@@ -1,0 +1,574 @@
+@use 'variables' as *;
+
+// ==========================================
+// TOUR DETAILS PAGE STYLES
+// ==========================================
+
+// 1. HERO SECTION
+.section-header {
+  position: relative;
+  height: 80vh;
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+}
+
+.header-hero {
+  height: 100%;
+  position: relative;
+
+  &__bg {
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+
+  &__text-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: $color-white;
+    width: 90%;
+    max-width: 100rem;
+
+    .heading-primary {
+      color: $color-white;
+      font-size: 6rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__meta {
+    margin-top: $spacing-4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-6;
+  }
+
+  &__meta-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+  }
+
+  &__icon {
+    height: 2rem;
+    width: 2rem;
+    fill: $color-white;
+  }
+
+  &__text {
+    font-family: $font-body;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $color-white;
+  }
+}
+
+// 2. SECTION 1: QUICK FACTS & ABOUT (2-COLUMN GRID)
+.section-description {
+  background-color: $color-white;
+  padding: 10rem $spacing-10;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-10;
+  max-width: 120rem;
+  margin: 0 auto;
+}
+
+.overview-box {
+  background-color: $color-neutral-gray;
+  padding: $spacing-8;
+  border-radius: 8px;
+
+  .heading-secondary {
+    font-size: 2.2rem;
+    margin-bottom: $spacing-4;
+    color: $color-dark-base;
+  }
+
+  &__group {
+    &:not(:last-child) {
+      margin-bottom: $spacing-8;
+    }
+  }
+
+  &__detail {
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    margin-bottom: $spacing-3;
+  }
+
+  &__icon {
+    height: 2.2rem;
+    width: 2.2rem;
+    fill: $color-primary;
+  }
+
+  &__label {
+    font-family: $font-body;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+    color: $color-text-muted;
+  }
+
+  &__text {
+    font-family: $font-body;
+    font-size: 1.5rem;
+    color: $color-dark-base;
+    margin-left: auto;
+  }
+
+  &__guides {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  &__guide {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+
+    &-img {
+      height: 4.5rem;
+      width: 4.5rem;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+
+  &__role {
+    font-family: $font-body;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $color-primary;
+  }
+
+  &__name {
+    font-family: $font-headlines;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $color-dark-base;
+    margin-left: auto;
+  }
+}
+
+.description-box {
+  padding: $spacing-4 0;
+
+  .heading-secondary {
+    font-size: 2.2rem;
+    margin-bottom: $spacing-6;
+    color: $color-dark-base;
+  }
+
+  &__text {
+    font-family: $font-body;
+    font-size: 1.6rem;
+    color: $color-text-muted;
+    line-height: 1.8;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-4;
+    }
+  }
+}
+
+// 3. SECTION 2: IMAGE GALLERY
+.section-pictures {
+  display: flex;
+  clip-path: polygon(0 9%, 100% 0, 100% 91%, 0 100%);
+  margin-top: -6rem;
+  position: relative;
+  z-index: 5;
+}
+
+.picture-box {
+  flex: 1;
+
+  &__img {
+    display: block;
+    width: 100%;
+    height: 40rem;
+    object-fit: cover;
+    transition: transform 0.4s ease, filter 0.4s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      z-index: 10;
+    }
+  }
+}
+
+// 4. SECTION 3: MAP
+.section-map {
+  position: relative;
+  height: 50rem;
+  background-color: $color-deep-accent;
+  margin-top: -6rem;
+  z-index: 1;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+.map-popup {
+  .leaflet-popup-content-wrapper {
+    background-color: $color-deep-accent;
+    color: $color-white;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-family: $font-body;
+    font-size: 1.4rem;
+    box-shadow: 0 1rem 2rem rgba($color-dark-base, 0.4);
+  }
+  .leaflet-popup-tip {
+    background-color: $color-deep-accent;
+  }
+}
+
+// Leaflet Control Container Offsets
+.leaflet-bottom.leaflet-right {
+  margin-bottom: 12rem !important;
+  margin-right: 4rem !important;
+}
+
+// Leaflet Dark Glassmorphism Zoom Controls
+.leaflet-bar {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+
+  a,
+  .leaflet-control-zoom-in,
+  .leaflet-control-zoom-out {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: rgba(11, 19, 32, 0.85) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: $color-primary !important;
+    border: 1px solid rgba(255, 107, 53, 0.3) !important;
+    width: 4rem !important;
+    height: 4rem !important;
+    line-height: 1 !important;
+    font-size: 1.8rem !important;
+    transition: all 0.2s ease !important;
+
+    &:hover {
+      background-color: rgba(255, 107, 53, 0.2) !important;
+      border-color: $color-primary !important;
+      color: $color-neutral-gray !important;
+    }
+  }
+}
+
+.custom-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-pin {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: $color-primary;
+  border: 3px solid $color-neutral-gray;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.25);
+  }
+}
+
+// 5. SECTION 4: REVIEWS (HORIZONTAL SCROLL)
+.section-reviews {
+  padding: 12rem 0;
+  background-image: linear-gradient(to right bottom, $color-dark-base, $color-deep-accent);
+  clip-path: polygon(0 9%, 100% 0, 100% 91%, 0 100%);
+  margin-top: -6rem;
+  position: relative;
+  z-index: 5;
+}
+
+.reviews-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 120rem;
+  margin: 0 auto;
+}
+
+.reviews {
+  width: 100%;
+  display: flex;
+  gap: 3rem;
+  padding: $spacing-8 $spacing-4;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &__btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 5rem;
+    height: 5rem;
+    padding: 0;
+    line-height: 1;
+    letter-spacing: 0;
+    text-indent: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 107, 53, 0.5);
+    color: $color-white;
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+
+    span,
+    svg {
+      margin: 0;
+      display: block;
+    }
+
+    &:hover {
+      transform: translateY(-50%) scale(1.1);
+      background: rgba(255, 107, 53, 0.2);
+      border-color: $color-primary;
+      color: $color-white;
+    }
+
+    &--disabled {
+      opacity: 0.3;
+      cursor: default;
+      pointer-events: none;
+
+      &:hover {
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 107, 53, 0.5);
+      }
+    }
+
+    &--left {
+      left: -2rem;
+    }
+
+    &--right {
+      right: -2rem;
+    }
+  }
+
+  &__card {
+    flex: 0 0 35rem;
+    scroll-snap-align: center;
+    background-color: rgba($color-white, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba($color-white, 0.1);
+    border-radius: 8px;
+    padding: $spacing-6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+  }
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    margin-bottom: $spacing-4;
+
+    &-img {
+      height: 4.5rem;
+      width: 4.5rem;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+
+  &__user {
+    font-family: $font-headlines;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $color-white;
+  }
+
+  &__text {
+    font-family: $font-body;
+    font-size: 1.4rem;
+    color: $color-white;
+    opacity: 0.9;
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: $spacing-4;
+    flex: 1;
+  }
+
+  &__rating {
+    display: flex;
+    gap: $spacing-1;
+    margin-top: auto;
+  }
+
+  &__star {
+    height: 2rem;
+    width: 2rem;
+
+    &--active {
+      fill: $color-primary;
+      filter: drop-shadow(0 0 6px rgba($color-primary, 0.8));
+    }
+
+    &--inactive {
+      fill: rgba($color-white, 0.2);
+    }
+  }
+}
+
+// 6. SECTION 5: CTA (CALL TO ACTION)
+.section-cta {
+  padding: 10rem $spacing-10;
+  background-color: $color-neutral-gray;
+}
+
+.cta {
+  position: relative;
+  max-width: 105rem;
+  margin: 0 auto;
+  overflow: hidden;
+  background-color: $color-white;
+  padding: $spacing-8 $spacing-10;
+  border-radius: 2rem;
+  box-shadow: 0 3rem 8rem rgba($color-dark-base, 0.15);
+  display: flex;
+  align-items: center;
+
+  &__img {
+    height: 15rem;
+    width: 15rem;
+    border-radius: 50%;
+    position: absolute;
+    box-shadow: 0 1rem 3rem rgba($color-dark-base, 0.2);
+
+    &--logo {
+      background-color: $color-deep-accent;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      left: 0;
+      top: 50%;
+      transform: translate(-35%, -50%);
+    }
+
+    &--1 {
+      top: 50%;
+      left: 8%;
+      transform: translate(-10%, -50%);
+      z-index: 9;
+      object-fit: cover;
+    }
+
+    &--2 {
+      top: 50%;
+      left: 17%;
+      transform: translate(-10%, -50%);
+      z-index: 8;
+      object-fit: cover;
+    }
+  }
+
+  &__logo-text {
+    font-family: $font-headlines;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $color-white;
+    letter-spacing: 0.1em;
+  }
+
+  &__content {
+    margin-left: 28rem;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+  }
+
+  &__text {
+    font-family: $font-body;
+    font-size: 1.6rem;
+    color: $color-text-muted;
+  }
+
+  .heading-secondary {
+    color: $color-dark-base;
+    font-size: 3rem;
+  }
+}
+
+.btn {
+  &--pill {
+    padding: $spacing-3 $spacing-6;
+    border-radius: 10rem;
+    font-family: $font-body;
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-self: flex-start;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  &--primary {
+    background-color: $color-primary;
+    color: $color-white;
+
+    &:hover {
+      background-color: $color-primary-dark;
+      transform: translateY(-2px);
+      box-shadow: 0 1rem 2rem rgba($color-dark-base, 0.15);
+    }
+  }
+}

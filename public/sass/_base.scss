@@ -1,0 +1,101 @@
+@use 'variables' as *;
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  // 1rem = 10px (62.5% of 16px) - standard practice for easier rem calculations
+  font-size: 62.5%; 
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-body;
+  font-weight: 400;
+  color: $color-dark-base;
+  line-height: 1.6;
+  background-color: $color-white;
+}
+
+/* Typography Rules */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-headlines;
+  color: $color-dark-base;
+}
+
+// Oversized headers
+.heading-primary {
+  font-size: 8rem; // Oversized
+  font-weight: 700;
+  letter-spacing: -0.02em; // Slightly negative
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.heading-secondary {
+  font-size: 4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+// Eyebrow labels
+.eyebrow {
+  font-family: $font-headlines;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.15em; // Wide tracking
+  text-transform: uppercase;
+  color: $color-neutral-gray;
+  display: block;
+}
+
+// Meta text
+.meta-text {
+  font-family: $font-body;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: $color-neutral-gray;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Alert Banners */
+.alert {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  color: $color-white;
+  font-family: $font-body;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 1.6rem 15rem;
+  box-shadow: 0 2rem 4rem rgba($color-dark-base, 0.25);
+
+  &--success {
+    background-color: #20bf6b;
+  }
+
+  &--error {
+    background-color: $color-primary;
+  }
+}

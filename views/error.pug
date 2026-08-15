@@ -1,0 +1,14 @@
+extends base
+
+block content
+  main.main
+    section.section-error
+      .error
+        .error__card
+          .error__bg-text 404
+          svg.error__icon
+            use(href="/img/icons.svg#icon-compass")
+          .error__title
+            h2.heading-secondary.heading-secondary--error Something went wrong!
+          .error__msg= msg
+          a.btn.btn--primary.btn--pill(href="/") Back to Basecamp

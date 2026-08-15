@@ -1,0 +1,145 @@
+@use 'variables' as *;
+
+// ==========================================
+// FORM STYLES (LOGIN / SIGNUP / ACCOUNT)
+// ==========================================
+.section-login {
+  min-height: calc(100vh - 8rem);
+  background-image: linear-gradient(to right bottom, $color-dark-base, $color-deep-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12rem 2rem 6rem 2rem;
+}
+
+.login-form {
+  background-color: $color-deep-accent;
+  max-width: 55rem;
+  width: 100%;
+  border-radius: 1rem;
+  box-shadow: 0 2.5rem 8rem rgba($color-dark-base, 0.6);
+  border: 1px solid rgba(248, 249, 250, 0.08);
+  padding: 5rem 7rem;
+
+  .heading-secondary {
+    font-family: $font-headlines;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: $color-white;
+    margin-bottom: 3.5rem;
+    text-align: center;
+  }
+}
+
+.form {
+  &__group {
+    display: flex;
+    flex-direction: column;
+
+    &:not(:last-child) {
+      margin-bottom: 2.5rem;
+    }
+
+    &.ma-bt-md {
+      margin-bottom: 3rem;
+    }
+
+    &--actions {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    &--right {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+  }
+
+  &__label {
+    font-family: $font-body;
+    font-weight: 500;
+    font-size: 1.4rem;
+    color: $color-neutral-gray; // #F8F9FA
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  &__input {
+    font-family: $font-body;
+    font-size: 1.5rem;
+    color: $color-white;
+    padding: 1.25rem 1.75rem;
+    border-radius: 6px;
+    background-color: rgba($color-white, 0.05);
+    border: 1px solid rgba(248, 249, 250, 0.1);
+    width: 100%;
+    transition: all 0.3s ease;
+
+    &::placeholder {
+      color: rgba(248, 249, 250, 0.5);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      background-color: rgba($color-white, 0.08);
+      box-shadow: 0 0 1rem rgba($color-primary, 0.3);
+    }
+
+    // Invalid Field Error State
+    &:invalid:not(:placeholder-shown),
+    &--invalid {
+      border-color: #e74c3c;
+      box-shadow: 0 0 1rem rgba(231, 76, 60, 0.2);
+    }
+  }
+
+  // BEM Error Text Message
+  &__error {
+    font-family: $font-body;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #e74c3c;
+    margin-top: 0.6rem;
+    display: block;
+  }
+
+  &__link {
+    font-family: $font-body;
+    font-size: 1.4rem;
+    color: $color-neutral-gray;
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+
+    &:hover {
+      color: $color-primary;
+      text-decoration: underline;
+    }
+  }
+}
+
+// Button States & Interactions
+.btn {
+  &--primary {
+    background-color: $color-primary;
+    color: $color-white;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: $color-secondary;
+      transform: translateY(-2px);
+    }
+
+    &:disabled,
+    &--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+      transform: none;
+    }
+  }
+}

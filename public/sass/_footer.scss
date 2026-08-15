@@ -1,0 +1,44 @@
+@use 'variables' as *;
+
+.footer {
+  background-color: $color-dark-base;
+  padding: $spacing-8 $spacing-10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: $color-white;
+  font-family: $font-body;
+  font-size: 1.4rem;
+
+  &__logo {
+    a {
+      font-family: $font-headlines;
+      font-size: 2rem;
+      font-weight: 700;
+      color: $color-white;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    gap: $spacing-4;
+
+    a {
+      color: $color-neutral-gray;
+      transition: color 0.2s;
+
+      &:hover,
+      &:active {
+        color: $color-primary;
+      }
+    }
+  }
+
+  &__copyright {
+    color: $color-neutral-gray;
+    font-size: 1.2rem;
+  }
+}

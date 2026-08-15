@@ -1,0 +1,207 @@
+/* -------------------------------------
+    EXPEDITION DESIGN SYSTEM - EMAIL STYLES
+------------------------------------- */
+
+/* Global Resets */
+img {
+  border: none;
+  -ms-interpolation-mode: bicubic;
+  max-width: 100%;
+}
+
+body {
+  background-color: #000000;
+  font-family: Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color: #F8F9FA;
+}
+
+table {
+  border-collapse: separate;
+  mso-table-lspace: 0pt;
+  mso-table-rspace: 0pt;
+  width: 100%;
+}
+
+table td {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  vertical-align: top;
+  color: #F8F9FA;
+}
+
+/* Body & Container */
+.body {
+  background-color: #000000;
+  width: 100%;
+}
+
+.container {
+  display: block;
+  margin: 0 auto !important;
+  max-width: 580px;
+  padding: 20px;
+  width: 580px;
+}
+
+.content {
+  box-sizing: border-box;
+  display: block;
+  margin: 0 auto;
+  max-width: 580px;
+  padding: 10px;
+}
+
+/* Main Card (Deep Accent Navy) */
+.main {
+  background: #0B1320;
+  border-radius: 8px;
+  width: 100%;
+  border: 1px solid #1E293B;
+}
+
+.wrapper {
+  box-sizing: border-box;
+  padding: 30px;
+}
+
+/* Typography (Neutral Off-White) */
+h1, h2, h3, h4 {
+  color: #F8F9FA;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0 0 20px 0;
+}
+
+h1 {
+  font-size: 24px;
+  letter-spacing: -0.5px;
+}
+
+p, ul, ol {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: normal;
+  margin: 0 0 16px 0;
+  color: #F8F9FA;
+}
+
+a {
+  color: #FF6B35;
+  text-decoration: underline;
+}
+
+/* Buttons (Primary Orange Pill) */
+.btn {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.btn > tbody > tr > td {
+  padding-bottom: 15px;
+}
+
+.btn table {
+  width: auto;
+}
+
+.btn table td {
+  background-color: transparent;
+  border-radius: 50px;
+  text-align: center;
+}
+
+.btn a {
+  background-color: transparent;
+  border: solid 1px #FF6B35;
+  border-radius: 50px;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 15px;
+  font-weight: bold;
+  margin: 0;
+  padding: 12px 28px;
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
+.btn-primary table td {
+  background-color: #FF6B35;
+}
+
+.btn-primary a {
+  background-color: #FF6B35;
+  border: solid 1px #FF6B35;
+  border-radius: 50px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Footer */
+.footer {
+  clear: both;
+  margin-top: 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.footer td,
+.footer p,
+.footer span,
+.footer a {
+  color: #64748B;
+  font-size: 12px;
+  text-align: center;
+}
+
+.footer a {
+  color: #94A3B8;
+  text-decoration: underline;
+}
+
+/* Responsive Styles */
+@media only screen and (max-width: 620px) {
+  table.body h1 {
+    font-size: 22px !important;
+    margin-bottom: 12px !important;
+  }
+  table.body p,
+  table.body ul,
+  table.body ol,
+  table.body td,
+  table.body span,
+  table.body a {
+    font-size: 14px !important;
+  }
+  table.body .wrapper {
+    padding: 20px !important;
+  }
+  table.body .content {
+    padding: 0 !important;
+  }
+  table.body .container {
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  table.body .main {
+    border-left-width: 0 !important;
+    border-radius: 0 !important;
+    border-right-width: 0 !important;
+  }
+  table.body .btn table {
+    width: 100% !important;
+  }
+  table.body .btn a {
+    width: 100% !important;
+  }
+}

@@ -1,0 +1,18 @@
+//- Transparent vs Solid capability can be handled via a class on the header element
+//- e.g., header.header(class=`${isTransparent ? 'header--transparent' : 'header--solid'}`)
+header.header.header--transparent
+  .header__logo
+    a(href="/") NATOURS
+  
+  nav.header__nav.header__nav--tours
+    a.header__nav-link(href="/tours") All tours
+  
+  nav.header__nav.header__nav--user
+    if user
+      a.header__nav-link.header__nav-link--logout(href="#") Log out
+      a.header__nav-link.header__nav-link--profile(href="/me")
+        img.header__user-img(src=`/img/users/${user.photo || 'default.jpg'}` alt=`Photo of ${user.name}`)
+        span.header__user-name= user.name.split(' ')[0]
+    else
+      a.header__nav-link(href="/login") Log in
+      a.header__nav-link.header__nav-link--cta(href="/signup") Sign up

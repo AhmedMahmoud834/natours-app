@@ -1,0 +1,110 @@
+extends base
+
+block append head
+  link(rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css")
+  script(src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer)
+  script(src="/js/leaflet.js" defer)
+  script(src="/js/reviewsSlider.js" defer)
+  script(src="/js/stripe.js" defer)
+
+mixin overviewBox(label, text, icon)
+  .overview-box__detail
+    svg.overview-box__icon
+      use(href=`/img/icons.svg#icon-${icon}`)
+    span.overview-box__label= label
+    span.overview-box__text= text
+
+block content
+  main.main
+    //- HERO SECTION
+    section.section-header
+      .header-hero
+        .header-hero__bg(style=`background-image: linear-gradient(to right bottom, rgba(11, 19, 32, 0.7), rgba(0, 0, 0, 0.8)), url('/img/tours/${tour.imageCover}')`)
+        .header-hero__text-box
+          h1.heading-primary
+            span= tour.name
+          .header-hero__meta
+            .header-hero__meta-item
+              svg.header-hero__icon
+                use(href="/img/icons.svg#icon-clock")
+              span.header-hero__text #{tour.duration} days
+            .header-hero__meta-item
+              svg.header-hero__icon
+                use(href="/img/icons.svg#icon-map-pin")
+              span.header-hero__text= tour.startLocation.description
+
+    //- SECTION 1: QUICK FACTS & ABOUT (2-COLUMN GRID)
+    section.section-description
+      .overview-box
+        div
+          .overview-box__group
+            h2.heading-secondary Quick facts
+            
+            - const date = tour.startDates[0] ? new Date(tour.startDates[0]).toLocaleString('en-us', {month: 'long', year: 'numeric'}) : 'TBD'
+            +overviewBox('Next date', date, 'calendar')
+            +overviewBox('Difficulty', tour.difficulty, 'trending-up')
+            +overviewBox('Participants', `${tour.maxGroupSize} people`, 'user')
+            +overviewBox('Rating', `${Math.round(tour.ratingsAverage * 10) / 10} / 5`, 'star')
+
+          .overview-box__group
+            h2.heading-secondary Your tour guides
+            .overview-box__guides
+              if tour.guides
+                each guide in tour.guides
+                  .overview-box__guide
+                    img.overview-box__guide-img(src=`/img/users/${guide.photo}` alt=`${guide.name}`)
+                    - if (guide.role === 'lead-guide')
+                      span.overview-box__role Lead guide
+                    - if (guide.role === 'guide')
+                      span.overview-box__role Tour guide
+                    span.overview-box__name= guide.name
+
+      .description-box
+        h2.heading-secondary About #{tour.name}
+        - const paragraphs = tour.description ? tour.description.split('\n') : []
+        each p in paragraphs
+          p.description-box__text= p
+
+    //- SECTION 2: IMAGE GALLERY
+    section.section-pictures
+      if tour.images
+        each img, i in tour.images
+          .picture-box
+            img.picture-box__img(src=`/img/tours/${img}` alt=`${tour.name} ${i + 1}` class=`picture-box__img--${i + 1}`)
+
+    //- SECTION 3: MAP
+    section.section-map
+      #map(data-locations=`${JSON.stringify(tour.locations)}`)
+
+    //- SECTION 4: REVIEWS (HORIZONTAL SCROLL)
+    section.section-reviews
+      .reviews-wrapper
+        button.reviews__btn.reviews__btn--left(aria-label="Previous reviews") &larr;
+        .reviews
+          if tour.reviews && tour.reviews.length
+            each review in tour.reviews
+              .reviews__card
+                .reviews__avatar
+                  img.reviews__avatar-img(src=`/img/users/${review.user ? review.user.photo : 'default.jpg'}` alt=`${review.user ? review.user.name : 'User'}`)
+                  h6.reviews__user= review.user ? review.user.name : 'Anonymous'
+                p.reviews__text= review.review
+                .reviews__rating
+                  each star in [1, 2, 3, 4, 5]
+                    svg.reviews__star(class=`reviews__star--${review.rating >= star ? 'active' : 'inactive'}`)
+                      use(href="/img/icons.svg#icon-star")
+        button.reviews__btn.reviews__btn--right(aria-label="Next reviews") &rarr;
+
+    //- SECTION 5: CTA (CALL TO ACTION)
+    section.section-cta
+      .cta
+        .cta__img.cta__img--logo
+          span.cta__logo-text NATOURS
+        img.cta__img.cta__img--1(src=`/img/tours/${tour.images && tour.images[1] ? tour.images[1] : tour.imageCover}` alt="Tour image")
+        img.cta__img.cta__img--2(src=`/img/tours/${tour.images && tour.images[2] ? tour.images[2] : tour.imageCover}` alt="Tour image")
+        .cta__content
+          h2.heading-secondary What are you waiting for?
+          p.cta__text #{tour.duration} days. 1 adventure. Infinite memories. Make it yours today!
+          if user
+            button.btn.btn--primary.btn--pill#book-tour(data-tour-id=`${tour.id}`) Book tour now!
+          else
+            a.btn.btn--primary.btn--pill(href='/login') Log in to book tour

@@ -1,0 +1,402 @@
+@use 'variables' as *;
+
+// ==========================================
+// HERO SECTION
+// ==========================================
+.section-hero {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__eyebrow {
+    position: absolute;
+    top: calc(50% - 9rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    font-family: $font-headlines;
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: $color-white;
+  }
+
+  &__slider {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+    z-index: 1;
+
+    &--active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 2;
+    }
+  }
+
+  &__heading {
+    font-family: $font-headlines;
+    font-size: 14rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin: 0;
+    color: $color-white;
+    text-align: center;
+  }
+
+  // Pinned social icons — vertical, middle-left
+  &__social {
+    position: absolute;
+    left: $spacing-8;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+
+    &-list {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-4;
+    }
+
+    &-link {
+      color: $color-white;
+      font-family: $font-body;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      transition: color 0.2s;
+
+      &:hover {
+        color: $color-primary;
+      }
+    }
+  }
+
+  // Pinned slide counter — rotated 90deg, middle-right
+  &__slider-counter {
+    position: absolute;
+    right: $spacing-8;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    color: $color-white;
+    font-family: $font-body;
+    font-size: 1.4rem;
+    letter-spacing: 0.2em;
+    font-weight: 500;
+    z-index: 10;
+  }
+}
+
+// ==========================================
+// TOP TOURS SECTION (Glass Cards on Dark)
+// ==========================================
+.section-top-tours {
+  padding: 10rem $spacing-10;
+  background-image: linear-gradient(to right bottom, $color-dark-base, $color-deep-accent);
+
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-10;
+  }
+
+  &__eyebrow {
+    font-family: $font-headlines;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: $color-primary;
+    display: block;
+    margin-bottom: $spacing-1;
+  }
+
+  &__heading {
+    font-family: $font-headlines;
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: $color-white;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4rem;
+    max-width: 120rem;
+    margin: 0 auto;
+  }
+}
+
+// ==========================================
+// GLASS CARD
+// ==========================================
+.glass-card {
+  background-color: rgba($color-white, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba($color-white, 0.1);
+  border-radius: 8px;
+  padding: $spacing-4;
+  color: $color-white;
+  transition: transform 0.3s, background-color 0.3s;
+  text-decoration: none;
+  display: block;
+
+  &:hover {
+    transform: translateY(-5px);
+    background-color: rgba($color-white, 0.15);
+  }
+
+  &__title {
+    font-family: $font-headlines;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: $spacing-2;
+    line-height: 1.2;
+    color: $color-white;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    font-family: $font-body;
+    font-size: 1.4rem;
+    opacity: 0.9;
+  }
+
+  &__separator {
+    opacity: 0.5;
+  }
+}
+
+// ==========================================
+// RECENT TOURS SECTION
+// ==========================================
+.section-recent {
+  padding: $spacing-12 $spacing-10;
+  background-color: $color-neutral-gray;
+
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-10;
+  }
+
+  &__eyebrow {
+    font-family: $font-headlines;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: $color-primary;
+    display: block;
+    margin-bottom: $spacing-1;
+  }
+
+  &__heading {
+    font-family: $font-headlines;
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: $color-dark-base;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5rem;
+    max-width: 120rem;
+    margin: 0 auto;
+  }
+}
+
+// ==========================================
+// TOUR CARD (Full card with diagonal image)
+// ==========================================
+.tour-card {
+  background-color: $color-white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 20px rgba($color-dark-base, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba($color-dark-base, 0.12);
+  }
+
+  // Top 45% — Image with diagonal cut
+  &__image {
+    position: relative;
+    height: 0;
+    padding-top: 45%;
+    overflow: hidden;
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background-color: $color-white;
+      clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    }
+  }
+
+  // Bottom 55% — Content
+  &__body {
+    padding: $spacing-3 $spacing-4;
+    flex: 1;
+  }
+
+  &__name {
+    font-family: $font-headlines;
+    font-size: 2rem;
+    font-weight: 700;
+    color: $color-dark-base;
+    margin-bottom: $spacing-1;
+  }
+
+  &__summary {
+    font-family: $font-body;
+    font-size: 1.4rem;
+    color: $color-text-muted;
+    line-height: 1.6;
+    margin-bottom: $spacing-3;
+  }
+
+  // Data grid — 2 columns
+  &__data {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-2;
+
+    &-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &-label {
+      font-family: $font-body;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: $color-text-muted;
+      margin-bottom: 2px;
+    }
+
+    &-value {
+      font-family: $font-body;
+      font-size: 1.4rem;
+      color: $color-dark-base;
+    }
+  }
+
+  // Footer — separated by a line
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-3 $spacing-4;
+    border-top: 1px solid rgba($color-dark-base, 0.08);
+    margin-top: auto;
+    gap: $spacing-2;
+
+    &-left,
+    &-right {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+  }
+
+  &__price {
+    font-family: $font-headlines;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $color-dark-base;
+
+    &-label {
+      font-family: $font-body;
+      font-size: 1.2rem;
+      color: $color-text-muted;
+    }
+  }
+
+  &__rating {
+    font-family: $font-headlines;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $color-dark-base;
+
+    &-label {
+      font-family: $font-body;
+      font-size: 1.2rem;
+      color: $color-text-muted;
+    }
+  }
+
+  // CTA button
+  &__cta {
+    padding: $spacing-2 $spacing-4;
+    background-color: $color-primary;
+    color: $color-white;
+    border-radius: 10rem;
+    font-family: $font-body;
+    font-size: 1.4rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    align-self: center;
+
+    &:hover {
+      background-color: $color-primary-dark;
+    }
+  }
+}

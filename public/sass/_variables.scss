@@ -1,0 +1,26 @@
+// Colors matching design-spec.md
+$color-primary: #FF6B35;
+$color-secondary: #E85D29;
+$color-deep-accent: #0B1320;
+$color-dark-base: #000000;
+$color-neutral-gray: #F8F9FA;
+$color-text-muted: #666666;
+$color-white: #ffffff;
+
+// Derived colors
+$color-primary-dark: #D95321;
+
+// Typography
+$font-headlines: 'Poppins', sans-serif;
+$font-body: 'Inter', sans-serif;
+
+// Grid & Spacing (8-point grid system)
+$spacing-1: 0.8rem; // 8px
+$spacing-2: 1.6rem; // 16px
+$spacing-3: 2.4rem; // 24px
+$spacing-4: 3.2rem; // 32px
+$spacing-5: 4.0rem; // 40px
+$spacing-6: 4.8rem; // 48px
+$spacing-8: 6.4rem; // 64px
+$spacing-10: 8.0rem; // 80px
+$spacing-12: 9.6rem; // 96px

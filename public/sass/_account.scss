@@ -1,0 +1,247 @@
+@use 'variables' as *;
+
+// ==========================================
+// USER ACCOUNT / DASHBOARD PAGE STYLES
+// ==========================================
+.section-account {
+  min-height: 100vh;
+  background: radial-gradient(circle at center, $color-deep-accent 0%, $color-dark-base 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12rem 2rem 6rem 2rem;
+}
+
+.user-view {
+  max-width: 120rem;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 65rem;
+  background-color: $color-deep-accent;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 2.5rem 8rem rgba($color-dark-base, 0.6);
+  border: 1px solid rgba(248, 249, 250, 0.08);
+  display: flex;
+
+  &__menu {
+    flex: 0 0 32rem;
+    background-color: rgba($color-dark-base, 0.5);
+    padding: 4rem 0;
+    border-right: 1px solid rgba(248, 249, 250, 0.05);
+  }
+
+  &__content {
+    flex: 1;
+    padding: 6rem 8rem;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    .heading-secondary {
+      font-family: $font-headlines;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: $color-neutral-gray;
+      -webkit-text-fill-color: unset;
+      background-image: none;
+      letter-spacing: 1px;
+      margin-bottom: 3rem;
+    }
+  }
+
+  &__form-container {
+    max-width: 68rem;
+    margin: 0 auto;
+  }
+}
+
+.side-nav {
+  list-style: none;
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: $font-headlines;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: $color-neutral-gray;
+    padding: 1.5rem 4rem;
+    text-decoration: none;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+      fill: currentColor;
+    }
+  }
+
+  li:hover a,
+  &--active a {
+    color: $color-white;
+    border-left-color: $color-primary;
+    background-color: rgba($color-primary, 0.1);
+  }
+}
+
+.admin-nav {
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(248, 249, 250, 0.08);
+
+  &__heading {
+    font-family: $font-headlines;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(248, 249, 250, 0.5);
+    padding: 0 4rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.form__photo-upload {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  justify-content: flex-start;
+  margin-bottom: 3rem;
+}
+
+.form__user-photo {
+  height: 7.5rem;
+  width: 7.5rem;
+  border-radius: 50%;
+  border: 2px solid $color-primary;
+  object-fit: cover;
+}
+
+.form__upload {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+
+  & + label {
+    font-family: $font-body;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: $color-primary;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $color-secondary;
+    }
+  }
+}
+
+.line {
+  margin: 6rem 0;
+  height: 1px;
+  background-color: rgba(248, 249, 250, 0.08);
+}
+
+.right {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+
+// ==========================================
+// MY BOOKINGS DASHBOARD STYLES
+// ==========================================
+.bookings-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+.booking-card {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 107, 53, 0.5);
+    box-shadow: 0 1rem 3rem rgba($color-dark-base, 0.4);
+  }
+
+  &__img {
+    width: 16rem;
+    height: 11rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: $font-headlines;
+    font-size: 2rem;
+    font-weight: 700;
+    color: $color-neutral-gray;
+  }
+
+  &__text {
+    margin: 0;
+    font-family: $font-body;
+    font-size: 1.4rem;
+    color: rgba(248, 249, 250, 0.7);
+    line-height: 1.6;
+  }
+
+  .btn {
+    align-self: flex-start;
+  }
+}
+
+.btn--small {
+  padding: 0.8rem 2rem;
+  font-size: 1.3rem;
+}
+
+.empty-state {
+  font-family: $font-body;
+  font-size: 1.8rem;
+  color: rgba(248, 249, 250, 0.7);
+  text-align: center;
+  padding: 6rem 2rem;
+}

@@ -1,0 +1,43 @@
+extends base
+
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(href=`/img/icons.svg#icon-${icon}`)
+      span= text
+
+block content
+  main.main
+    section.section-account
+      .user-view
+        nav.user-view__menu
+          ul.side-nav
+            +navItem('/me', 'Settings', 'settings', false)
+            +navItem('/my-tours', 'My bookings', 'briefcase', true)
+            +navItem('#', 'My reviews', 'star', false)
+            +navItem('#', 'Billing', 'credit-card', false)
+          
+          if user && user.role === 'admin'
+            .admin-nav
+              h5.admin-nav__heading Admin
+              ul.side-nav
+                +navItem('#', 'Manage tours', 'map', false)
+                +navItem('#', 'Manage users', 'users', false)
+                +navItem('#', 'Manage reviews', 'star', false)
+                +navItem('#', 'Manage bookings', 'briefcase', false)
+
+        .user-view__content
+          h2.heading-secondary.ma-bt-md My Booked Tours
+          if tours && tours.length
+            .bookings-grid
+              each tour in tours
+                .booking-card
+                  .booking-card__img
+                    img(src=`/img/tours/${tour.imageCover}` alt=`${tour.name}`)
+                  .booking-card__details
+                    h4.booking-card__title= tour.name
+                    p.booking-card__text= tour.summary
+                    a.btn.btn--primary.btn--pill.btn--small(href=`/tours/${tour.slug}`) View Tour
+          else
+            p.empty-state You haven't booked any tours yet. Time for an adventure!

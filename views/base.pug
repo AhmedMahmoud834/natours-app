@@ -1,0 +1,35 @@
+doctype html
+html(lang="en")
+  head
+    block head
+      meta(charset="UTF-8")
+      meta(name="viewport" content="width=device-width, initial-scale=1.0")
+      
+      // Google Fonts
+      link(rel="preconnect" href="https://fonts.googleapis.com")
+      link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+      link(href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet")
+      
+      // CSS
+      link(rel="stylesheet" href="/css/style.css")
+      
+      // Stripe & JS
+      script(src="https://js.stripe.com/v3/")
+      script(src="/js/logout.js" defer)
+      script(src="/js/smartHeader.js" defer)
+      
+      // Favicon
+      link(rel="shortcut icon" type="image/png" href="/img/favicon.png")
+      
+      title Natours | #{title}
+
+  body
+    // HEADER
+    include _header
+
+    // CONTENT
+    block content
+      h1 This is a placeholder heading
+
+    // FOOTER
+    include _footer

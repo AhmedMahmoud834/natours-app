@@ -1,0 +1,44 @@
+extends base
+
+block content
+  main.main
+    section.section-overview
+      .card-container
+        if tours && tours.length
+          each tour in tours
+            .card
+              .card__header
+                .card__picture
+                  img.card__picture-img(src=`/img/tours/${tour.imageCover}` alt=`${tour.name}`)
+              
+              .card__details
+                h3.card__name= tour.name
+                p.card__summary= tour.summary
+                
+                .card__data
+                  .card__data-item
+                    svg.card__icon
+                      use(href="/img/icons.svg#icon-map-pin")
+                    span= tour.startLocation ? tour.startLocation.description : 'Worldwide'
+                  .card__data-item
+                    svg.card__icon
+                      use(href="/img/icons.svg#icon-calendar")
+                    - const date = tour.startDates && tour.startDates[0] ? new Date(tour.startDates[0]).toLocaleString('en-us', {month: 'long', year: 'numeric'}) : 'TBD'
+                    span= date
+                  .card__data-item
+                    svg.card__icon
+                      use(href="/img/icons.svg#icon-flag")
+                    span #{tour.locations ? tour.locations.length : 0} stops
+                  .card__data-item
+                    svg.card__icon
+                      use(href="/img/icons.svg#icon-user")
+                    span #{tour.maxGroupSize} people
+
+              .card__footer
+                p.card__footer-detail
+                  span.card__footer-value $#{tour.price} 
+                  span.card__footer-text per person
+                p.card__footer-detail
+                  span.card__footer-value #{Math.round(tour.ratingsAverage * 10) / 10} 
+                  span.card__footer-text rating (#{tour.ratingsQuantity})
+                a.btn.btn--primary.btn--pill.btn--small(href=`/tours/${tour.slug}`) Details

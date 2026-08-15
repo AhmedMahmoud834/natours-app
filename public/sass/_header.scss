@@ -1,0 +1,114 @@
+@use 'variables' as *;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-4 $spacing-8;
+  height: $spacing-10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease-in-out;
+
+  &--scrolled {
+    background-color: rgba(11, 19, 32, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  &--hidden {
+    transform: translateY(-100%);
+  }
+
+  &__logo {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    
+    a {
+      font-family: $font-headlines;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: $color-white;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+
+    &--tours {
+      flex: 1;
+      justify-content: center;
+    }
+
+    &--user {
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    &-link {
+      font-family: $font-body;
+      font-weight: 500;
+      font-size: 1.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      color: $color-white;
+      transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+
+      &:hover,
+      &:active {
+        color: $color-primary;
+      }
+
+      &--cta {
+        padding: $spacing-2 $spacing-4;
+        border-radius: 10rem;
+        background-color: $color-primary;
+        color: $color-white;
+        border: 1px solid $color-primary;
+        
+        &:hover {
+          background-color: $color-primary-dark;
+          border-color: $color-primary-dark;
+          color: $color-white;
+        }
+      }
+    }
+  }
+
+  &__user {
+    &-img {
+      height: 3.5rem;
+      width: 3.5rem;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid $color-primary;
+      margin-right: $spacing-2;
+    }
+    
+    &-name {
+      font-family: $font-headlines;
+      font-weight: 600;
+    }
+  }
+
+  .header__nav-link--profile {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+}

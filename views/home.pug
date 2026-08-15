@@ -1,0 +1,100 @@
+extends base
+
+block content
+  -
+    const slides = [
+      { name: 'ALASKA', img: '/img/hero-alaska.jpg' },
+      { name: 'YELLOWKNIFE', img: '/img/hero-yellowknife.jpg' },
+      { name: 'CALGARY', img: '/img/hero-calgary.jpg' },
+      { name: 'SAN FRANCISCO', img: '/img/hero-san-francisco.jpg' },
+      { name: 'BAHAMAS', img: '/img/hero-bahamas.jpg' }
+    ]
+
+  main.main
+    //- ==========================================
+    //- HERO SECTION — Dynamic Cross-Fading Slider
+    //- ==========================================
+    section.section-hero
+      .hero
+        //- Eyebrow label static on top
+        span.hero__eyebrow Explore
+
+        //- Slider container holding each slide
+        .hero__slider
+          each slide, i in slides
+            .hero__slide(
+              class=i === 0 ? 'hero__slide--active' : ''
+              style=`background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('${slide.img}')`
+            )
+              h1.hero__heading= slide.name
+
+        //- Pinned Elements (outside loop)
+        .hero__social
+          ul.hero__social-list
+            li: a.hero__social-link(href="#") Fb
+            li: a.hero__social-link(href="#") Ig
+            li: a.hero__social-link(href="#") Tw
+
+        .hero__slider-counter
+          span.hero__slider-counter-text 01 / 05
+
+    //- ==========================================
+    //- TOP TOURS SECTION — Glass Cards on Dark Background
+    //- ==========================================
+    section.section-top-tours
+      .section-top-tours__header
+        span.section-top-tours__eyebrow Highest Rated
+        h2.section-top-tours__heading Top Rated Explorations
+
+      .section-top-tours__grid
+        if top3Tours && top3Tours.length
+          each tour in top3Tours
+            a.glass-card(href=`/tours/${tour.slug}`)
+              .glass-card__content
+                h3.glass-card__title= tour.name
+                .glass-card__meta
+                  span.glass-card__duration #{tour.duration} Days
+                  span.glass-card__separator |
+                  span.glass-card__price $#{tour.price}
+
+    //- ==========================================
+    //- RECENT TOURS SECTION — Full Tour Cards
+    //- ==========================================
+    section.section-recent
+      .section-recent__header
+        span.section-recent__eyebrow New adventures
+        h2.section-recent__heading Newly Added Explorations
+
+      .section-recent__grid
+        if recent3Tours && recent3Tours.length
+          each tour in recent3Tours
+            .tour-card
+              .tour-card__image
+                img(src=`/img/tours/${tour.imageCover}` alt=`${tour.name}`)
+              .tour-card__body
+                h3.tour-card__name= tour.name
+                p.tour-card__summary= tour.summary
+                .tour-card__data
+                  .tour-card__data-item
+                    span.tour-card__data-label Location
+                    span.tour-card__data-value= tour.startLocation.description
+                  .tour-card__data-item
+                    span.tour-card__data-label Date
+                    - const date = tour.startDates[0] ? new Date(tour.startDates[0]) : null
+                    span.tour-card__data-value= date ? `${date.toLocaleString('en-us', { month: 'long' })}, ${date.getFullYear()}` : 'TBD'
+                  .tour-card__data-item
+                    span.tour-card__data-label Stops
+                    span.tour-card__data-value #{tour.locations.length} stops
+                  .tour-card__data-item
+                    span.tour-card__data-label People
+                    span.tour-card__data-value #{tour.maxGroupSize} people
+              .tour-card__footer
+                .tour-card__footer-left
+                  span.tour-card__price $#{tour.price}
+                  span.tour-card__price-label  per person
+                .tour-card__footer-right
+                  span.tour-card__rating #{Math.round(tour.ratingsAverage * 10) / 10}
+                  span.tour-card__rating-label  rating (#{tour.ratingsQuantity})
+                a.tour-card__cta(href=`/tours/${tour.slug}`) Details
+
+  script(src="/js/slider.js")
