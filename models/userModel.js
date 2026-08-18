@@ -127,20 +127,27 @@ userSchema.methods.checkPassword = async function (
       { new: true },
     );
     if (updated.loginAttempts >= 5) {
-      const locked = await this.constructor.findOneAndUpdate(
-        { _id: this.id },
+      await this.constructor.findOneAndUpdate({ _id: this.id }, [
         {
           $inc: { lockoutCount: 1 },
-          $set: { loginAttempts: 0 },
         },
-      );
-      await this.constructor.findOneAndUpdate(
-        { _id: this.id },
+        { $set: { loginAttempts: 0 } },
         {
-          lockedUntil:
-            Date.now() + 15 * 60 * 1000 * 2 ** (locked.lockoutCount - 1),
+          $set: {
+            lockedUntil: {
+              $add: [
+                new Date(),
+                {
+                  $multiply: [
+                    900000,
+                    { $pow: [2, { $subtract: ['$lockoutCount', 1] }] },
+                  ],
+                },
+              ],
+            },
+          },
         },
-      );
+      ]);
     }
   } else if (this.loginAttempts > 0) {
     await this.constructor.findOneAndUpdate(

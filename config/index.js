@@ -10,11 +10,13 @@ const requiredEnvVars = [
   'EMAIL_PORT',
 ];
 
-requiredEnvVars.forEach((key) => {
-  if (!process.env[key]) {
-    throw new Error(`Missing required environment variable: ${key}`);
-  }
-});
+if (process.env.Node_ENV !== 'production') {
+  requiredEnvVars.forEach((key) => {
+    if (!process.env[key]) {
+      throw new Error(`Missing required environment variable: ${key}`);
+    }
+  });
+}
 
 const config = {
   env: process.env.NODE_ENV || 'development',

@@ -8,6 +8,7 @@ import { inHTMLData } from 'xss-filters';
 import cookieParser from 'cookie-parser';
 import hpp from 'hpp';
 
+import compression from 'compression';
 import toursRouter from './routes/toursRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import rootDir from './util/rootDir.js';
@@ -125,6 +126,8 @@ app.use(
     ],
   }),
 );
+
+app.use(compression());
 
 // routes
 

@@ -119,27 +119,30 @@ export const restrictTo =
 
 export const forgetPassword = async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
-  if (!user)
-    return next(new AppError('There is no user with this email!', 404));
-
-  // gen token
-  const resetToken = user.genPassResetToken();
-  await user.save({ validateBeforeSave: false });
-
-  // send to user
-  const resetURL = `${req.protocol}://${req.get('host')}/resetPassword/${resetToken}`;
+  let resetToken;
+  if (user) {
+    // gen token
+    resetToken = user.genPassResetToken();
+    await user.save({ validateBeforeSave: false });
+  }
 
   try {
-    await new Email(user, resetURL).sendPasswordReset();
+    // send to user
+    if (resetToken) {
+      const resetURL = `${req.protocol}://${req.get('host')}/resetPassword/${resetToken}`;
+      await new Email(user, resetURL).sendPasswordReset();
+    }
 
     res.status(200).json({
       status: 'Success',
-      message: 'Token sent to email!',
+      message: 'If that email is registered a reset link was sent.',
     });
   } catch (err) {
-    user.passResetToken = undefined;
-    user.passResetExpires = undefined;
-    await user.save({ validateBeforeSave: false });
+    if (user) {
+      user.passResetToken = undefined;
+      user.passResetExpires = undefined;
+      await user.save({ validateBeforeSave: false });
+    }
 
     return next(
       new AppError(

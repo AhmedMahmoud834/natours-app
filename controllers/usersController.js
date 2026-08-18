@@ -10,7 +10,7 @@ import rootDir from '../util/rootDir.js';
 export const getAllUsers = FactoryHandler.getAll(User);
 
 export const getMe = (req, res, next) => {
-  if (!req.user) return next(new AppError('Please login first!'));
+  if (!req.user) return next(new AppError('Please login first!', 401));
 
   res.status(200).json({
     status: 'Success',
