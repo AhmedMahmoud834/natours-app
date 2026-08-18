@@ -11,7 +11,7 @@ const requiredEnvVars = [
 ];
 
 if (process.env.Node_ENV !== 'production') {
-  console.log(process.env.Node_ENV)
+  console.log(process.env.Node_ENV);
   requiredEnvVars.forEach((key) => {
     if (!process.env[key]) {
       throw new Error(`Missing required environment variable: ${key}`);

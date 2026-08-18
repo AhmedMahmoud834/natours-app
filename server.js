@@ -1,6 +1,4 @@
 /* eslint-disable no-console */
-/* eslint-disable import/first */
-import 'dotenv/config';
 import dns from 'node:dns';
 import mongoose from 'mongoose';
 import app from './app.js';
