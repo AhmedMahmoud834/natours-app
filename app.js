@@ -7,6 +7,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import { inHTMLData } from 'xss-filters';
 import cookieParser from 'cookie-parser';
 import hpp from 'hpp';
+import cors from 'cors';
 
 import compression from 'compression';
 import toursRouter from './routes/toursRoutes.js';
@@ -25,6 +26,9 @@ app.set('views', path.join(rootDir, 'views'));
 
 // Serving static files
 app.use(express.static(path.join(rootDir, 'public')));
+
+app.use(cors());
+app.options('*splat', cors());
 // data sanitization against XSS
 
 app.set('query parser', 'extended');

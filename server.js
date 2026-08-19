@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 import app from './app.js';
 import config from './config/index.js';
 
-
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const dbUrl = config.db.url.replace('<DB_PASSWORD>', config.db.password);
@@ -24,5 +23,13 @@ process.on('unhandledRejection', (err) => {
 
   server.close(() => {
     process.exit(1);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM RECEIVED. SHUTTING DOWN GRACEFULLY!');
+  server.close(() => {
+    mongoose.connection.close();
+    console.log('Process terminated!');
   });
 });
