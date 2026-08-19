@@ -19,7 +19,7 @@ export const signup = async (req, res, next) => {
 
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome();
-  sendToken(newUser.id, res);
+  sendToken(newUser.id, req, res);
 
   res.status(201).json({
     status: 'Success',
@@ -56,7 +56,7 @@ export const login = async (req, res, next) => {
     return next(new AppError('Incorrect email or password!', 401));
 
   // gen token and send it
-  sendToken(user._id, res);
+  sendToken(user._id, req, res);
   res.status(200).json({
     status: 'Success',
   });
@@ -174,7 +174,7 @@ export const resetPassword = async (req, res, next) => {
   user.passResetExpires = undefined;
   await user.save();
 
-  sendToken(user._id, res);
+  sendToken(user._id, req, res);
   res.status(200).json({
     status: 'Success',
   });
@@ -195,7 +195,7 @@ export const updatePassword = async (req, res, next) => {
   await user.save();
 
   // send token to user
-  sendToken(user._id, res);
+  sendToken(user._id, req, res);
   res.status(200).json({
     status: 'Success',
     message: 'Password changed successfully!',

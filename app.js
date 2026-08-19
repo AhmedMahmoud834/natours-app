@@ -29,6 +29,8 @@ app.use(express.static(path.join(rootDir, 'public')));
 
 app.set('query parser', 'extended');
 
+app.set('trust proxy', 1);
+
 // middleware
 const limiter = rateLimit({
   max: 50,

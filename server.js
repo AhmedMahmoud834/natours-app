@@ -4,12 +4,10 @@ import mongoose from 'mongoose';
 import app from './app.js';
 import config from './config/index.js';
 
+
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 
-const dbUrl = config.db.url.replace(
-  '<DB_PASSWORD>',
-  config.db.password,
-);
+const dbUrl = config.db.url.replace('<DB_PASSWORD>', config.db.password);
 
 (async () => {
   await mongoose.connect(dbUrl, {});

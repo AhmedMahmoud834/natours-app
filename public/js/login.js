@@ -54,6 +54,18 @@
         login(email, password);
       });
     }
+
+    const demoButtons = document.querySelectorAll('.demo-btn');
+    if (demoButtons) {
+      demoButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault(); 
+          const { email, pass } = e.target.dataset;
+          document.getElementById('email').value = email;
+          document.getElementById('password').value = pass;
+        });
+      });
+    }
   };
 
   if (document.readyState === 'loading') {

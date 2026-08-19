@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const requiredEnvVars = [
   'DATABASE',
   'DATABASE_PASSWORD',
@@ -10,14 +14,11 @@ const requiredEnvVars = [
   'EMAIL_PORT',
 ];
 
-if (process.env.Node_ENV !== 'production') {
-  console.log(process.env.Node_ENV);
-  requiredEnvVars.forEach((key) => {
-    if (!process.env[key]) {
-      throw new Error(`Missing required environment variable: ${key}`);
-    }
-  });
-}
+requiredEnvVars.forEach((key) => {
+  if (!process.env[key]) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+});
 
 const config = {
   env: process.env.NODE_ENV || 'development',

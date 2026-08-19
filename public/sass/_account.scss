@@ -24,11 +24,22 @@
   border: 1px solid rgba(248, 249, 250, 0.08);
   display: flex;
 
+  @media only screen and (max-width: 60em) {
+    flex-direction: column;
+  }
+
   &__menu {
     flex: 0 0 32rem;
     background-color: rgba($color-dark-base, 0.5);
     padding: 4rem 0;
     border-right: 1px solid rgba(248, 249, 250, 0.05);
+
+    @media only screen and (max-width: 60em) {
+      display: flex;
+      overflow-x: auto;
+      padding: 1rem 0;
+      flex: 0 0 auto;
+    }
   }
 
   &__content {
@@ -61,6 +72,11 @@
 
   li {
     margin-bottom: 0.5rem;
+
+    @media only screen and (max-width: 60em) {
+      flex: 0 0 auto;
+      margin-right: 2rem;
+    }
   }
 
   a {
