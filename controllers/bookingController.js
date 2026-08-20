@@ -4,6 +4,7 @@ import config from '../config/index.js';
 import AppError from '../util/appError.js';
 import Booking from '../models/bookingModel.js';
 import FactoryHandler from './factoryHandler.js';
+import User from '../models/userModel.js';
 
 const stripe = new Stripe(config.stripe.secretKey);
 
@@ -40,14 +41,39 @@ export const getCheckoutSession = async (req, res, next) => {
   });
 };
 
-export const createBookingCheckout = async (req, res, next) => {
-  const { user, tour, price } = req.query;
+// export const createBookingCheckout = async (req, res, next) => {
+//   const { user, tour, price } = req.query;
 
-  if (!user || !tour || !price) return next();
+//   if (!user || !tour || !price) return next();
 
+//   await Booking.create({ user, tour, price });
+
+//   res.redirect(req.originalUrl.split('?')[0]);
+// };
+
+const createBookingCheckout = async (session) => {
+  const tour = session.client_reference_id;
+  const user = (await User.findOne({ email: session.customer_email })).id;
+  const price = session.line_items[0].price_data.unit_amount / 100;
   await Booking.create({ user, tour, price });
+};
 
-  res.redirect(req.originalUrl.split('?')[0]);
+export const webhookCheckout = async (req, res, next) => {
+  const signature = req.headers['stripe-signature'];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      config.stripe.webhookSecret,
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.complete') {
+    createBookingCheckout(event.data.object);
+  }
 };
 
 export const getAllBookings = FactoryHandler.getAll(Booking);
@@ -63,4 +89,4 @@ export const createBooking = FactoryHandler.createOne(Booking, [
   'paid',
 ]);
 
-export const deleteBooking = FactoryHandler.deleteOne(Booking, "bookingId")
+export const deleteBooking = FactoryHandler.deleteOne(Booking, 'bookingId');

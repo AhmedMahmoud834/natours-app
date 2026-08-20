@@ -15,11 +15,10 @@ import {
   redirectIfLoggedIn,
   routeProtect,
 } from '../controllers/authController.js';
-import { createBookingCheckout } from '../controllers/bookingController.js';
 
 const viewRouter = express.Router();
 
-viewRouter.get('/', createBookingCheckout, isLoggedIn, getHome);
+viewRouter.get('/', isLoggedIn, getHome);
 viewRouter.get('/tours', isLoggedIn, getAllTours);
 viewRouter.get('/tours/:slug', isLoggedIn, getTourDetailsPage);
 viewRouter.get('/login', isLoggedIn, redirectIfLoggedIn, getLogin);

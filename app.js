@@ -83,6 +83,9 @@ if (config.env === 'production') {
   app.use('/api', limiter);
 }
 
+// stripe webhook checkout
+app.post("webhook-checkout",express.raw({type: "application/json"}) )
+
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
 
@@ -149,6 +152,8 @@ app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/booking', bookingRouter);
+
+
 
 // Handle unhandled routes
 app.all('*splat', (req, res, next) => {
