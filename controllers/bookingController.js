@@ -27,7 +27,9 @@ export const getCheckoutSession = async (req, res, next) => {
           product_data: {
             description: tour.summary,
             name: `${tour.name} Tour`,
-            images: [`${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}`],
+            images: [
+              `${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}`,
+            ],
           },
         },
         quantity: 1,
@@ -44,8 +46,9 @@ export const getCheckoutSession = async (req, res, next) => {
 const createBookingCheckout = async (session) => {
   const tour = session.client_reference_id;
   const user = (await User.findOne({ email: session.customer_email })).id;
-  const price = session.line_items[0].price_data.unit_amount / 100;
-  await Booking.create({ user, tour, price });
+  const price = session.amount_total / 100;
+  const stripePaymentIntentId = session.payment_intent;
+  await Booking.create({ user, tour, price, stripePaymentIntentId });
 };
 
 export const webhookCheckout = async (req, res, next) => {
@@ -64,6 +67,8 @@ export const webhookCheckout = async (req, res, next) => {
   if (event.type === 'checkout.session.completed') {
     await createBookingCheckout(event.data.object);
   }
+
+  res.status(200).json({ received: true });
 };
 
 export const getAllBookings = FactoryHandler.getAll(Booking);

@@ -23,15 +23,19 @@ const bookingSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  stripePaymentIntentId: {
+    type: String,
+    required: true,
+    select: false,
+  },
 });
 
-bookingSchema.pre(/^find/, function() {
-  this.populate("user").populate({
-    path: "tour",
-    select: "name",
-    
-  })
-})
+bookingSchema.pre(/^find/, function () {
+  this.populate('user').populate({
+    path: 'tour',
+    select: 'name',
+  });
+});
 
 const Booking = mongoose.model('Booking', bookingSchema);
 

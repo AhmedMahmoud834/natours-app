@@ -86,7 +86,7 @@ if (config.env === 'production') {
 
 // stripe webhook checkout
 app.post(
-  'webhook-checkout',
+  '/webhook-checkout',
   express.raw({ type: 'application/json' }),
   webhookCheckout,
 );
