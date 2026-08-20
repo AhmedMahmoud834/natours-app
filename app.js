@@ -19,6 +19,7 @@ import globalErrorHandler from './controllers/errorController.js';
 import AppError from './util/appError.js';
 import rootDir from './util/rootDir.js';
 import config from './config/index.js';
+import { webhookCheckout } from './controllers/bookingController.js';
 
 const app = express();
 
@@ -84,7 +85,11 @@ if (config.env === 'production') {
 }
 
 // stripe webhook checkout
-app.post("webhook-checkout",express.raw({type: "application/json"}) )
+app.post(
+  'webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  webhookCheckout,
+);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
@@ -152,8 +157,6 @@ app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/booking', bookingRouter);
-
-
 
 // Handle unhandled routes
 app.all('*splat', (req, res, next) => {
