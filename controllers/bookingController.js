@@ -11,10 +11,10 @@ const stripe = new Stripe(config.stripe.secretKey);
 export const getCheckoutSession = async (req, res, next) => {
   const tour = await Tour.findById(req.params.tourId);
   if (!tour) return next(new AppError('Tour not found!', 404));
-
+  console.log(config.stripe.webhookSecret);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
-    success_url: `${req.protocol}://${req.get('host')}/?user=${req.user.id}&tour=${tour.id}&price=${tour.price}`,
+    success_url: `${req.protocol}://${req.get('host')}`,
     cancel_url: `${req.protocol}://${req.get('host')}/tours/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
