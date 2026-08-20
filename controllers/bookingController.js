@@ -27,7 +27,7 @@ export const getCheckoutSession = async (req, res, next) => {
           product_data: {
             description: tour.summary,
             name: `${tour.name} Tour`,
-            images: [`https://natours.dev/img/tours/${tour.imageCover}`],
+            images: [`${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}`],
           },
         },
         quantity: 1,
