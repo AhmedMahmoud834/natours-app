@@ -4,7 +4,8 @@
 // HERO SECTION
 // ==========================================
 .section-hero {
-  height: 100vh;
+  min-height: 100vh;
+  height: 100dvh;
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -71,6 +72,11 @@
     margin: 0;
     color: $color-white;
     text-align: center;
+
+    @media only screen and (max-width: 60em) {
+      font-size: 12vw;
+      letter-spacing: 1rem;
+    }
   }
 
   // Pinned social icons — vertical, middle-left
@@ -80,6 +86,10 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 10;
+
+    @media only screen and (max-width: 60em) {
+      display: none;
+    }
 
     &-list {
       display: flex;
@@ -115,6 +125,10 @@
     letter-spacing: 0.2em;
     font-weight: 500;
     z-index: 10;
+
+    @media only screen and (max-width: 60em) {
+      display: none;
+    }
   }
 }
 
@@ -155,6 +169,17 @@
     gap: 4rem;
     max-width: 120rem;
     margin: 0 auto;
+
+    @media only screen and (max-width: 65em) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4rem;
+    }
+
+    @media only screen and (max-width: 40em) {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      padding: 0 2rem;
+    }
   }
 }
 
@@ -238,6 +263,17 @@
     gap: 5rem;
     max-width: 120rem;
     margin: 0 auto;
+
+    @media only screen and (max-width: 65em) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4rem;
+    }
+
+    @media only screen and (max-width: 40em) {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      padding: 0 2rem;
+    }
   }
 }
 

@@ -1,5 +1,5 @@
-import express from 'express';
 import path from 'path';
+import express from 'express';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
@@ -8,45 +8,35 @@ import { inHTMLData } from 'xss-filters';
 import cookieParser from 'cookie-parser';
 import hpp from 'hpp';
 import cors from 'cors';
-
 import compression from 'compression';
+
 import toursRouter from './routes/toursRoutes.js';
 import userRouter from './routes/userRoutes.js';
-import rootDir from './util/rootDir.js';
-import AppError from './util/appError.js';
-import globalErrorHandler from './controllers/errorController.js';
 import reviewRouter from './routes/reviewRoutes.js';
 import viewRouter from './routes/viewRoutes.js';
-import config from './config/index.js';
 import bookingRouter from './routes/bookingRoutes.js';
+import globalErrorHandler from './controllers/errorController.js';
+import AppError from './util/appError.js';
+import rootDir from './util/rootDir.js';
+import config from './config/index.js';
 
 const app = express();
+
+app.set('trust proxy', 1);
 app.set('view engine', 'pug');
 app.set('views', path.join(rootDir, 'views'));
+app.set('query parser', 'extended');
+
+// 1) GLOBAL MIDDLEWARES
+
+// Implement CORS
+app.use(cors());
+app.options('*splat', cors());
 
 // Serving static files
 app.use(express.static(path.join(rootDir, 'public')));
 
-app.use(cors());
-app.options('*splat', cors());
-// data sanitization against XSS
-
-app.set('query parser', 'extended');
-
-app.set('trust proxy', 1);
-
-// middleware
-const limiter = rateLimit({
-  max: 50,
-  windowMs: 60 * 60 * 1000,
-  message: 'Too many request from this ip, Please try again later in an hour!',
-});
-if (config.env === 'development') {
-  app.use(morgan('dev'));
-} else if (config.env === 'production') {
-  app.use('/api', limiter);
-}
-// header middleware with CSP whitelist
+// Set security HTTP headers
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -78,13 +68,28 @@ app.use(
   }),
 );
 
-// limit req rate
+// Development logging
+if (config.env === 'development') {
+  app.use(morgan('dev'));
+}
 
-// parse body content
+// Limit requests from same API
+const limiter = rateLimit({
+  max: 50,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many request from this ip, Please try again later in an hour!',
+});
+if (config.env === 'production') {
+  app.use('/api', limiter);
+}
+
+// Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+
+// Cookie parser, reading cookies into req.cookies
 app.use(cookieParser());
 
-// data sanitization against NoSQL Injection
+// Data sanitization against NoSQL query injection
 app.use((req, res, next) => {
   ['body', 'params', 'headers', 'query'].forEach((key) => {
     if (req[key]) {
@@ -103,6 +108,8 @@ app.use((req, res, next) => {
   });
   next();
 });
+
+// Data sanitization against XSS
 const sanitizeStrings = (obj) => {
   if (typeof obj === 'string') return inHTMLData(obj);
   if (Array.isArray(obj)) return obj.map(sanitizeStrings);
@@ -119,7 +126,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// prevent param pollution
+// Prevent parameter pollution
 app.use(
   hpp({
     whitelist: [
@@ -133,17 +140,17 @@ app.use(
   }),
 );
 
+// Compress text responses
 app.use(compression());
 
-// routes
-
+// 2) ROUTES
 app.use('/', viewRouter);
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/booking', bookingRouter);
 
-// wrong routes
+// Handle unhandled routes
 app.all('*splat', (req, res, next) => {
   const err = new AppError(
     `Can't find ${req.originalUrl} on this server!`,
@@ -152,6 +159,7 @@ app.all('*splat', (req, res, next) => {
   next(err);
 });
 
+// Global error handling middleware
 app.use(globalErrorHandler);
 
 export default app;

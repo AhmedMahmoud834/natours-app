@@ -55,6 +55,19 @@
         signup(name, email, password, passwordConfirm);
       });
     }
+
+    const demoSignupBtn = document.getElementById('demo-signup-btn');
+    if (demoSignupBtn) {
+      demoSignupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const randomStr = Math.random().toString(36).substring(2, 8); 
+        
+        document.getElementById('name').value = `Test User ${randomStr}`;
+        document.getElementById('email').value = `tester_${randomStr}@example.com`;
+        document.getElementById('password').value = 'test1234';
+        document.getElementById('passwordConfirm').value = 'test1234';
+      });
+    }
   };
 
   if (document.readyState === 'loading') {

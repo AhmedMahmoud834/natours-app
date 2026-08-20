@@ -17,6 +17,18 @@
   border-bottom: 1px solid transparent;
   transition: all 0.3s ease-in-out;
 
+  @media only screen and (max-width: 56.25em) {
+    padding: $spacing-3 $spacing-4;
+  }
+
+  @media only screen and (max-width: 37.5em) {
+    flex-direction: column;
+    height: auto;
+    padding: $spacing-2 0 $spacing-2 0;
+    gap: $spacing-2;
+    background-color: rgba(11, 19, 32, 0.95);
+  }
+
   &--scrolled {
     background-color: rgba(11, 19, 32, 0.85);
     backdrop-filter: blur(16px);
@@ -32,6 +44,11 @@
     flex: 1;
     display: flex;
     justify-content: flex-start;
+    
+    @media only screen and (max-width: 37.5em) {
+      justify-content: center;
+      flex: 0 0 auto;
+    }
     
     a {
       font-family: $font-headlines;
@@ -49,14 +66,31 @@
     align-items: center;
     gap: $spacing-4;
 
+    @media only screen and (max-width: 37.5em) {
+      width: 100%;
+      gap: $spacing-2;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 $spacing-2;
+    }
+
     &--tours {
       flex: 1;
       justify-content: center;
+      
+      @media only screen and (max-width: 37.5em) {
+        flex: 0 0 auto;
+      }
     }
 
     &--user {
       flex: 1;
       justify-content: flex-end;
+      
+      @media only screen and (max-width: 37.5em) {
+        flex: 0 0 auto;
+        justify-content: center;
+      }
     }
 
     &-link {
@@ -68,6 +102,11 @@
       text-decoration: none;
       color: $color-white;
       transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+      
+      // Touch targets
+      display: flex;
+      align-items: center;
+      min-height: 4.4rem;
 
       &:hover,
       &:active {
@@ -75,7 +114,7 @@
       }
 
       &--cta {
-        padding: $spacing-2 $spacing-4;
+        padding: 0 $spacing-4;
         border-radius: 10rem;
         background-color: $color-primary;
         color: $color-white;
@@ -110,5 +149,6 @@
     display: flex;
     align-items: center;
     text-decoration: none;
+    min-height: 4.4rem;
   }
 }

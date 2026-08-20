@@ -7,7 +7,8 @@
 // 1. HERO SECTION
 .section-header {
   position: relative;
-  height: 80vh;
+  min-height: 80vh;
+  height: 80dvh;
   clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
 }
 
@@ -80,6 +81,16 @@
   gap: $spacing-10;
   max-width: 120rem;
   margin: 0 auto;
+
+  @media only screen and (max-width: 56.25em) {
+    grid-template-columns: 1fr;
+    gap: $spacing-6;
+    padding: 8rem $spacing-6;
+  }
+
+  @media only screen and (max-width: 37.5em) {
+    padding: 6rem $spacing-4;
+  }
 }
 
 .overview-box {
@@ -194,6 +205,14 @@
   margin-top: -6rem;
   position: relative;
   z-index: 5;
+
+  @media only screen and (max-width: 50em) {
+    display: flex;
+    flex-direction: column;
+    clip-path: none;
+    padding-bottom: 0;
+    margin-top: 0;
+  }
 }
 
 .picture-box {
@@ -204,7 +223,15 @@
     width: 100%;
     height: 40rem;
     object-fit: cover;
-    transition: transform 0.4s ease, filter 0.4s ease;
+    transition:
+      transform 0.4s ease,
+      filter 0.4s ease;
+
+    @media only screen and (max-width: 50em) {
+      width: 100%;
+      height: auto;
+      padding-bottom: 2rem;
+    }
 
     &:hover {
       transform: scale(1.05);
@@ -220,6 +247,12 @@
   background-color: $color-deep-accent;
   margin-top: -6rem;
   z-index: 1;
+
+  @media only screen and (max-width: 50em) {
+    height: 40rem;
+    clip-path: none;
+    margin-top: 0;
+  }
 }
 
 #map {
@@ -303,11 +336,21 @@
 // 5. SECTION 4: REVIEWS (HORIZONTAL SCROLL)
 .section-reviews {
   padding: 12rem 0;
-  background-image: linear-gradient(to right bottom, $color-dark-base, $color-deep-accent);
+  background-image: linear-gradient(
+    to right bottom,
+    $color-dark-base,
+    $color-deep-accent
+  );
   clip-path: polygon(0 9%, 100% 0, 100% 91%, 0 100%);
   margin-top: -6rem;
   position: relative;
   z-index: 5;
+
+  @media only screen and (max-width: 50em) {
+    clip-path: none;
+    margin-top: 0;
+    padding: 8rem 0;
+  }
 }
 
 .reviews-wrapper {
@@ -322,7 +365,7 @@
   width: 100%;
   display: flex;
   gap: 3rem;
-  padding: $spacing-8 $spacing-4;
+  padding: 4rem 2rem;
   overflow-x: auto;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
@@ -334,7 +377,8 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 
-  &__btn {
+  &__btn,
+  .slider__btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -356,7 +400,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease,
+      border-color 0.2s ease,
+      opacity 0.2s ease;
+
+    @media only screen and (max-width: 65em) {
+      display: none !important;
+    }
+
+    @media only screen and (max-width: 50em) {
+      display: none !important;
+    }
 
     span,
     svg {
@@ -393,12 +449,12 @@
   }
 
   &__card {
-    flex: 0 0 35rem;
+    flex: 0 0 30rem;
     scroll-snap-align: center;
-    background-color: rgba($color-white, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba($color-white, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 107, 53, 0.2);
     border-radius: 8px;
     padding: $spacing-6;
     display: flex;
@@ -482,12 +538,25 @@
   display: flex;
   align-items: center;
 
+  @media only screen and (max-width: 50em) {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 4rem 2rem;
+    border-radius: 1.5rem;
+  }
+
   &__img {
     height: 15rem;
     width: 15rem;
     border-radius: 50%;
     position: absolute;
     box-shadow: 0 1rem 3rem rgba($color-dark-base, 0.2);
+
+    @media only screen and (max-width: 50em) {
+      display: none;
+    }
 
     &--logo {
       background-color: $color-deep-accent;
@@ -530,6 +599,12 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-2;
+
+    @media only screen and (max-width: 50em) {
+      grid-column: 1 / -1;
+      margin-left: 0;
+      align-items: center;
+    }
   }
 
   &__text {

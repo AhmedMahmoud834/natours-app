@@ -10,6 +10,13 @@
   font-family: $font-body;
   font-size: 1.4rem;
 
+  @media only screen and (max-width: 50em) {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 4rem 2rem;
+  }
+
   &__logo {
     a {
       font-family: $font-headlines;
@@ -26,9 +33,28 @@
     display: flex;
     gap: $spacing-4;
 
+    @media only screen and (max-width: 50em) {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    li {
+      @media only screen and (max-width: 50em) {
+        margin-left: 0 !important;
+      }
+    }
+
     a {
       color: $color-neutral-gray;
       transition: color 0.2s;
+      display: inline-block;
+      padding: 0.5rem 1rem; // Touch targets
+      min-height: 4.4rem;
+      display: flex;
+      align-items: center;
 
       &:hover,
       &:active {

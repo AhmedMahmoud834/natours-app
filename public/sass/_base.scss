@@ -37,13 +37,17 @@ h1, h2, h3, h4, h5, h6 {
   color: $color-dark-base;
 }
 
-// Oversized headers
 .heading-primary {
   font-size: 8rem; // Oversized
   font-weight: 700;
   letter-spacing: -0.02em; // Slightly negative
   line-height: 1.1;
   text-transform: uppercase;
+
+  @media only screen and (max-width: 60em) {
+    font-size: 12vw;
+    letter-spacing: 1rem;
+  }
 }
 
 .heading-secondary {
