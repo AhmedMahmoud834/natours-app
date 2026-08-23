@@ -3,6 +3,15 @@ import Tour from '../models/tourModel.js';
 import APIFeatures from '../util/apiFeatures.js';
 import AppError from '../util/appError.js';
 
+export const alerts = (req, res, next) => {
+  const { alert } = req.query;
+  if (alert === 'booking') {
+    res.locals.alert =
+      "Your booking was successful! Please check your email for a confirmation. If your booking doesn't show up here immediately, please come back later.";
+  }
+  next();
+};
+
 export const getHome = async (req, res, next) => {
   const topFeatures = await new APIFeatures(
     Tour.find(),

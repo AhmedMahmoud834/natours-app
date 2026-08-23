@@ -28,6 +28,10 @@ const bookingSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
+  status: {
+    type: String,
+    enum: ["pending", "confirmed", "cancelled", "refunded"]
+  }
 });
 
 bookingSchema.pre(/^find/, function () {

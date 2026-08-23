@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+  alerts,
   getHome,
   getTourDetailsPage,
   getAllTours,
@@ -17,6 +18,8 @@ import {
 } from '../controllers/authController.js';
 
 const viewRouter = express.Router();
+
+viewRouter.use(alerts);
 
 viewRouter.get('/', isLoggedIn, getHome);
 viewRouter.get('/tours', isLoggedIn, getAllTours);
