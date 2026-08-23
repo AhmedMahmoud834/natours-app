@@ -30,7 +30,7 @@ class Email {
     });
   }
 
-  async send(template, subject) {
+  async send(template, subject, data = {}) {
     // render html
     const html = pug.renderFile(
       path.join(rootDir, '/views/email/', `${template}.pug`),
@@ -38,6 +38,7 @@ class Email {
         firstName: this.firstName,
         url: this.url,
         subject,
+        ...data,
       },
     );
     // define mail options
@@ -65,31 +66,15 @@ class Email {
     const subject = 'Your password reset link is valid for only 10 minutes';
     await this.send(template, subject);
   }
+
+  async sendBookingConfirmation(tour, booking) {
+    const template = 'bookingConfirmation';
+    const subject = `Your booking for ${tour.name} is confirmed!`;
+    await this.send(template, subject, {
+      tourName: tour.name,
+      price: booking.price,
+    });
+  }
 }
-
-const sendEmail = async (options) => {
-  // create transporter
-  const transporter = nodemailer.createTransport({
-    host: config.email.host,
-    port: config.email.port,
-    auth: {
-      user: config.email.username,
-      pass: config.email.password,
-    },
-    connectionTimeout: 5000,
-    socketTimeout: 5000,
-  });
-
-  // define mail options
-  const mailOptions = {
-    from: config.email.from,
-    to: options.email,
-    subject: options.subject,
-    text: options.message,
-  };
-
-  // send mail
-  await transporter.sendMail(mailOptions);
-};
 
 export default Email;

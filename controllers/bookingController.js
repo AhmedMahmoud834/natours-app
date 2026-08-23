@@ -5,6 +5,8 @@ import AppError from '../util/appError.js';
 import Booking from '../models/bookingModel.js';
 import FactoryHandler from './factoryHandler.js';
 import User from '../models/userModel.js';
+import Email from '../util/email.js';
+import logger from '../util/logger.js';
 
 const stripe = new Stripe(config.stripe.secretKey);
 
@@ -47,7 +49,8 @@ const createBookingCheckout = async (session) => {
   const user = (await User.findOne({ email: session.customer_email })).id;
   const price = session.amount_total / 100;
   const stripePaymentIntentId = session.payment_intent;
-  await Booking.create({ user, tour, price, stripePaymentIntentId });
+  return await Booking.create({ user, tour, price, stripePaymentIntentId });
+  
 };
 
 export const webhookCheckout = async (req, res, next) => {
@@ -64,7 +67,21 @@ export const webhookCheckout = async (req, res, next) => {
   }
 
   if (event.type === 'checkout.session.completed') {
-    await createBookingCheckout(event.data.object);
+    const session = event.data.object
+    const booking = await createBookingCheckout(session);
+
+    try {
+      const user = await User.findById(booking.user)
+      const tour = await Tour.findById(booking.tour)
+      const url = `${req.protocol}://${req.get('host')}/my-tours`
+      await new Email(user,url ).sendBookingConfirmation(tour, booking)
+    } catch(err) {
+      logger.error("Failed to send booking confirmation email.", {
+        bookingId: booking.id,
+        error: err.message
+      })
+      
+    }
   }
 
   res.status(200).json({ received: true });
