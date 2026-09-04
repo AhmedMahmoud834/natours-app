@@ -21,17 +21,22 @@ const bookingSchema = new mongoose.Schema({
   },
   paid: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   stripePaymentIntentId: {
     type: String,
-    required: true,
     select: false,
+  },
+  paymentOption: {
+    type: String,
+    enum: ['stripe', 'cash'],
+    default: 'cash',
   },
   status: {
     type: String,
-    enum: ["pending", "confirmed", "cancelled", "refunded"]
-  }
+    enum: ['pending', 'confirmed', 'cancelled', 'refunded'],
+    default: 'pending',
+  },
 });
 
 bookingSchema.pre(/^find/, function () {

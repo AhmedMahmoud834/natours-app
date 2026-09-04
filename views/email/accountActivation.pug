@@ -1,0 +1,29 @@
+extends baseEmail
+
+block content
+  p Hi #{firstName || name},
+  p Great news! Your Natours account has been successfully activated. 🎉
+  p An administrator has activated your account. Here are your temporary login credentials:
+  table(role='presentation', border='0', cellpadding='0', cellspacing='0', style='margin: 20px 0; background: #f8f9fa; border-radius: 6px; padding: 15px; border-left: 4px solid #55c57a; width: 100%;')
+    tbody
+      tr
+        td
+          p(style='margin: 0 0 10px 0; font-size: 14px;')
+            strong Name: 
+            | #{name}
+          p(style='margin: 0; font-size: 14px;')
+            strong Temporary Password: 
+            code(style='background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #2d3436; font-size: 15px;') #{password}
+  p For your security, please log in and change this password as soon as possible.
+  if url
+    table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+      tbody
+        tr
+          td(align='left')
+            table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+              tbody
+                tr
+                  td
+                    a(href=`${url}`, target='_blank') Log in to your account
+  p If you did not expect this activation or have any concerns, please contact our support team immediately.
+  p - The Natours Team

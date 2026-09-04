@@ -6,6 +6,7 @@ import User from '../models/userModel.js';
 import sendToken from '../util/sendCookie.js';
 import config from '../config/index.js';
 import Email from '../util/email.js';
+import Tour from '../models/tourModel.js';
 
 export const signup = async (req, res, next) => {
   const { name, email, password, passwordConfirm } = req.body;
@@ -229,5 +230,22 @@ export const redirectIfLoggedIn = (req, res, next) => {
   if (res.locals.user) {
     return res.redirect('/');
   }
+  next();
+};
+
+export const restrictToOwnTour = async (req, res, next) => {
+  if (req.user.role === 'admin') return next();
+
+  const tour = await Tour.findById(req.params.tourId);
+
+  if (!tour) return next(new AppError('No tour found with this id!', 404));
+
+  const isAssignedToTour = tour.guides.some(
+    (guideId) => guideId.toString() === req.user.id,
+  );
+
+  if (!isAssignedToTour)
+    return next(new AppError('You are not assigned to this tour!', 403));
+
   next();
 };

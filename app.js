@@ -12,9 +12,9 @@ import compression from 'compression';
 
 import toursRouter from './routes/toursRoutes.js';
 import userRouter from './routes/userRoutes.js';
-import reviewRouter from './routes/reviewRoutes.js';
+import reviewRouter from './routes/reviewsRoutes.js';
 import viewRouter from './routes/viewRoutes.js';
-import bookingRouter from './routes/bookingRoutes.js';
+import bookingRouter from './routes/bookingsRoutes.js';
 import globalErrorHandler from './controllers/errorController.js';
 import AppError from './util/appError.js';
 import rootDir from './util/rootDir.js';
@@ -64,6 +64,7 @@ app.use(
           'https://*.basemaps.cartocdn.com',
           'https://api.stripe.com',
         ],
+        frameSrc: ["'self'", 'https://js.stripe.com'],
       },
     },
   }),
@@ -151,12 +152,23 @@ app.use(
 // Compress text responses
 app.use(compression());
 
+// Disable caching and 304 responses on dynamic JSON API endpoints
+app.use('/api', (req, res, next) => {
+  res.set(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate',
+  );
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
 // 2) ROUTES
 app.use('/', viewRouter);
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
-app.use('/api/v1/booking', bookingRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 // Handle unhandled routes
 app.all('*splat', (req, res, next) => {

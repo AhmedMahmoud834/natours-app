@@ -1,0 +1,55 @@
+doctype html
+html(lang="en")
+  head
+    block head
+      meta(charset="UTF-8")
+      meta(name="viewport" content="width=device-width, initial-scale=1.0")
+      
+      // Google Fonts
+      link(rel="preconnect" href="https://fonts.googleapis.com")
+      link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+      link(href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet")
+      
+      // CSS
+      link(rel="stylesheet" href="/css/style.css")
+      
+      // Favicon
+      link(rel="shortcut icon" type="image/png" href="/img/favicon.png")
+      
+      title Natours Admin | #{title}
+
+  body(data-alert=`${alert ? alert : ''}`).admin-body
+    .dashboard-layout
+      // NARROW SIDEBAR
+      nav.sidebar-minimal
+        ul.sidebar-minimal__menu
+          li(class=`${activeTab === 'overview' ? 'active' : ''}`)
+            a(href="/admin/overview", title="Dashboard Overview")
+              svg
+                use(href="/img/icons.svg#icon-trending-up")
+          li(class=`${activeTab === 'tours' ? 'active' : ''}`)
+            a(href="/admin/tours", title="Manage Tours")
+              svg
+                use(href="/img/icons.svg#icon-map")
+          li(class=`${activeTab === 'users' ? 'active' : ''}`)
+            a(href="/admin/users", title="Manage Users")
+              svg
+                use(href="/img/icons.svg#icon-users")
+          li(class=`${activeTab === 'reviews' ? 'active' : ''}`)
+            a(href="/admin/reviews", title="Manage Reviews")
+              svg
+                use(href="/img/icons.svg#icon-star")
+          li(class=`${activeTab === 'bookings' ? 'active' : ''}`)
+            a(href="/admin/bookings", title="Manage Bookings")
+              svg
+                use(href="/img/icons.svg#icon-briefcase")
+        
+        .sidebar-minimal__bottom
+          a(href="/", title="Back to Site")
+            svg
+              use(href="/img/icons.svg#icon-log-out")
+
+      // MAIN CONTENT
+      .dashboard-content
+        block content
+          h1 This is a placeholder heading

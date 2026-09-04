@@ -1,0 +1,61 @@
+extends baseAdmin
+
+block append head
+  script(src='/js/adminReviews.js' defer)
+
+block content
+  .split-layout
+    // LEFT COLUMN (Master List)
+    .admin-controls
+      h2.heading-secondary.ma-bt-md Manage Reviews
+      
+      #master-list-view
+        .list-controls
+          .search-group(style="width: 100%;")
+            input#search-reviews(type="text", placeholder="Search by author or review text...")
+        
+        .admin-list-container
+          ul#reviews-list
+            each review in reviews
+              - const authorName = review.user ? review.user.name : 'Unknown User'
+              - const authorEmail = review.user ? review.user.email : 'N/A'
+              - const tourName = review.tour ? review.tour.name : 'Unknown Tour'
+              li.tour-item.review-item(
+                data-id=review._id
+                data-author=authorName
+                data-email=authorEmail
+                data-rating=review.rating
+                data-content=review.review
+              )
+                div(style="display: flex; justify-content: space-between; align-items: center; width: 100%; min-width: 0; gap: 1rem;")
+                  div(style="flex: 1; min-width: 0; overflow: hidden;")
+                    h4.tour-name(style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #f8f9fa; font-weight: 600; font-size: 1.5rem;")= authorName
+                    span.tour-meta(style="color: rgba(255, 255, 255, 0.75); font-size: 1.2rem;")
+                      = tourName
+                  span.badge.badge--rating= `★ ${review.rating}`
+            else
+              li.empty-msg No reviews found.
+
+    // RIGHT COLUMN (Details Pane)
+    .admin-data
+      #review-details-pane
+        p#review-placeholder Select a review to view details.
+        
+        #review-content(style='display: none;')
+          .review-read-pane
+            .tour-stats-grid
+              .stat-box
+                span.stat-label Author Name
+                span.stat-value#detail-author 
+              .stat-box
+                span.stat-label Author Email
+                span.stat-value#detail-email 
+              .stat-box
+                span.stat-label Rating
+                span.stat-value.text-orange#detail-rating 
+            .review-content-box
+              h4.heading-tertiary Review Content
+              p#detail-content 
+            
+            .action-btn-group
+              button#btn-delete-review.btn.btn-delete Delete Review

@@ -17,18 +17,24 @@ block content
         nav.user-view__menu
           ul.side-nav
             +navItem('/me', 'Settings', 'settings', true)
-            +navItem('/my-tours', 'My bookings', 'briefcase', false)
-            +navItem('#', 'My reviews', 'star', false)
-            +navItem('#', 'Billing', 'credit-card', false)
+            if user && user.role === 'user'
+              +navItem('/my-tours', 'My bookings', 'briefcase', false)
+              +navItem('#', 'My reviews', 'star', false)
+              +navItem('#', 'Billing', 'credit-card', false)
+            if user && (user.role === 'lead-guide' || user.role === 'admin')
+              +navItem('/lead-guide-dashboard', 'Lead Guide Panel', 'map', false)
+            if user && user.role === 'guide'
+              +navItem('/guide-dashboard', 'Guide Dashboard', 'map', false)
           
           if user && user.role === 'admin'
             .admin-nav
               h5.admin-nav__heading Admin
               ul.side-nav
-                +navItem('#', 'Manage tours', 'map', false)
-                +navItem('#', 'Manage users', 'users', false)
-                +navItem('#', 'Manage reviews', 'star', false)
-                +navItem('#', 'Manage bookings', 'briefcase', false)
+                +navItem('/admin/overview', 'Dashboard', 'trending-up', false)
+                +navItem('/admin/tours', 'Manage tours', 'map', false)
+                +navItem('/admin/users', 'Manage users', 'users', false)
+                +navItem('/admin/reviews', 'Manage reviews', 'star', false)
+                +navItem('/admin/bookings', 'Manage bookings', 'briefcase', false)
 
         .user-view__content
           .user-view__form-container

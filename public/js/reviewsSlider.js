@@ -1,5 +1,5 @@
 /* eslint-disable */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('tourRendered', () => {
   const reviewsContainer = document.querySelector('.reviews');
   const btnLeft = document.querySelector('.reviews__btn--left');
   const btnRight = document.querySelector('.reviews__btn--right');

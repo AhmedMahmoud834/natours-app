@@ -1,13 +1,123 @@
-import multer from 'multer';
-import path from 'node:path';
-import sharp from 'sharp';
 import User from '../models/userModel.js';
 import AppError from '../util/appError.js';
+import Email from '../util/email.js';
 import filterObj from '../util/filterObj.js';
+import genRandomPassword from '../util/genRandomPassword.js';
+import logger from '../util/logger.js';
+import upload from '../util/multer.js';
 import FactoryHandler from './factoryHandler.js';
-import rootDir from '../util/rootDir.js';
 
 export const getAllUsers = FactoryHandler.getAll(User);
+
+export const getAllInActiveUsers = FactoryHandler.getAll(User, [], {
+  active: false,
+});
+
+export const createUser = FactoryHandler.createOne(User, [
+  'name',
+  'email',
+  'photo',
+  'password',
+  'passwordConfirm',
+  'role',
+]);
+
+// export const updateUser = FactoryHandler.updateOne(User, 'userId');
+export const updateUser = async (req, res, next) => {
+  if (
+    req.user.id === req.params.userId &&
+    req.body.role &&
+    req.body.role !== 'admin'
+  ) {
+    return next(new AppError('You cannot lower your role than admin', 400));
+  }
+  const updateOne = FactoryHandler.updateOne(User, 'userId', [
+    'name',
+    'email',
+    'role',
+  ]);
+  return updateOne(req, res, next);
+};
+
+export const getUser = FactoryHandler.getOne(User, 'userId');
+
+export const deactivateUser = async (req, res, next) => {
+  if (req.user.id === req.params.userId) {
+    return next(new AppError('You cannot deactivate your own account!', 400));
+  }
+  const user = await User.findById(req.params.userId)
+    .setOptions({
+      includeInactive: true,
+    })
+    .select('+active');
+
+  if (!user) {
+    return next(new AppError('No user found with this id!', 404));
+  }
+
+  if (!user.active) {
+    return next(new AppError('This user is already deactivated!', 400));
+  }
+
+  user.active = false;
+  user.email = `deleted_${user.id}_${Date.now()}@deleted.natours.io`;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: 'Success',
+    data: { document: user },
+  });
+};
+
+export const activateUser = async (req, res, next) => {
+  const user = await User.findById(req.params.userId)
+    .setOptions({
+      includeInactive: true,
+    })
+    .select('+active');
+
+  if (!user) {
+    return next(new AppError('No user found with this id!', 404));
+  }
+
+  if (user.active) {
+    return next(new AppError('This user is already active!', 400));
+  }
+
+  const { email } = req.body;
+
+  if (!email) {
+    return next(
+      new AppError('Please provide an email to activate this user', 400),
+    );
+  }
+
+  const randomPassword = genRandomPassword();
+
+  user.email = email;
+  user.password = randomPassword;
+  user.passwordConfirm = randomPassword;
+  user.active = true;
+  await user.save();
+
+  try {
+    const loginUrl = `${req.protocol}://${req.get('host')}/login`;
+    await new Email(user, loginUrl).sendAccountActivation(
+      user.name,
+      randomPassword,
+    );
+  } catch (err) {
+    logger.error('Failed to send account activation email', {
+      userId: user.id,
+      error: err.message,
+    });
+  }
+
+  res.status(200).json({
+    status: 'Success',
+    data: { document: user },
+  });
+};
 
 export const getMe = (req, res, next) => {
   if (!req.user) return next(new AppError('Please login first!', 401));
@@ -51,45 +161,6 @@ export const deleteMe = async (req, res, next) => {
     status: 'Success',
     data: null,
   });
-};
-
-export const getUser = async (req, res, next) => {
-  const id = req.params.userId;
-  const user = await User.findById(id);
-
-  if (!user) return next(new AppError('User not found!'));
-
-  res.status(200).json({
-    status: 'Success',
-    data: {
-      user,
-    },
-  });
-};
-
-const multerStorage = multer.memoryStorage();
-
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
-    cb(null, true);
-  } else {
-    cb(new AppError('Please upload image file only!', 400), false);
-  }
-};
-
-const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
-
-export const resizeUserPhoto = async (req, res, next) => {
-  if (!req.file) return next();
-
-  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
-  await sharp(req.file.buffer)
-    .resize(500, 500)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(path.join(rootDir, '/public/img/users', req.file.filename));
-
-  next();
 };
 
 export const userUploadPhoto = upload.single('photo');

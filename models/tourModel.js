@@ -54,6 +54,7 @@ const tourSchema = new mongoose.Schema(
         },
         message: 'Discount price ({VALUE}) should be less than regular price!',
       },
+      default: 0,
     },
     summary: {
       type: String,
@@ -63,6 +64,7 @@ const tourSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
+      required: [true, 'A tour must have a description'],
     },
     imageCover: {
       type: String,
@@ -74,7 +76,17 @@ const tourSchema = new mongoose.Schema(
       default: Date.now,
       select: false,
     },
-    startDates: [Date],
+    startDates: {
+      type: [Date],
+      required: [true, 'One or more startDates is required.'],
+      validate: {
+        validator: function (dates) {
+          return dates.every(
+            (d) => d instanceof Date && !Number.isNaN(d.getTime()),
+          );
+        },
+      },
+    },
     secretTour: {
       type: Boolean,
       default: false,
@@ -85,29 +97,85 @@ const tourSchema = new mongoose.Schema(
         default: 'Point',
         enum: ['Point'],
       },
-      coordinates: [Number],
+      coordinates: {
+        type: [Number],
+        required: [
+          true,
+          'startLocation must have coordinates [longitude, latitude].',
+        ],
+        validate: {
+          validator: function (coords) {
+            if (coords.length !== 2) return false;
+            const [lng, lat] = coords;
+            return lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90;
+          },
+          message:
+            'startLocation coordinates must be [longitude, latitude] with valid ranges ' +
+            '(lng: -180 to 180, lat: -90 to 90).',
+        },
+      },
       address: String,
       description: String,
     },
-    locations: [
-      {
-        type: {
-          type: String,
-          default: 'Point',
-          enum: ['Point'],
+    locations: {
+      type: [
+        {
+          type: {
+            type: String,
+            default: 'Point',
+            enum: ['Point'],
+          },
+          coordinates: {
+            type: [Number],
+            required: [
+              true,
+              'Each location must have coordinates [longitude, latitude].',
+            ],
+            validate: {
+              validator: function (coords) {
+                if (coords.length !== 2) return false;
+                const [lng, lat] = coords;
+                return lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90;
+              },
+              message:
+                'Location coordinates must be [longitude, latitude] with valid ranges ' +
+                '(lng: -180 to 180, lat: -90 to 90).',
+            },
+          },
+          address: String,
+          description: String,
+          day: {
+            type: Number,
+            min: [1, 'Day must be at least 1.'],
+          },
         },
-        coordinates: [Number],
-        address: String,
-        description: String,
-        day: Number,
+      ],
+      validate: {
+        validator: function (val) {
+          return val && val.length > 0;
+        },
+        message: 'A tour must have at least one location!',
       },
-    ],
-    guides: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
+    },
+    guides: {
+      type: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+      validate: {
+        validator: async function (ids) {
+          const User = mongoose.model('User');
+          const count = await User.countDocuments({
+            _id: { $in: ids },
+            role: { $in: ['guide', 'lead-guide'] },
+          });
+          return count === ids.length;
+        },
+        message: 'All guides must have the role "guide" or "lead-guide".',
       },
-    ],
+    },
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -136,13 +204,12 @@ tourSchema.pre('save', function () {
 });
 
 tourSchema.pre(/^find/, function () {
-  this.find({ secretTour: { $ne: true } });
+  if (this.getOptions().includeInactive) return;
+  this.find({ active: { $ne: false } });
 });
 
 tourSchema.pre(/^find/, function () {
-  this.populate({
-    path: 'guides',
-  });
+  this.find({ secretTour: { $ne: true } });
 });
 
 tourSchema.pre('aggregate', function () {

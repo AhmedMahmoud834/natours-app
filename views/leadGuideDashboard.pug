@@ -1,0 +1,143 @@
+extends base
+
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(href=`/img/icons.svg#icon-${icon}`)
+      span= text
+
+block append head
+  script(src='/js/leadGuideDashboard.js' defer)
+
+block content
+  main.main
+    section.section-account
+      .user-view
+        nav.user-view__menu
+          ul.side-nav
+            +navItem('/me', 'Settings', 'settings', false)
+            if user && user.role === 'user'
+              +navItem('/my-tours', 'My bookings', 'briefcase', false)
+            +navItem('/lead-guide-dashboard', 'Lead Guide Panel', 'map', true)
+          
+          if user && user.role === 'admin'
+            .admin-nav
+              h5.admin-nav__heading Admin
+              ul.side-nav
+                +navItem('/admin/overview', 'Dashboard', 'trending-up', false)
+                +navItem('/admin/tours', 'Manage tours', 'map', false)
+                +navItem('/admin/users', 'Manage users', 'users', false)
+                +navItem('/admin/reviews', 'Manage reviews', 'star', false)
+                +navItem('/admin/bookings', 'Manage bookings', 'briefcase', false)
+
+        .user-view__content
+          // 1. ASSIGNED TOURS SECTION
+          .user-view__form-container
+            h2.heading-secondary.ma-bt-md My Guided Tours
+            if tours && tours.length
+              .bookings-grid(style='display: grid; grid-template-columns: repeat(auto-fit, minmax(26rem, 1fr)); gap: 2.5rem; margin-bottom: 4rem;')
+                each tour in tours
+                  .tour-dashboard-card
+                    if tour.imageCover
+                      .tour-dashboard-card__header
+                        img.tour-dashboard-card__picture(src=`/img/tours/${tour.imageCover}` alt=`${tour.name}`)
+                        span.tour-dashboard-card__badge.tour-dashboard-card__badge--difficulty= tour.difficulty
+                        span.tour-dashboard-card__badge(class=tour.active !== false ? 'tour-dashboard-card__badge--active' : 'tour-dashboard-card__badge--inactive')= tour.active !== false ? 'Active' : 'Inactive'
+                    .tour-dashboard-card__body
+                      h4.tour-dashboard-card__title= tour.name
+                      p.tour-dashboard-card__summary= tour.summary
+                    .tour-dashboard-card__footer
+                      .tour-dashboard-card__footer-stats
+                        .tour-dashboard-card__footer-left
+                          span.tour-dashboard-card__footer-label Duration & Max Group
+                          strong.tour-dashboard-card__footer-value= `${tour.duration} days • ${tour.maxGroupSize} ppl`
+                      .tour-dashboard-card__actions
+                        a.tour-dashboard-card__cta(href=`/tours/${tour.slug}` target='_blank') View Tour
+                        button.btn-toggle-tour-status.tour-dashboard-card__btn-status(
+                          type='button'
+                          class=tour.active !== false ? 'tour-dashboard-card__btn-status--active' : 'tour-dashboard-card__btn-status--inactive'
+                          data-tour-id=tour.id
+                          data-active=`${tour.active !== false}`
+                        )= tour.active !== false ? 'Deactivate' : 'Activate'
+            else
+              p.empty-state(style='color: rgba(255, 255, 255, 0.5); font-style: italic; margin-bottom: 3rem;') You are currently not assigned to any tours as a guide.
+
+          .line &nbsp;
+
+          // 2. ASSIGNED BOOKINGS SECTION
+          .user-view__form-container
+            div(style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;')
+              h2.heading-secondary(style='margin-bottom: 0;') Customer Bookings
+              
+              .filter-group
+                label(for='tour-filter' style='font-size: 1.4rem; color: rgba(255, 255, 255, 0.7); margin-right: 1rem;') Filter by Tour:
+                select#tour-filter.form__input(style='width: auto; display: inline-block; padding: 0.8rem; background-color: rgba(255, 255, 255, 0.05); color: #F8F9FA; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem;')
+                  option(value='all' selected=(selectedTour === 'all')) All Tours
+                  each tour in tours
+                    option(value=tour.id selected=(selectedTour === tour.id))= tour.name
+
+            if bookings && bookings.length
+              .admin-list-container(style='background: rgba(255, 255, 255, 0.02); border-radius: 1rem; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 4rem;')
+                ul(style='list-style: none; padding: 0; margin: 0;')
+                  each booking in bookings
+                    li(style='display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); gap: 1.5rem;')
+                      div(style='display: flex; align-items: center; gap: 1.2rem;')
+                        img(src=`/img/users/${booking.user && booking.user.photo ? booking.user.photo : 'default.jpg'}` alt=`${booking.user ? booking.user.name : 'Customer'}` style='height: 4rem; width: 4rem; border-radius: 50%; object-fit: cover;')
+                        div
+                          h4(style='color: #f8f9fa; font-size: 1.4rem; margin: 0; font-weight: 600;')= booking.user ? booking.user.name : 'Unknown Customer'
+                          p(style='color: rgba(255, 255, 255, 0.5); font-size: 1.2rem; margin: 0;')= booking.user ? booking.user.email : 'N/A'
+                      div(style='text-align: right;')
+                        span(style='display: block; color: #ff6b35; font-size: 1.3rem; font-weight: 600;')= booking.tour && booking.tour.name ? booking.tour.name : 'Tour'
+                        span(style='display: inline-block; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; text-transform: uppercase; background: rgba(85, 197, 122, 0.15); color: #55c57a; margin-top: 0.3rem;')= booking.status
+            else
+              p.empty-state(style='color: rgba(255, 255, 255, 0.5); font-style: italic; margin-bottom: 3rem;') No bookings yet for your assigned tours.
+
+          .line &nbsp;
+
+          // 3. CREATE NEW TOUR FORM
+          .user-view__form-container
+            h2.heading-secondary.ma-bt-md Create a New Tour
+            form#create-tour-form.form
+              .form__group
+                label.form__label(for='tour-name') Tour Name
+                input#tour-name.form__input(type='text', required, placeholder='The Forest Hiker')
+              
+              .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;')
+                .form__group
+                  label.form__label(for='tour-duration') Duration (Days)
+                  input#tour-duration.form__input(type='number', min='1', required, placeholder='5')
+                .form__group
+                  label.form__label(for='tour-maxGroupSize') Max Group Size
+                  input#tour-maxGroupSize.form__input(type='number', min='1', required, placeholder='15')
+
+              .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;')
+                .form__group
+                  label.form__label(for='tour-difficulty') Difficulty
+                  select#tour-difficulty.form__input(required)
+                    option(value='easy') Easy
+                    option(value='medium' selected) Medium
+                    option(value='difficult') Difficult
+                .form__group
+                  label.form__label(for='tour-price') Price ($)
+                  input#tour-price.form__input(type='number', min='0', required, placeholder='497')
+
+              .form__group
+                label.form__label(for='tour-summary') Summary
+                input#tour-summary.form__input(type='text', required, placeholder='Breathtaking hike through the forest')
+
+              .form__group
+                label.form__label(for='tour-description') Description
+                textarea#tour-description.form__input(rows='4', required, placeholder='Detailed description of the tour experience...')
+
+              .form__group
+                label.form__label(for='tour-guides') Assign Guides (Optional — Hold Ctrl / Cmd to select multiple)
+                select#tour-guides.form__input(multiple size='3' style='height: auto; min-height: 8rem;')
+                  if availableGuides && availableGuides.length
+                    each g in availableGuides
+                      option(value=g.id)= `${g.name} (${g.email})`
+                  else
+                    option(disabled) No supporting guides found
+
+              .form__group.form__group--right(style='display: flex; justify-content: flex-end; margin-top: 2rem;')
+                button.btn.btn--primary.btn--pill(type='submit') Create Tour

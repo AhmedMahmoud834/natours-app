@@ -647,3 +647,123 @@
     }
   }
 }
+
+// 6. WRITE A REVIEW SECTION
+.section-write-review {
+  padding: 6rem 3rem 10rem 3rem;
+  background-color: $color-dark-base;
+  display: flex;
+  justify-content: center;
+
+  /* Form Container & Spacing */
+  .review-form-container {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 4rem;
+    max-width: 70rem; /* Keep it contained */
+    margin: 0 auto;
+    width: 100%;
+
+    .heading-secondary {
+      color: $color-white;
+      margin-bottom: 2.5rem;
+      font-size: 2.4rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form__group {
+      margin-bottom: 2.5rem;
+    }
+
+    /* Give labels room to breathe */
+    .form__label {
+      display: block;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      letter-spacing: 1px;
+    }
+
+    .btn-primary {
+      background-color: #FF6B35;
+      color: #fff;
+      border: none;
+      padding: 1.2rem 3.5rem; /* Make it a sleek pill */
+      border-radius: 3rem; 
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: #e55a2b;
+        transform: translateY(-2px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  /* Refined Textarea */
+  #review-content {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #F8F9FA;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 0.8rem;
+    font-family: inherit;
+    font-size: 1.5rem;
+    resize: vertical;
+    transition: all 0.3s;
+
+    &:focus {
+      outline: none;
+      border-color: #FF6B35;
+      /* Adds a soft glow instead of a harsh thin line */
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2); 
+    }
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+  }
+
+  /* Submit Button Alignment & Styling */
+  .form__group--right {
+    display: flex;
+    justify-content: flex-end; /* Pushes button to the right */
+    margin-bottom: 0 !important;
+  }
+
+  .star-rating {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    cursor: pointer;
+
+    .star-icon {
+      height: 2.8rem;
+      width: 2.8rem;
+      fill: rgba(255, 255, 255, 0.2);
+      transition: all 0.15s ease;
+
+      &.hovered,
+      &.active {
+        fill: #FF6B35;
+        transform: scale(1.15);
+      }
+    }
+  }
+}
+

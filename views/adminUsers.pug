@@ -1,0 +1,101 @@
+extends baseAdmin
+
+block append head
+  script(src='/js/adminUsers.js' defer)
+
+block content
+  .split-layout
+    // LEFT COLUMN (Master List & Forms)
+    .admin-controls
+      h2.heading-secondary.ma-bt-md Manage Users
+      
+      // Master List View
+      #master-list-view
+        .list-controls
+          .list-controls-row
+            .filter-group
+              button#filter-active.btn.btn--small.btn--primary Active
+              button#filter-inactive.btn.btn--small.btn-outline Inactive
+            .filter-group(style='margin-left: auto;')
+              button#btn-refresh.btn.btn--small.btn-outline &#x21bb; Refresh
+              button#btn-create-new.btn.btn--small.btn--primary + New User
+              
+          .list-controls-row
+            .filter-group
+              label(for='filter-role') Role:
+              select#filter-role
+                option(value='') All
+                option(value='user') User
+                option(value='guide') Guide
+                option(value='lead-guide') Lead Guide
+                option(value='admin') Admin
+            .sort-group(style='margin-left: auto;')
+              label(for='sort-field') Sort:
+              select#sort-field
+                option(value='name') Name
+                option(value='role') Role
+              button.btn-sort-toggle#sort-direction(data-direction='') &uarr; ASC
+        
+        .admin-list-container
+          ul#users-list
+          .pagination-controls
+            .pagination-controls__limit
+              label(for='limit-select') Rows:
+              select#limit-select
+                option(value='10', selected) 10
+                option(value='20') 20
+            .pagination-controls__actions
+              button.btn-page#btn-prev(disabled) &larr; Prev
+              span#page-info Page 1
+              button.btn-page#btn-next Next &rarr;
+      
+      // Form View (Create/Edit)
+      form#user-form.form.glass-form(style='display: none;')
+        h3#form-title.heading-tertiary.ma-bt-sm Create New User
+        .form__group
+          label.form__label(for='edit-name') Name
+          input#edit-name.form__input(type='text', required)
+        .form__group
+          label.form__label(for='edit-email') Email
+          input#edit-email.form__input(type='email', required)
+        .form__group
+          label.form__label(for='edit-role') Role
+          select#edit-role.form__input
+            option(value='user') User
+            option(value='guide') Guide
+            option(value='lead-guide') Lead Guide
+            option(value='admin') Admin
+        .form__group#password-group
+          label.form__label#password-label(for='edit-password') Password
+          input#edit-password.form__input(type='password', required, minlength='8')
+        .form__group#password-confirm-group
+          label.form__label#password-confirm-label(for='edit-password-confirm') Confirm Password
+          input#edit-password-confirm.form__input(type='password', required, minlength='8')
+        .form__group.form__group--actions
+          button#btn-save.btn.btn-save.btn--small.btn--primary(type='submit') Save Changes
+          button#btn-status.btn.btn-deactivate.btn--small.btn-outline(type='button', style='display: none;') Deactivate User
+          button#btn-cancel.btn.btn-cancel.btn--small.btn-outline(type='button') Cancel
+
+    // RIGHT COLUMN (Data Summary)
+    .admin-data
+      #user-details-pane
+        p#user-placeholder Select a user to view details.
+        
+        #user-content(style='display: none;')
+          .user-profile-header
+            .user-profile-header__left
+              img#detail-photo.form__user-photo(src='', alt='')
+              .user-profile-info.user-info-wrapper
+                h4.heading-tertiary#detail-name Name
+                p.user-email.user-email-text#detail-email Email
+            .user-profile-header__right
+              span.badge#detail-role Role
+              span.badge#detail-status Active
+              .header-actions
+                button#edit-user-btn.btn.btn--small.btn-outline Edit
+          
+          h3.heading-tertiary.ma-bt-sm Bookings
+          #user-bookings-section.data-section
+          
+          h3.heading-tertiary.ma-bt-sm Reviews
+          #user-reviews-section.data-section

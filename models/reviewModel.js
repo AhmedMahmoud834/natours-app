@@ -37,9 +37,16 @@ const reviewSchema = new mongoose.Schema(
 reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
 reviewSchema.pre(/^find/, function () {
+  const userFields = this.getOptions().includeUserEmail
+    ? 'name photo email'
+    : 'name photo';
+
   this.populate({
     path: 'user',
-    select: 'name photo',
+    select: userFields,
+  }).populate({
+    path: 'tour',
+    select: 'name',
   });
 });
 

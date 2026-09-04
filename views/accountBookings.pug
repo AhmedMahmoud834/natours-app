@@ -14,9 +14,12 @@ block content
         nav.user-view__menu
           ul.side-nav
             +navItem('/me', 'Settings', 'settings', false)
-            +navItem('/my-tours', 'My bookings', 'briefcase', true)
-            +navItem('#', 'My reviews', 'star', false)
-            +navItem('#', 'Billing', 'credit-card', false)
+            if user && user.role === 'user'
+              +navItem('/my-tours', 'My bookings', 'briefcase', true)
+              +navItem('#', 'My reviews', 'star', false)
+              +navItem('#', 'Billing', 'credit-card', false)
+            if user && (user.role === 'lead-guide' || user.role === 'admin')
+              +navItem('/lead-guide-dashboard', 'Lead Guide Panel', 'map', false)
           
           if user && user.role === 'admin'
             .admin-nav

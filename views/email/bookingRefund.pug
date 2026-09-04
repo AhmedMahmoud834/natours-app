@@ -1,0 +1,17 @@
+extends baseEmail
+
+block content
+  p Hi #{firstName},
+  p A refund has been issued for your booking of the <strong>#{tourName}</strong> tour.
+  p The refund amount of <strong>$#{price}</strong> has been credited to your original payment method. Please allow 5–10 business days for the credit to appear on your bank statement.
+  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td
+                  a(href=`${url}`, target='_blank') View Account
+  p If you do not see the credit within 10 business days, please don't hesitate to reach out to our support team.
+  p - The Natours Team

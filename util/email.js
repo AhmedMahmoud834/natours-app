@@ -67,9 +67,36 @@ class Email {
     await this.send(template, subject);
   }
 
+  async sendAccountActivation(name, password) {
+    const template = 'accountActivation';
+    const subject = 'Your Natours account has been activated!';
+    await this.send(template, subject, {
+      password: password,
+      name: name,
+    });
+  }
+
   async sendBookingConfirmation(tour, booking) {
     const template = 'bookingConfirmation';
     const subject = `Your booking for ${tour.name} is confirmed!`;
+    await this.send(template, subject, {
+      tourName: tour.name,
+      price: booking.price,
+    });
+  }
+
+  async sendBookingCancellation(tour, booking) {
+    const template = 'bookingCancellation';
+    const subject = `Your booking for ${tour.name} has been cancelled`;
+    await this.send(template, subject, {
+      tourName: tour.name,
+      price: booking.price,
+    });
+  }
+
+  async sendBookingRefund(tour, booking) {
+    const template = 'bookingRefund';
+    const subject = `Refund processed for ${tour.name} ($${booking.price})`;
     await this.send(template, subject, {
       tourName: tour.name,
       price: booking.price,

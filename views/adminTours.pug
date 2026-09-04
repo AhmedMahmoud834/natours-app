@@ -1,0 +1,182 @@
+extends baseAdmin
+
+block append head
+  script(src='/js/adminTours.js' defer)
+
+block content
+  .split-layout
+    // LEFT COLUMN (Master List & Forms)
+    .admin-controls
+      h2.heading-secondary.ma-bt-md Manage Tours
+      
+      // Master List View
+      #master-list-view
+        .list-controls
+          .list-controls-row
+            .filter-group
+              button#filter-active.btn.btn--small.btn--primary Active
+              button#filter-inactive.btn.btn--small.btn-outline Inactive
+            .filter-group(style='margin-left: auto;')
+              button#btn-refresh.btn.btn--small.btn-outline &#x21bb; Refresh
+              button#btn-create-new.btn.btn--small.btn--primary + New Tour
+              
+          .list-controls-row
+            .filter-group
+              label(for='filter-difficulty') Difficulty:
+              select#filter-difficulty
+                option(value='') All
+                option(value='easy') Easy
+                option(value='medium') Medium
+                option(value='difficult') Difficult
+            .sort-group(style='margin-left: auto;')
+              label(for='sort-field') Sort:
+              select#sort-field
+                option(value='createdAt') Date Created
+                option(value='name') Name
+                option(value='price') Price
+                option(value='duration') Duration
+                option(value='maxGroupSize') Group Size
+                option(value='ratingsAverage') Rating
+              button.btn-sort-toggle#sort-direction(data-direction='-') &darr; DESC
+        
+        .admin-list-container
+          ul#tours-list
+          .pagination-controls
+            .pagination-controls__limit
+              label(for='limit-select') Rows:
+              select#limit-select
+                option(value='10', selected) 10
+                option(value='20') 20
+            .pagination-controls__actions
+              button.btn-page#btn-prev(disabled) &larr; Prev
+              span#page-info Page 1
+              button.btn-page#btn-next Next &rarr;
+      
+      // Form View (Create/Edit)
+      form#tour-form.form.glass-form(style='display: none;')
+        h3#form-title.heading-tertiary.ma-bt-sm Create New Tour
+        
+        .form__group
+          label.form__label(for='edit-name') Tour Name
+          input#edit-name.form__input(type='text', required, minlength='10', maxlength='40', placeholder='e.g., The Forest Hiker')
+        
+        .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;')
+          .form__group
+            label.form__label(for='edit-duration') Duration (Days)
+            input#edit-duration.form__input(type='number', required, min='1', placeholder='e.g., 5')
+          .form__group
+            label.form__label(for='edit-max-group-size') Max Group Size
+            input#edit-max-group-size.form__input(type='number', required, min='1', placeholder='e.g., 25')
+        
+        .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;')
+          .form__group
+            label.form__label(for='edit-difficulty') Difficulty
+            select#edit-difficulty.form__input
+              option(value='easy') Easy
+              option(value='medium') Medium
+              option(value='difficult') Difficult
+          .form__group
+            label.form__label(for='edit-price') Price ($)
+            input#edit-price.form__input(type='number', required, min='1', placeholder='e.g., 397')
+          .form__group
+            label.form__label(for='edit-price-discount') Discount ($)
+            input#edit-price-discount.form__input(type='number', min='0', placeholder='e.g., 50')
+
+        .form__group.locations-section
+          h4.heading-tertiary Tour Stops
+          #locations-container
+            //- JavaScript will inject .location-block divs here
+          button(type="button").btn-small.btn-outline-orange#btn-add-location + Add Stop
+
+        .form__group
+          label.form__label(for='edit-summary') Summary
+          input#edit-summary.form__input(type='text', required, placeholder='Brief summary of the tour')
+        
+        .form__group
+          label.form__label(for='edit-description') Description
+          textarea#edit-description.form__input(rows='3', required, placeholder='Full tour description')
+
+        .form__group
+          label.form__label(for='edit-guides') Tour Guides (Hold Ctrl / Cmd to select multiple)
+          select#edit-guides.form__input(multiple size='4' style='height: auto; min-height: 9rem;')
+            if guides && guides.length
+              optgroup(label='Lead Guides')
+                each g in guides.filter(u => u.role === 'lead-guide')
+                  option(value=g.id)= `${g.name} (${g.email})`
+              optgroup(label='Guides')
+                each g in guides.filter(u => u.role === 'guide')
+                  option(value=g.id)= `${g.name} (${g.email})`
+        
+        .form__group
+          label.form__label(for='edit-start-dates') Start Dates (comma-separated: YYYY-MM-DD)
+          input#edit-start-dates.form__input(type='text', required, placeholder='2025-06-15, 2025-07-20, 2025-08-25')
+
+        .form__group
+          label.form__label(for='edit-start-location-desc') Start Location Name
+          input#edit-start-location-desc.form__input(type='text', required, placeholder='e.g., Banff, Canada')
+
+        .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;')
+          .form__group
+            label.form__label(for='edit-start-location-address') Address
+            input#edit-start-location-address.form__input(type='text', placeholder='e.g., 224 Banff Ave, Banff, AB')
+          .form__group
+            label.form__label(for='edit-start-location-coords') Coordinates (lng, lat)
+            input#edit-start-location-coords.form__input(type='text', required, placeholder='e.g., -115.57077, 51.17836')
+
+        .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;')
+          .form__group
+            label.form__label(for='edit-image-cover') Cover Image
+            input#edit-image-cover.form__input(type='file', accept='image/*')
+          .form__group
+            label.form__label(for='edit-images') Gallery Images (up to 3)
+            input#edit-images.form__input(type='file', multiple, accept='image/*')
+
+        .form__group.form__group--actions
+          button#btn-save.btn.btn-save.btn--small.btn--primary(type='submit') Save Tour
+          button#btn-status.btn.btn-deactivate.btn--small.btn-outline(type='button', style='display: none;') Deactivate Tour
+          button#btn-delete.btn.btn-delete.btn--small(type='button', style='display: none;') Delete Tour
+          button#btn-cancel.btn.btn-cancel.btn--small.btn-outline(type='button') Cancel
+
+    // RIGHT COLUMN (Data Summary)
+    .admin-data
+      #tour-details-pane
+        p#tour-placeholder Select a tour to view details.
+        
+        #tour-content(style='display: none;')
+          .user-profile-header.tour-profile-header
+            .user-profile-header__left
+              img#detail-cover.tour-cover-thumbnail(src='', alt='')
+              .user-profile-info.user-info-wrapper
+                h4.heading-tertiary#detail-name Tour Name
+                p.user-email.user-email-text#detail-summary Tour Summary
+            .user-profile-header__right
+              span.badge#detail-difficulty Difficulty
+              span.badge#detail-status Active
+              .header-actions
+                button#edit-tour-btn.btn.btn--small.btn-outline Edit
+          
+          .tour-stats-grid
+            .stat-box
+              span.stat-label Duration
+              span.stat-value#detail-duration -
+            .stat-box
+              span.stat-label Group Size
+              span.stat-value#detail-group-size -
+            .stat-box
+              span.stat-label Regular Price
+              span.stat-value#detail-price -
+            .stat-box.stat-discount
+              span.stat-label Discount
+              span.stat-value.text-green#detail-discount -
+            .stat-box.stat-final
+              span.stat-label Final Price
+              span.stat-value.text-orange#detail-final-price -
+            .stat-box.stat-rating
+              span.stat-label Rating
+              span.stat-value#detail-rating -
+
+          h3.heading-tertiary.ma-bt-sm Bookings
+          #tour-bookings-section.data-section
+          
+          h3.heading-tertiary.ma-bt-sm Reviews
+          #tour-reviews-section.data-section

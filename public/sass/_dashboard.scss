@@ -1,0 +1,1571 @@
+// ==========================================
+// SAAS ADMIN DASHBOARD: EXPEDITION THEME
+// ==========================================
+
+// VARIABLES & THEME
+$color-admin-bg: #0b101e;
+$color-admin-primary: #ff6b35;
+$color-admin-text: #f8f9fa;
+$color-admin-glass: rgba(255, 255, 255, 0.05);
+$color-admin-glass-hover: rgba(255, 255, 255, 0.08);
+
+.admin-body {
+  background-color: $color-admin-bg;
+  color: $color-admin-text;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+// LAYOUT: SIDEBAR + CONTENT
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar-minimal {
+  width: 80px;
+  background-color: rgba(15, 23, 42, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3rem 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+
+  ul {
+    list-style: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  li {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 1.2rem;
+      transition: all 0.3s;
+
+      svg {
+        width: 2.2rem;
+        height: 2.2rem;
+        fill: rgba(248, 249, 250, 0.4);
+        transition: all 0.3s;
+      }
+
+      &:hover {
+        background-color: $color-admin-glass;
+        svg {
+          fill: $color-admin-text;
+        }
+      }
+    }
+
+    &.active a {
+      background-color: rgba(255, 107, 53, 0.1);
+      svg {
+        fill: $color-admin-primary;
+      }
+    }
+  }
+
+  &__bottom a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 1.2rem;
+    transition: all 0.3s;
+
+    svg {
+      width: 2.2rem;
+      height: 2.2rem;
+      fill: rgba(248, 249, 250, 0.4);
+    }
+
+    &:hover {
+      background-color: rgba(255, 0, 0, 0.1);
+      svg {
+        fill: #ff4d4d;
+      }
+    }
+  }
+}
+
+.dashboard-content {
+  flex: 1;
+  margin-left: 80px;
+  min-height: 100vh;
+}
+
+// ADMIN USERS: SPLIT LAYOUT
+.split-layout {
+  display: grid;
+  grid-template-columns: 4fr 6fr;
+  gap: 4rem;
+  padding: 4rem;
+
+  @media only screen and (max-width: 60em) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// COMMON COMPONENTS
+.list-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.list-controls-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.sort-group, .filter-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.3rem;
+  }
+
+  select {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #F8F9FA;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+
+    &:focus { border-color: #FF6B35; }
+    
+    /* Ensure the dropdown options have a dark background */
+    option {
+      background-color: #0B101E; 
+      color: #F8F9FA;
+    }
+  }
+}
+
+.btn-sort-toggle {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #F8F9FA;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-family: inherit;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #FF6B35;
+    border-color: #FF6B35;
+  }
+}
+
+.filter-group {
+  display: flex;
+  gap: 1rem;
+
+  button {
+    border: none;
+    outline: none;
+    padding: 0.8rem 2rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-size: 1.4rem;
+
+    &.btn--primary {
+      background-color: #ff6b35;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        background-color: #ff7f4f;
+      }
+    }
+
+    &.btn-outline {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #888;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      &:hover {
+        color: #f8f9fa;
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+}
+
+.empty-msg {
+  font-size: 1.4rem;
+  color: rgba(248, 249, 250, 0.5);
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  margin-top: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0 0 1rem 1rem;
+  color: $color-admin-text;
+
+  &__limit {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.4rem;
+
+    select {
+      background-color: $color-admin-glass;
+      color: $color-admin-text;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      outline: none;
+      &:focus {
+        border-color: $color-admin-primary;
+      }
+      option {
+        background-color: $color-admin-bg;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 1.4rem;
+
+    .btn-page {
+      background: none;
+      border: none;
+      color: $color-admin-primary;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      &:hover:not(:disabled) {
+        text-decoration: underline;
+      }
+      &:disabled {
+        color: rgba(248, 249, 250, 0.3);
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: $color-admin-text;
+
+  &:hover {
+    background-color: $color-admin-glass;
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  &--red {
+    border-color: rgba(255, 77, 77, 0.5);
+    color: #ff4d4d;
+    &:hover {
+      background-color: rgba(255, 77, 77, 0.1);
+      border-color: #ff4d4d;
+    }
+  }
+
+  &--green {
+    border-color: rgba(85, 197, 122, 0.5);
+    color: #55c57a;
+    &:hover {
+      background-color: rgba(85, 197, 122, 0.1);
+      border-color: #55c57a;
+    }
+  }
+}
+
+// LEFT COLUMN: MASTER LIST & FORM
+.admin-controls {
+  h2 {
+    color: $color-admin-text;
+  }
+
+  .admin-list-container {
+    background: $color-admin-glass;
+    border-radius: 1rem;
+    padding: 1rem;
+    max-height: 70vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    &::-webkit-scrollbar {
+      width: 0.8rem;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 1rem;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+
+  #tours-list, .admin-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    
+    /* Force dark theme scrollbar */
+    &::-webkit-scrollbar { width: 0.6rem; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { 
+      background: rgba(255, 255, 255, 0.15); 
+      border-radius: 1rem; 
+    }
+    &::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+  }
+
+  .tour-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem; /* Fixes the cramped sticking issue */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Visual separator */
+    border-left: 4px solid transparent; /* Reserves space for active border */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    /* Hover State */
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Active State */
+    &.active {
+      background-color: rgba(255, 107, 53, 0.05);
+      border-left-color: #FF6B35;
+    }
+  }
+
+  .user-item {
+    padding: 1.5rem;
+    border-radius: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-bottom: none;
+
+    &:hover {
+      background-color: $color-admin-glass-hover;
+    }
+
+    &.active {
+      background-color: rgba(255, 107, 53, 0.1);
+      border-left: 4px solid $color-admin-primary;
+    }
+
+    .user-name {
+      color: #f8f9fa;
+      font-weight: 600;
+      font-size: 1.6rem;
+      margin-bottom: 0.2rem;
+      margin-top: 0;
+    }
+
+    .user-role {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.3rem;
+      font-weight: 400;
+      text-transform: capitalize;
+    }
+  }
+
+  // GLASSMORPHISM FORM
+  .glass-form {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 3rem;
+    border-radius: 1rem;
+
+    .heading-tertiary, #form-title {
+      color: #f8f9fa;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 2.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form__group {
+      margin-bottom: 2rem;
+    }
+
+    .form__label {
+      color: rgba(248, 249, 250, 0.8);
+    }
+
+    .form__input {
+      background-color: $color-admin-glass;
+      color: $color-admin-text;
+      padding: 1.5rem;
+      border: 1px solid transparent;
+      border-radius: 0.5rem;
+      width: 100%;
+      transition: all 0.3s;
+
+      &:focus {
+        border-color: $color-admin-primary;
+        outline: none;
+        box-shadow: 0 0 10px rgba(255, 107, 53, 0.2);
+      }
+
+      option {
+        background-color: $color-admin-bg;
+      }
+
+      &[type='number'] {
+        -moz-appearance: textfield;
+        &::-webkit-inner-spin-button,
+        &::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+      }
+
+      &[type='file'] {
+        padding: 1rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-family: inherit;
+        white-space: normal; /* Allows text to wrap to the next line */
+        word-break: break-all; /* Prevents long filenames from breaking the container */
+        line-height: 1.5;
+
+        &::file-selector-button {
+          display: block; /* The magic rule that forces the 2-line layout */
+          width: 100%; /* Makes the button fill the container width */
+          margin-right: 0; /* Remove any previous right margin */
+          margin-bottom: 1rem; /* Space between the button and the filename */
+          text-align: center;
+          background-color: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          color: #f8f9fa;
+          padding: 0.8rem 1.6rem;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-weight: 600;
+          
+          &:hover {
+            background-color: #ff6b35;
+            border-color: #ff6b35;
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .form__group--actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 4rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 3rem;
+
+      button {
+        width: 100%;
+        border: none;
+        outline: none;
+        border-radius: 0.5rem;
+        padding: 1.2rem 2.4rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+    }
+  }
+}
+
+#tour-form button, #user-form button, .form__group--actions button {
+  padding: 1.2rem 2.4rem;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Primary Action
+.btn-save { 
+  background-color: #FF6B35 !important; 
+  color: #fff !important; 
+  border: 1px solid #FF6B35 !important;
+}
+
+// Toggle Action - Neutral outline to separate it from the destructive Delete
+.btn-deactivate { 
+  background-color: transparent !important; 
+  color: rgba(255, 255, 255, 0.8) !important; 
+  border: 1px solid rgba(255, 255, 255, 0.3) !important; 
+  
+  &:hover {
+    border-color: #F8F9FA !important;
+    color: #F8F9FA !important;
+  }
+}
+
+// Destructive Action
+.btn-delete { 
+  background-color: #ef4444 !important; 
+  color: #fff !important; 
+  border: 1px solid #ef4444 !important;
+}
+
+// Cancel Action
+.btn-cancel { 
+  background: transparent !important; 
+  border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+  color: rgba(255, 255, 255, 0.5) !important; 
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+}
+
+/* Ensure the wrapper vertically aligns both buttons */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Base styling for the small header buttons to ensure exact matches */
+.header-actions button, .header-actions .btn {
+  padding: 0.6rem 1.4rem; /* Standardize the padding */
+  border-radius: 3px; /* Sharp corners to match the Edit button */
+  font-size: 1.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Specific styling for the Delete button to match the Outline style of Edit */
+.header-actions .btn-delete {
+  background-color: transparent !important;
+  color: #ef4444 !important; /* Danger Red */
+  border: 1px solid rgba(239, 68, 68, 0.5) !important; 
+  
+  &:hover {
+    background-color: #ef4444 !important;
+    color: #fff !important;
+    border-color: #ef4444 !important;
+  }
+}
+
+// RIGHT COLUMN: DATA SUMMARY
+.admin-data {
+  #user-details-pane,
+  #tour-details-pane {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 2.5rem 3rem;
+    min-height: 50vh;
+    overflow: hidden;
+  }
+
+  #user-placeholder,
+  #tour-placeholder {
+    font-size: 1.6rem;
+    color: rgba(248, 249, 250, 0.5);
+    text-align: center;
+    margin-top: 5rem;
+  }
+
+  .user-profile-header {
+    display: grid;
+    // Column 1: Avatar (auto width)
+    // Column 2: Text Wrapper (takes remaining space, forced to allow shrinking to 0)
+    // Column 3: Badges & Buttons (auto width)
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    &__left {
+      // Flattens the DOM visually so its children become direct grid items of the header
+      display: contents;
+    }
+
+    &__right {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .user-profile-info,
+    .user-info-wrapper {
+      display: block;
+      overflow: hidden;
+    }
+
+    h4 {
+      color: $color-admin-text;
+      margin-bottom: 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-email,
+    .user-email-text {
+      font-size: 1.2rem;
+      color: rgba(248, 249, 250, 0.6);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      width: 100%;
+    }
+  }
+
+  // TITLES
+  h3.heading-tertiary {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f8f9fa;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+    padding-bottom: 0.6rem;
+    letter-spacing: 0.5px;
+  }
+
+  // BADGES
+  .badge {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border-radius: 10rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    &--admin {
+      background-color: rgba($color-admin-primary, 0.15);
+      color: $color-admin-primary;
+      border: 1px solid rgba($color-admin-primary, 0.3);
+    }
+    &--guide,
+    &--lead-guide {
+      background-color: rgba(#ffb900, 0.15);
+      color: #ffb900;
+      border: 1px solid rgba(#ffb900, 0.3);
+    }
+    &--user {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    &--active,
+    &--easy {
+      background-color: rgba(85, 197, 122, 0.15);
+      color: #55c57a;
+      border: 1px solid rgba(85, 197, 122, 0.3);
+    }
+    &--medium {
+      background-color: rgba(#ffb900, 0.15);
+      color: #ffb900;
+      border: 1px solid rgba(#ffb900, 0.3);
+    }
+    &--inactive,
+    &--difficult {
+      background-color: rgba(255, 77, 77, 0.15);
+      color: #ff4d4d;
+      border: 1px solid rgba(255, 77, 77, 0.3);
+    }
+
+    // Booking status badges
+    &--pending {
+      background-color: rgba(#f59e0b, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(#f59e0b, 0.5);
+    }
+    &--confirmed {
+      background-color: #10b981;
+      color: #fff;
+      border: 1px solid #10b981;
+    }
+    &--cancelled {
+      background-color: #ef4444;
+      color: #fff;
+      border: 1px solid #ef4444;
+    }
+    &--refunded {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    &--cash {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    &--stripe {
+      background-color: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+  }
+
+  // TOUR QUICK FACTS
+  .tour-cover-thumbnail {
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: 0.8rem;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .tour-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+
+    @media only screen and (max-width: 900px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media only screen and (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding: 1.2rem 1.4rem;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 0.8rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .stat-label {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: rgba(248, 249, 250, 0.6);
+        font-weight: 500;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #f8f9fa;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.text-green {
+          color: #10b981;
+        }
+
+        &.text-orange {
+          color: #ff6b35;
+        }
+      }
+    }
+  }
+
+  // DATA ROWS
+  .data-section {
+    margin-bottom: 1rem;
+  }
+
+  .data-card, .review-card, .booking-card {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 0.8rem;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.2rem;
+    backdrop-filter: blur(10px);
+    color: $color-admin-text;
+    font-size: 1.4rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 1rem 2rem rgba(0,0,0, 0.15);
+    }
+
+    &--detailed {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.2rem;
+    }
+
+    .booking-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .booking-card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f8f9fa;
+      margin-bottom: 0.4rem;
+    }
+
+    .booking-card-meta {
+      font-size: 1.2rem;
+      color: rgba(248, 249, 250, 0.6);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .booking-card-price-status {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.6rem;
+    }
+
+    .booking-card-price {
+      font-weight: 700;
+      color: #ff6b35;
+      font-size: 1.6rem;
+    }
+
+    .booking-card-badge {
+      display: inline-block;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.3rem 0.9rem;
+      border-radius: 2rem;
+
+      &--pending {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        color: #f59e0b;
+      }
+
+      &--confirmed {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        color: #10b981;
+      }
+
+      &--cancelled {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #ef4444;
+      }
+
+      &--refunded {
+        background: rgba(168, 85, 247, 0.15);
+        border: 1px solid rgba(168, 85, 247, 0.4);
+        color: #a855f7;
+      }
+    }
+
+    .booking-card-actions {
+      display: flex;
+      gap: 0.8rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+      .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.7rem 1.4rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+        font-family: inherit;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+        }
+      }
+
+      .btn-confirm {
+        background-color: #10b981;
+        color: #fff;
+        &:hover { background-color: #059669; }
+      }
+
+      .btn-cancel-booking {
+        background-color: #ef4444;
+        color: #fff;
+        &:hover { background-color: #dc2626; }
+      }
+
+      .btn-refund {
+        background-color: #f59e0b;
+        color: #fff;
+        &:hover { background-color: #d97706; }
+      }
+    }
+  }
+
+  .empty-msg {
+    font-size: 1.3rem;
+    color: rgba(248, 249, 250, 0.5);
+    font-style: italic;
+    padding: 0.5rem 0;
+    margin-bottom: 0;
+  }
+
+  .review-text {
+    margin-top: 0.4rem;
+    line-height: 1.4;
+  }
+}
+
+/* Locations Section */
+.locations-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  h4 {
+    color: #F8F9FA;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+}
+
+.location-block {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #FF6B35; /* Orange accent to group the stop */
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  position: relative;
+
+  /* Force the description and address to span full width */
+  .desc-group, .address-group {
+    grid-column: 1 / -1;
+  }
+
+  /* Remove Button Styling */
+  .btn-remove-loc {
+    grid-column: 1 / -1;
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    padding: 0.6rem 1rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    justify-self: end;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+  }
+}
+
+/* Add Stop Button */
+.btn-outline-orange {
+  background: transparent;
+  color: #FF6B35;
+  border: 1px dashed #FF6B35;
+  padding: 0.8rem 1.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 600;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 107, 53, 0.1);
+  }
+}
+
+/* Action Buttons Group for State Transitions */
+.action-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.8rem;
+    border-radius: 0.6rem;
+    font-family: inherit;
+    font-size: 1.3rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  .btn-confirm {
+    background-color: #10b981;
+    color: #fff;
+
+    &:hover {
+      background-color: #059669;
+    }
+  }
+
+  .btn-cancel-booking {
+    background-color: #ef4444;
+    color: #fff;
+
+    &:hover {
+      background-color: #dc2626;
+    }
+  }
+
+  .btn-refund {
+    background-color: #f59e0b;
+    color: #fff;
+
+    &:hover {
+      background-color: #d97706;
+    }
+  }
+}
+
+/* ==========================================
+   ADMIN OVERVIEW STAT CARDS & DASHBOARD
+   ========================================== */
+.admin-dashboard-wrapper {
+  padding: 4rem 6rem;
+  max-width: 160rem;
+  margin: 0 auto;
+
+  @media only screen and (max-width: 60em) {
+    padding: 3rem 3rem;
+  }
+
+  @media only screen and (max-width: 40em) {
+    padding: 2rem 1.5rem;
+  }
+}
+
+.welcome-banner {
+  margin-bottom: 3.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  h1 {
+    color: #F8F9FA;
+    font-size: 3.2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.8rem;
+  }
+
+  .welcome-subtitle {
+    font-size: 1.6rem;
+    color: rgba(248, 249, 250, 0.65);
+  }
+}
+
+.dashboard-header {
+  margin-bottom: 3rem;
+
+  .heading-secondary {
+    color: #F8F9FA;
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.6rem;
+  }
+
+  .sub-heading {
+    font-size: 1.4rem;
+    color: rgba(248, 249, 250, 0.55);
+  }
+}
+
+.stats-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+
+  @media only screen and (max-width: 75em) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media only screen and (max-width: 45em) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.4rem;
+  padding: 3rem 2.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 107, 53, 0.3);
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.3);
+  }
+
+  &__icon-box {
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    width: 2.8rem;
+    height: 2.8rem;
+  }
+
+  &--revenue {
+    .stat-card__icon-box {
+      background: rgba(85, 197, 122, 0.15);
+      border: 1px solid rgba(85, 197, 122, 0.3);
+    }
+    .stat-card__icon {
+      fill: #55c57a;
+    }
+    .stat-card__number {
+      color: #55c57a;
+    }
+  }
+
+  &--bookings {
+    .stat-card__icon-box {
+      background: rgba(255, 107, 53, 0.15);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+    .stat-card__icon {
+      fill: #FF6B35;
+    }
+    .stat-card__number {
+      color: #FF6B35;
+    }
+  }
+
+  &--tour {
+    .stat-card__icon-box {
+      background: rgba(255, 185, 0, 0.15);
+      border: 1px solid rgba(255, 185, 0, 0.3);
+    }
+    .stat-card__icon {
+      fill: #ffb900;
+    }
+    .stat-card__number {
+      color: #F8F9FA;
+      font-size: 2.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 20rem;
+    }
+  }
+
+  &--users {
+    .stat-card__icon-box {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .stat-card__icon {
+      fill: #3b82f6;
+    }
+    .stat-card__number {
+      color: #60a5fa;
+    }
+  }
+
+  &--tours {
+    .stat-card__icon-box {
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .stat-card__icon {
+      fill: #a855f7;
+    }
+    .stat-card__number {
+      color: #c084fc;
+    }
+  }
+
+  &--rating {
+    .stat-card__icon-box {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+    .stat-card__icon {
+      fill: #fbbf24;
+    }
+    .stat-card__number {
+      color: #fbbf24;
+    }
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(248, 249, 250, 0.6);
+  }
+
+  &__number {
+    font-size: 3.4rem;
+    font-weight: 700;
+    line-height: 1.1;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  &__caption {
+    font-size: 1.2rem;
+    color: rgba(248, 249, 250, 0.45);
+    font-style: italic;
+  }
+}
+
+/* ==========================================
+   LEAD GUIDE DASHBOARD TOUR CARDS
+   ========================================== */
+
+/* Main Card Wrapper - Scoped to Dashboard */
+.tour-dashboard-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  overflow: hidden; 
+  padding: 0 !important; /* Forces edge-to-edge image */
+  transition: all 0.3s ease;
+  height: 100%;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.2);
+  }
+
+  /* Header & Image - Upper Half */
+  &__header {
+    position: relative;
+    width: 100%;
+    height: 22rem; 
+  }
+
+  &__picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block; 
+  }
+
+  /* Badge */
+  &__badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(16, 185, 129, 0.15); /* Soft transparent emerald */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(16, 185, 129, 0.4); /* Subtle emerald ring */
+    color: #10b981; /* High-contrast emerald text */
+    padding: 0.6rem 1.6rem;
+    border-radius: 3rem; /* Perfect pill shape */
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    z-index: 2;
+
+    &--difficulty {
+      left: 1.5rem;
+      right: auto;
+      background: rgba(0, 0, 0, 0.6);
+      border-color: rgba(255, 107, 53, 0.4);
+      color: #ff6b35;
+    }
+
+    &--active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #10b981;
+    }
+
+    &--inactive {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+    }
+  }
+
+  &__body {
+    padding: 2rem 2rem 1.2rem 2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #F8F9FA;
+    margin-bottom: 0.8rem;
+    line-height: 1.25;
+  }
+
+  &__summary {
+    font-size: 1.4rem;
+    color: rgba(248, 249, 250, 0.7);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.8rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin-top: auto;
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  &__footer-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &__footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  &__footer-label {
+    font-size: 1.2rem;
+    color: rgba(248, 249, 250, 0.5);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  &__footer-value {
+    font-size: 1.4rem;
+    color: #F8F9FA;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  &__cta {
+    flex: 1;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.1rem 1.6rem;
+    background-color: #FF6B35;
+    color: #fff;
+    border-radius: 0.6rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+    border: 1px solid transparent;
+    line-height: 1.2;
+
+    &:hover {
+      background-color: #e05e2e;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 107, 53, 0.35);
+      color: #fff;
+    }
+  }
+
+  &__btn-status {
+    flex: 1;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.1rem 1.6rem;
+    border-radius: 0.6rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    font-family: inherit;
+    line-height: 1.2;
+
+    &--active {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+
+      &:hover {
+        background: #ef4444;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      }
+    }
+
+    &--inactive {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #10b981;
+
+      &:hover {
+        background: #10b981;
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      }
+    }
+  }
+}

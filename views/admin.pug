@@ -1,0 +1,79 @@
+extends base
+
+block append head
+  script(src='/js/adminUsers.js' defer)
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(href=`/img/icons.svg#icon-${icon}`)
+      span= text
+
+block content
+  main.main
+    section.section-account
+      .user-view
+        nav.user-view__menu
+          ul.side-nav
+            +navItem('/me', 'Settings', 'settings', false)
+            if user && user.role === 'user'
+              +navItem('/my-tours', 'My bookings', 'briefcase', false)
+              +navItem('#', 'My reviews', 'star', false)
+              +navItem('#', 'Billing', 'credit-card', false)
+            if user && (user.role === 'lead-guide' || user.role === 'admin')
+              +navItem('/lead-guide-dashboard', 'Lead Guide Panel', 'map', false)
+          
+          if user && user.role === 'admin'
+            .admin-nav
+              h5.admin-nav__heading Admin
+              ul.side-nav
+                +navItem('#', 'Manage tours', 'map', activeTab === 'tours')
+                +navItem('#', 'Manage users', 'users', activeTab === 'users' || !activeTab)
+                +navItem('#', 'Manage reviews', 'star', activeTab === 'reviews')
+                +navItem('#', 'Manage bookings', 'briefcase', activeTab === 'bookings')
+
+        .user-view__content
+          h2.heading-secondary.ma-bt-md Manage Users
+          
+          .admin-container
+            // Left Column (Master List)
+            .admin-list
+              .filter-group
+                button#filter-active.btn.btn--small.btn--primary Active Users
+                button#filter-inactive.btn.btn--small Inactive Users
+              ul#users-list
+            
+            // Right Column (Details Pane)
+            .admin-details
+              #user-details-pane
+                p#user-placeholder Select a user to view details.
+                #user-content(style='display: none;')
+                  .user-profile-header
+                    .user-profile-header__left
+                      img#detail-photo.form__user-photo(src='', alt='')
+                      .user-profile-info
+                        h4.heading-tertiary#detail-name Name
+                        p.user-email#detail-email Email
+                        span.badge#detail-role Role
+                    button#edit-user-btn.btn.btn--small.btn--primary Edit User
+                  
+                  form#edit-user-form.form.form-user-data(style='display: none;')
+                    .form__group
+                      label.form__label(for='edit-name') Name
+                      input#edit-name.form__input(type='text', required)
+                    .form__group
+                      label.form__label(for='edit-email') Email
+                      input#edit-email.form__input(type='email', required)
+                    .form__group
+                      label.form__label(for='edit-role') Role
+                      select#edit-role.form__input
+                        option(value='user') User
+                        option(value='guide') Guide
+                        option(value='lead-guide') Lead Guide
+                        option(value='admin') Admin
+                    .form__group.right
+                      button.btn.btn--small.btn--primary(type='submit') Save Changes
+                      button#cancel-edit-btn.btn.btn--small(type='button') Cancel
+                  
+                  #user-bookings-section.bookings-section
+                  #user-reviews-section.reviews-section

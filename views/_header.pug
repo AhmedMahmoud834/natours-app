@@ -9,6 +9,12 @@ header.header.header--transparent
   
   nav.header__nav.header__nav--user
     if user
+      if user.role === 'admin'
+        a.header__nav-link(href="/admin/overview" style="margin-right: 1.5rem; color: #FF6B35;") Admin Panel
+      else if user.role === 'lead-guide'
+        a.header__nav-link(href="/lead-guide-dashboard" style="margin-right: 1.5rem; color: #FF6B35;") Guide Panel
+      else if user.role === 'guide'
+        a.header__nav-link(href="/guide-dashboard" style="margin-right: 1.5rem; color: #FF6B35;") Guide Panel
       a.header__nav-link.header__nav-link--logout(href="#") Log out
       a.header__nav-link.header__nav-link--profile(href="/me")
         img.header__user-img(src=`/img/users/${user.photo || 'default.jpg'}` alt=`Photo of ${user.name}`)

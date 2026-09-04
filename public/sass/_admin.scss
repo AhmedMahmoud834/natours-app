@@ -1,0 +1,358 @@
+@use 'variables' as *;
+
+// ==========================================
+// ADMIN DASHBOARD MASTER-DETAIL STYLES
+// ==========================================
+
+.admin-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  min-height: 50vh;
+
+  @media only screen and (max-width: 60em) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Left Column (Master List)
+.admin-list {
+  .filter-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  #users-list {
+    list-style: none;
+    overflow-y: auto;
+    max-height: 60vh;
+    border: 1px solid rgba(248, 249, 250, 0.08);
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.01);
+
+    &::-webkit-scrollbar {
+      width: 0.8rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 1rem;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+
+  .user-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(248, 249, 250, 0.08);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(248, 249, 250, 0.85);
+    border-radius: 0.5rem;
+    border-left: 4px solid transparent; // for active state
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+// Right Column (Details Pane)
+.admin-details {
+  #user-details-pane {
+    padding: 3rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(248, 249, 250, 0.08);
+    border-radius: 1rem;
+    color: rgba(248, 249, 250, 0.85);
+    height: 100%;
+    box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.1);
+
+    #user-placeholder {
+      font-size: 1.6rem;
+      color: rgba(248, 249, 250, 0.7);
+      text-align: center;
+      margin-top: 5rem;
+    }
+
+    strong {
+      color: $color-white;
+    }
+
+    .user-profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(248, 249, 250, 0.08);
+
+      &__left {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+    }
+
+    .user-profile-info,
+    .user-info-wrapper {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+
+      h4 {
+        margin-bottom: 0.5rem;
+      }
+      .user-email,
+      .user-email-text {
+        font-size: 1.4rem;
+        color: rgba(248, 249, 250, 0.7);
+        margin-bottom: 0.8rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        width: 100%;
+      }
+    }
+
+    // Role Badges
+    .badge {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border-radius: 10rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+
+      &--admin {
+        background-color: rgba($color-primary, 0.15);
+        color: $color-primary;
+        border: 1px solid rgba($color-primary, 0.3);
+      }
+      &--guide,
+      &--lead-guide {
+        background-color: rgba(#ff7730, 0.15);
+        color: #ff7730;
+        border: 1px solid rgba(#ff7730, 0.3);
+      }
+      &--user {
+        background-color: rgba(248, 249, 250, 0.1);
+        color: rgba(248, 249, 250, 0.7);
+        border: 1px solid rgba(248, 249, 250, 0.2);
+      }
+    }
+
+    // Edit Form Styles
+    .form-user-data {
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 2rem;
+      border-radius: 0.5rem;
+      margin-bottom: 3rem;
+
+      .form__group {
+        margin-bottom: 2rem;
+      }
+
+      .form__group.right {
+        text-align: right;
+        button {
+          margin-left: 1rem;
+        }
+      }
+
+      .form__input {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: $color-white;
+        border: 1px solid rgba(248, 249, 250, 0.1);
+        padding: 1.25rem 1.75rem;
+        border-radius: 0.5rem;
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: 0 0 0 3px rgba($color-primary, 0.2);
+        }
+
+        option {
+          background-color: $color-dark-base;
+        }
+      }
+    }
+
+    .list-item {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(248, 249, 250, 0.05);
+      font-size: 1.4rem;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .review-text {
+        margin-top: 0.8rem;
+        font-size: 1.3rem;
+        font-style: italic;
+        color: rgba(248, 249, 250, 0.6);
+      }
+    }
+
+    .empty-msg {
+      font-size: 1.4rem;
+      color: rgba(248, 249, 250, 0.5);
+      font-style: italic;
+      padding: 1rem 0;
+    }
+  }
+}
+
+// Spinner
+.spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid rgba(248, 249, 250, 0.1);
+  border-radius: 50%;
+  border-top-color: $color-primary;
+  animation: spin 1s ease-in-out infinite;
+  vertical-align: middle;
+  margin-right: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================
+   MANAGE REVIEWS TAB STYLES
+   ========================================== */
+
+/* Frontend Search Bar */
+.search-group input {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #F8F9FA;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.2rem 1.6rem;
+  border-radius: 0.5rem;
+  font-size: 1.4rem;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #FF6B35;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Reviews Master List & Scrollbar */
+#reviews-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+
+  /* Custom dark theme scrollbar */
+  &::-webkit-scrollbar { 
+    width: 0.6rem; 
+  }
+  &::-webkit-scrollbar-track { 
+    background: transparent; 
+  }
+  &::-webkit-scrollbar-thumb { 
+    background: rgba(255, 255, 255, 0.15); 
+    border-radius: 1rem; 
+  }
+  &::-webkit-scrollbar-thumb:hover { 
+    background: rgba(255, 255, 255, 0.3); 
+  }
+
+  .review-item {
+    .badge--rating,
+    .badge {
+      flex-shrink: 0;
+      border-radius: 10rem;
+      padding: 0.4rem 1.2rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: rgba(255, 107, 53, 0.15);
+      color: #FF6B35;
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+  }
+}
+
+/* Read-Only Review Box */
+.review-content-box {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0.8rem;
+  padding: 2.5rem;
+  margin-top: 2rem;
+
+  /* Fix Dark Heading Contrast */
+  h4,
+  .heading-tertiary {
+    color: #F8F9FA;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.6rem;
+    line-height: 1.6;
+    font-style: italic;
+  }
+}
+
+/* Align the Delete Button & Details Actions */
+.review-read-pane {
+  .action-btn-group {
+    display: flex;
+    justify-content: flex-end; /* Aligns the button cleanly to the right */
+    margin-top: 3rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 2rem;
+  }
+
+  .btn-delete {
+    padding: 1.2rem 3rem;
+    border-radius: 0.6rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    background-color: #ef4444 !important;
+    color: #fff !important;
+    border: 1px solid #ef4444 !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #dc2626 !important;
+      border-color: #dc2626 !important;
+    }
+  }
+}
+
+

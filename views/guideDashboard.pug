@@ -1,0 +1,103 @@
+extends base
+
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(href=`/img/icons.svg#icon-${icon}`)
+      span= text
+
+block append head
+  script(src='/js/guideDashboard.js' defer)
+
+block content
+  main.main
+    section.section-account
+      .user-view
+        nav.user-view__menu
+          ul.side-nav
+            +navItem('/me', 'Settings', 'settings', false)
+            if user && user.role === 'user'
+              +navItem('/my-tours', 'My bookings', 'briefcase', false)
+            +navItem('/guide-dashboard', 'Guide Dashboard', 'map', true)
+            if user && (user.role === 'lead-guide' || user.role === 'admin')
+              +navItem('/lead-guide-dashboard', 'Lead Guide Panel', 'map', false)
+          
+          if user && user.role === 'admin'
+            .admin-nav
+              h5.admin-nav__heading Admin
+              ul.side-nav
+                +navItem('/admin/overview', 'Dashboard', 'trending-up', false)
+                +navItem('/admin/tours', 'Manage tours', 'map', false)
+                +navItem('/admin/users', 'Manage users', 'users', false)
+                +navItem('/admin/reviews', 'Manage reviews', 'star', false)
+                +navItem('/admin/bookings', 'Manage bookings', 'briefcase', false)
+
+        .user-view__content
+          // 1. ASSIGNED TOUR ITINERARIES SECTION
+          .user-view__form-container
+            h2.heading-secondary.ma-bt-md My Assigned Tours
+            if tours && tours.length
+              .bookings-grid(style='display: grid; grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr)); gap: 2.5rem; margin-bottom: 4rem;')
+                each tour in tours
+                  .tour-dashboard-card
+                    if tour.imageCover
+                      .tour-dashboard-card__header
+                        img.tour-dashboard-card__picture(src=`/img/tours/${tour.imageCover}` alt=`${tour.name}`)
+                        span.tour-dashboard-card__badge.tour-dashboard-card__badge--difficulty= tour.difficulty
+                    .tour-dashboard-card__body
+                      h4.tour-dashboard-card__title= tour.name
+                      p.tour-dashboard-card__summary= tour.summary
+
+                      .itinerary-details(style='display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 1.3rem; color: rgba(255, 255, 255, 0.7);')
+                        div(style='display: flex; align-items: center; gap: 0.8rem;')
+                          span(style='color: #ff6b35;') 📍
+                          span= tour.startLocation && tour.startLocation.description ? tour.startLocation.description : 'Location TBD'
+                        div(style='display: flex; align-items: center; gap: 0.8rem;')
+                          span(style='color: #ff6b35;') 📅
+                          span= tour.startDates && tour.startDates.length ? new Date(tour.startDates[0]).toLocaleString('en-us', { month: 'long', year: 'numeric', day: 'numeric' }) : 'Dates TBD'
+                        div(style='display: flex; align-items: center; gap: 0.8rem;')
+                          span(style='color: #ff6b35;') 🗺️
+                          span= `${tour.locations ? tour.locations.length : 0} Itinerary Stops`
+
+                    .tour-dashboard-card__footer
+                      .tour-dashboard-card__footer-stats
+                        .tour-dashboard-card__footer-left
+                          span.tour-dashboard-card__footer-label Participants
+                          strong.tour-dashboard-card__footer-value= `${tour.totalParticipants || 0} / ${tour.maxGroupSize} booked`
+                        .tour-dashboard-card__footer-right
+                          span.tour-dashboard-card__footer-label Duration
+                          strong.tour-dashboard-card__footer-value= `${tour.duration} days`
+                      a.tour-dashboard-card__cta(href=`/tours/${tour.slug}` target='_blank') View Tour Page
+            else
+              p.empty-state(style='color: rgba(255, 255, 255, 0.5); font-style: italic; margin-bottom: 3rem;') You are currently not assigned to any tours as a guide.
+
+          .line &nbsp;
+
+          // 2. PASSENGER ROSTER / BOOKINGS SECTION
+          .user-view__form-container
+            div(style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem;')
+              h2.heading-secondary(style='margin-bottom: 0;') Tour Passenger Roster
+              
+              .filter-group
+                label(for='tour-filter' style='font-size: 1.4rem; color: rgba(255, 255, 255, 0.7); margin-right: 1rem;') Filter by Tour:
+                select#tour-filter.form__input(style='width: auto; display: inline-block; padding: 0.8rem 1.2rem; background-color: rgba(255, 255, 255, 0.05); color: #F8F9FA; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 0.5rem; cursor: pointer;')
+                  option(value='all' selected=(selectedTour === 'all')) All Assigned Tours
+                  each tour in tours
+                    option(value=tour.id selected=(selectedTour === tour.id))= tour.name
+
+            if bookings && bookings.length
+              .admin-list-container(style='background: rgba(255, 255, 255, 0.02); border-radius: 1rem; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 4rem;')
+                ul(style='list-style: none; padding: 0; margin: 0;')
+                  each booking in bookings
+                    li(style='display: flex; justify-content: space-between; align-items: center; padding: 1.4rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); gap: 1.5rem; flex-wrap: wrap;')
+                      div(style='display: flex; align-items: center; gap: 1.4rem;')
+                        img(src=`/img/users/${booking.user && booking.user.photo ? booking.user.photo : 'default.jpg'}` alt=`${booking.user ? booking.user.name : 'Customer'}` style='height: 4.5rem; width: 4.5rem; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.1);')
+                        div
+                          h4(style='color: #f8f9fa; font-size: 1.5rem; margin: 0; font-weight: 600;')= booking.user ? booking.user.name : 'Unknown Customer'
+                          p(style='color: rgba(255, 255, 255, 0.6); font-size: 1.3rem; margin: 0.2rem 0 0;')= booking.user ? booking.user.email : 'No email available'
+                      div(style='text-align: right;')
+                        span(style='display: block; color: #ff6b35; font-size: 1.3rem; font-weight: 600;')= booking.tour && booking.tour.name ? booking.tour.name : 'Assigned Tour'
+                        span(style=booking.status === 'confirmed' ? 'display: inline-block; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; text-transform: uppercase; background: rgba(85, 197, 122, 0.15); color: #55c57a; margin-top: 0.3rem;' : 'display: inline-block; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; text-transform: uppercase; background: rgba(245, 158, 11, 0.15); color: #f59e0b; margin-top: 0.3rem;')= booking.status || 'confirmed'
+            else
+              p.empty-state(style='color: rgba(255, 255, 255, 0.5); font-style: italic; margin-bottom: 3rem;') No booked passengers found for the selected tour.

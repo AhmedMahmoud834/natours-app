@@ -1,0 +1,119 @@
+extends baseAdmin
+
+block append head
+  script(src='/js/adminBookings.js' defer)
+
+block content
+  .split-layout
+    // LEFT COLUMN (Master List & Create Form)
+    .admin-controls
+      h2.heading-secondary.ma-bt-md Manage Bookings
+      
+      // Master List View
+      #master-list-view
+        .list-controls
+          .list-controls-row
+            .filter-group
+              label(for='filter-status') Status:
+              select#filter-status
+                option(value='') All Statuses
+                option(value='pending') Pending
+                option(value='confirmed') Confirmed
+                option(value='cancelled') Cancelled
+                option(value='refunded') Refunded
+            .filter-group(style='margin-left: auto;')
+              button#btn-refresh.btn.btn--small.btn-outline &#x21bb; Refresh
+              button#btn-create-new.btn.btn--small.btn--primary + New Booking
+              
+          .list-controls-row
+            .sort-group
+              label(for='sort-field') Sort:
+              select#sort-field
+                option(value='createdAt') Date Created
+                option(value='price') Price
+                option(value='status') Status
+            .sort-group(style='margin-left: auto;')
+              button.btn-sort-toggle#sort-direction(data-direction='-') &darr; DESC
+        
+        .admin-list-container
+          ul#bookings-list
+          .pagination-controls
+            .pagination-controls__limit
+              label(for='limit-select') Rows:
+              select#limit-select
+                option(value='10', selected) 10
+                option(value='20') 20
+            .pagination-controls__actions
+              button.btn-page#btn-prev(disabled) &larr; Prev
+              span#page-info Page 1
+              button.btn-page#btn-next Next &rarr;
+      
+      // Create Form View
+      form#booking-form.form.glass-form(style='display: none;')
+        h3#form-title.heading-tertiary.ma-bt-sm Create New Booking
+        
+        .form__group
+          label.form__label(for='create-tour') Select Tour
+          select#create-tour.form__input(required)
+            option(value='') -- Select a Tour --
+        
+        .form__group
+          label.form__label(for='create-user') Select Customer
+          select#create-user.form__input(required)
+            option(value='') -- Select a Customer --
+
+        .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;')
+          .form__group
+            label.form__label(for='create-price') Price ($)
+            input#create-price.form__input(type='number', min='0', placeholder='Auto from Tour')
+          .form__group
+            label.form__label(for='create-payment-option') Payment Method
+            select#create-payment-option.form__input(disabled)
+              option(value='cash', selected) Cash (Offline)
+          .form__group
+            label.form__label(for='create-status') Initial Status
+            select#create-status.form__input
+              option(value='pending', selected) Pending
+              option(value='confirmed') Confirmed
+
+        .form__group.form__group--actions
+          button#btn-save.btn.btn-save.btn--small.btn--primary(type='submit') Create Booking
+          button#btn-cancel.btn.btn-cancel.btn--small.btn-outline(type='button') Cancel
+
+    // RIGHT COLUMN (Data Summary & Action Controls)
+    .admin-data
+      #booking-details-pane
+        p#booking-placeholder Select a booking to view details.
+        
+        #booking-content(style='display: none;')
+          .user-profile-header
+            .user-profile-header__left
+              .user-profile-info.user-info-wrapper
+                h4.heading-tertiary#detail-tour-name Tour Name
+                p.user-email.user-email-text#detail-user-name Customer Name
+            .user-profile-header__right
+              span.badge#detail-payment-option Payment
+              span.badge#detail-status Status
+          
+          .tour-stats-grid
+            .stat-box
+              span.stat-label Tour
+              span.stat-value#stat-tour -
+            .stat-box
+              span.stat-label Customer
+              span.stat-value#stat-user -
+            .stat-box
+              span.stat-label Price
+              span.stat-value.text-orange#stat-price -
+            .stat-box
+              span.stat-label Date Booked
+              span.stat-value#stat-date -
+            .stat-box
+              span.stat-label Payment Method
+              span.stat-value#stat-payment -
+            .stat-box
+              span.stat-label Status
+              span.stat-value#stat-status -
+
+          h3.heading-tertiary.ma-bt-sm Actions
+          #booking-actions.action-btn-group

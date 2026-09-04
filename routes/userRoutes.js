@@ -5,7 +5,12 @@ import {
   deleteMe,
   getMe,
   userUploadPhoto,
-  resizeUserPhoto,
+  createUser,
+  getUser,
+  updateUser,
+  activateUser,
+  deactivateUser,
+  getAllInActiveUsers,
 } from '../controllers/usersController.js';
 import {
   forgetPassword,
@@ -17,6 +22,7 @@ import {
   signup,
   updatePassword,
 } from '../controllers/authController.js';
+import { resizeUserPhoto } from '../util/multer.js';
 
 const userRouter = express.Router();
 
@@ -35,6 +41,13 @@ userRouter.delete('/deleteMe', deleteMe);
 userRouter.get('/me', getMe);
 
 // admin routes
-userRouter.route('/').get(restrictTo('admin'), getAllUsers);
+userRouter.use(restrictTo('admin'));
+userRouter.route('/').get(getAllUsers).post(createUser);
+
+userRouter.get('/inActive', getAllInActiveUsers);
+userRouter.route('/:userId').get(getUser).patch(updateUser);
+
+userRouter.patch('/:userId/activate', activateUser);
+userRouter.patch('/:userId/deactivate', deactivateUser);
 
 export default userRouter;

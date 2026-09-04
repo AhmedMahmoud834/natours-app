@@ -1,0 +1,17 @@
+extends baseEmail
+
+block content
+  p Hi #{firstName},
+  p Your booking for <strong>#{tourName}</strong> has been cancelled.
+  p If this was a mistake or you wish to reschedule, you can always explore our other available tours on Natours.
+  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td
+                  a(href=`${url}`, target='_blank') Explore Tours
+  p If you have any questions or need further assistance, feel free to reply directly to this email.
+  p - The Natours Team

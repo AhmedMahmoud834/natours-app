@@ -1,0 +1,73 @@
+extends baseAdmin
+
+block content
+  .admin-dashboard-wrapper
+    //- New Welcome Banner
+    .welcome-banner
+      h1 Welcome back, #{user ? user.name.split(' ')[0] : 'Admin'}! 👋
+      p.welcome-subtitle Here is what is happening with Natours today.
+      
+    .dashboard-header
+      h2.heading-secondary Business Overview
+      p.sub-heading Real-time summary of business metrics, tour inventory, and customer activity.
+
+    .stats-overview-grid.admin-stats-grid
+      // 1. Total Revenue Card
+      .stat-card.stat-card--revenue
+        .stat-card__icon-box
+          svg.stat-card__icon
+            use(href="/img/icons.svg#icon-dollar-sign")
+        .stat-card__details
+          span.stat-card__title Total Revenue
+          span.stat-card__number= `$${totalRevenue.toLocaleString()}`
+          span.stat-card__caption Paid bookings only
+
+      // 2. Active Bookings Card
+      .stat-card.stat-card--bookings
+        .stat-card__icon-box
+          svg.stat-card__icon
+            use(href="/img/icons.svg#icon-briefcase")
+        .stat-card__details
+          span.stat-card__title Active Bookings
+          span.stat-card__number= activeBookingsCount
+          span.stat-card__caption Pending & confirmed
+
+      // 3. Most Popular Tour Card
+      .stat-card.stat-card--tour
+        .stat-card__icon-box
+          svg.stat-card__icon
+            use(href="/img/icons.svg#icon-award")
+        .stat-card__details
+          span.stat-card__title Most Popular Tour
+          span.stat-card__number.stat-card__number--text= popularTourName
+          span.stat-card__caption= `${popularTourBookings} total bookings`
+
+      // 4. Total Clients / Users Card
+      .stat-card.stat-card--users
+        .stat-card__icon-box
+          svg.stat-card__icon
+            use(href="/img/icons.svg#icon-users")
+        .stat-card__details
+          span.stat-card__title Total Customers
+          span.stat-card__number= totalUsersCount
+          span.stat-card__caption Registered client accounts
+
+      // 5. Total Tours Card
+      .stat-card.stat-card--tours
+        .stat-card__icon-box
+          svg.stat-card__icon
+            use(href="/img/icons.svg#icon-map")
+        .stat-card__details
+          span.stat-card__title Total Tours
+          span.stat-card__number= totalToursCount
+          span.stat-card__caption Active itineraries
+
+      // 6. Global Average Rating Card
+      .stat-card.stat-card--rating
+        .stat-card__icon-box
+          svg.stat-card__icon
+            use(href="/img/icons.svg#icon-star")
+        .stat-card__details
+          span.stat-card__title Avg Tour Rating
+          span.stat-card__number= `★ ${globalAvgRating}`
+          span.stat-card__caption Platform-wide average

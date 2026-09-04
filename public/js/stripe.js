@@ -20,7 +20,7 @@
     const bookBtn = document.getElementById('book-tour');
     try {
       // 1) Get checkout session from API endpoint
-      const res = await fetch(`/api/v1/booking/checkout-session/${tourId}`);
+      const res = await fetch(`/api/v1/bookings/checkout-session/${tourId}`);
       const data = await res.json();
 
       if (!res.ok || (data.status !== 'Success' && data.status !== 'success')) {
@@ -55,9 +55,5 @@
     }
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initStripe);
-  } else {
-    initStripe();
-  }
+  document.addEventListener('tourRendered', initStripe);
 })();

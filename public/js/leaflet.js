@@ -1,5 +1,5 @@
 /* eslint-disable */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('tourRendered', () => {
   const mapElement = document.getElementById('map');
   if (!mapElement) return;
 
