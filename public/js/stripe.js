@@ -18,9 +18,24 @@
 
   const bookTour = async (tourId) => {
     const bookBtn = document.getElementById('book-tour');
+    const participantsInput = document.getElementById('tour-participants');
+    const participants = participantsInput
+      ? parseInt(participantsInput.value, 10) || 1
+      : 1;
+
     try {
+      if (participants < 1) {
+        throw new Error('Number of tickets must be at least 1.');
+      }
+      const maxGroup = bookBtn ? parseInt(bookBtn.dataset.maxGroup, 10) : null;
+      if (maxGroup && participants > maxGroup) {
+        throw new Error(`Cannot book more than ${maxGroup} tickets.`);
+      }
+
       // 1) Get checkout session from API endpoint
-      const res = await fetch(`/api/v1/bookings/checkout-session/${tourId}`);
+      const res = await fetch(
+        `/api/v1/bookings/checkout-session/${tourId}?participants=${participants}`,
+      );
       const data = await res.json();
 
       if (!res.ok || (data.status !== 'Success' && data.status !== 'success')) {

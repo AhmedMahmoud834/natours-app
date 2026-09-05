@@ -12,7 +12,7 @@ block append head
   script(src="/js/writeReview.js" defer)
 
 block content
-  main.main#tour-container(data-slug=slug data-user-role=(user ? user.role : ''))
+  main.main#tour-container(data-slug=slug data-user-role=(user ? user.role : '') data-user-id=(user ? user.id : ''))
     .tour-loading
       .tour-loading__hero
       .tour-loading__body
@@ -25,7 +25,7 @@ block content
   if user && user.role === 'user'
     section.section-write-review
       .review-form-container
-        h2.heading-secondary Leave a Review
+        h2.heading-secondary#review-form-title Leave a Review
         form#review-form(data-tour-id=(tour ? `${tour.id}` : ''))
           .form__group
             label.form__label Rating
@@ -39,7 +39,8 @@ block content
             label.form__label(for='review-content') Your Experience
             textarea#review-content.form__input(rows='4', required, placeholder='Share your adventure with others...', autocomplete='off', spellcheck='false')
           
-          .form__group.form__group--right
+          .form__group.form__group--actions(style='display: flex; justify-content: flex-end; align-items: center; gap: 1.5rem; margin-top: 2rem;')
+            button.btn.btn-delete#delete-review-btn(type='button' style='display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; padding: 1.2rem 2.4rem; border-radius: 10rem; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: all 0.2s;') Delete Review
             button.btn.btn-primary#submit-review(type='submit') Submit Review
 
   style.

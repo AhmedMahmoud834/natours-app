@@ -16,7 +16,7 @@ block content
             +navItem('/me', 'Settings', 'settings', false)
             if user && user.role === 'user'
               +navItem('/my-tours', 'My bookings', 'briefcase', true)
-              +navItem('#', 'My reviews', 'star', false)
+              +navItem('/my-reviews', 'My reviews', 'star', false)
               +navItem('#', 'Billing', 'credit-card', false)
             if user && (user.role === 'lead-guide' || user.role === 'admin')
               +navItem('/lead-guide-dashboard', 'Lead Guide Panel', 'map', false)
@@ -32,7 +32,28 @@ block content
 
         .user-view__content
           h2.heading-secondary.ma-bt-md My Booked Tours
-          if tours && tours.length
+          if bookings && bookings.length
+            .bookings-grid
+              each booking in bookings
+                - const tour = booking.tour || {}
+                .booking-card
+                  .booking-card__img
+                    img(src=`/img/tours/${tour.imageCover || 'tour-1-cover.jpg'}` alt=`${tour.name || 'Tour'}`)
+                  .booking-card__details
+                    h4.booking-card__title= tour.name || 'Tour'
+                    p.booking-card__text= tour.summary || ''
+                    .booking-card__meta(style='display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; font-size: 1.3rem; color: rgba(248, 249, 250, 0.7); margin-bottom: 0.5rem;')
+                      span
+                        strong(style='color: #ff6b35;')= `${booking.participants || 1} `
+                        = (booking.participants || 1) === 1 ? 'Guest' : 'Guests'
+                      span •
+                      span
+                        strong(style='color: #55c57a;')= `$${booking.price}`
+                      span •
+                      span(style=booking.status === 'confirmed' ? 'text-transform: uppercase; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; font-weight: 600; background: rgba(85, 197, 122, 0.15); color: #55c57a;' : 'text-transform: uppercase; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; font-weight: 600; background: rgba(245, 158, 11, 0.15); color: #f59e0b;')= booking.status || 'confirmed'
+                    if tour.slug
+                      a.btn.btn--primary.btn--pill.btn--small(href=`/tours/${tour.slug}`) View Tour
+          else if tours && tours.length
             .bookings-grid
               each tour in tours
                 .booking-card

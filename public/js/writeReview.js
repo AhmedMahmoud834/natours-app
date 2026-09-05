@@ -1,16 +1,21 @@
-// Interactive Star Rating & Write Review Submission
+// Interactive Star Rating & Write/Edit/Delete Review Submission
 
 document.addEventListener('DOMContentLoaded', () => {
   const reviewForm = document.getElementById('review-form');
   if (!reviewForm) return;
 
+  const tourContainer = document.getElementById('tour-container');
+  const currentUserId = tourContainer?.dataset.userId;
+  const formTitle = document.getElementById('review-form-title');
   const starIcons = reviewForm.querySelectorAll('.star-icon');
   const ratingInput = document.getElementById('review-rating');
   const starContainer = reviewForm.querySelector('.star-rating');
   const submitBtn = document.getElementById('submit-review');
+  const deleteBtn = document.getElementById('delete-review-btn');
   const reviewContent = document.getElementById('review-content');
 
   let currentSelectedRating = 0;
+  let existingReviewId = null;
 
   const hideAlert = () => {
     const el = document.querySelector('.alert');
@@ -35,16 +40,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // 1. Star Rating Interactions
+  // 1. Check for Existing Review by Current User
+  const initExistingReview = (reviews) => {
+    if (!currentUserId || !reviews || !reviews.length) return;
+
+    const myReview = reviews.find(
+      (r) =>
+        r.user &&
+        ((r.user._id && r.user._id.toString() === currentUserId) ||
+          (r.user.id && r.user.id.toString() === currentUserId) ||
+          r.user.toString() === currentUserId),
+    );
+
+    if (myReview) {
+      existingReviewId = myReview._id || myReview.id;
+      currentSelectedRating = myReview.rating;
+      ratingInput.value = myReview.rating;
+      updateStars(currentSelectedRating, 'active');
+      reviewContent.value = myReview.review || '';
+
+      if (formTitle) formTitle.textContent = 'Edit Your Review';
+      if (submitBtn) submitBtn.textContent = 'Update Review';
+      if (deleteBtn) deleteBtn.style.display = 'inline-block';
+    }
+  };
+
+  if (window.currentTourReviews) {
+    initExistingReview(window.currentTourReviews);
+  }
+
+  document.addEventListener('reviewsLoaded', (e) => {
+    if (e.detail && e.detail.reviews) {
+      initExistingReview(e.detail.reviews);
+    }
+  });
+
+  // 2. Star Rating Interactions
   starIcons.forEach((star) => {
-    // Hover over a star
     star.addEventListener('mouseover', () => {
       const hoverRating = parseInt(star.dataset.rating, 10);
       starIcons.forEach((s) => s.classList.remove('hovered'));
       updateStars(hoverRating, 'hovered');
     });
 
-    // Click to lock in rating
     star.addEventListener('click', () => {
       currentSelectedRating = parseInt(star.dataset.rating, 10);
       ratingInput.value = currentSelectedRating;
@@ -52,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Mouse leaves star container -> revert to selected rating
   if (starContainer) {
     starContainer.addEventListener('mouseleave', () => {
       starIcons.forEach((s) => s.classList.remove('hovered'));
@@ -60,7 +97,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 2. Form Submission with Axios
+  // 3. Delete Review Handler
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', async () => {
+      if (!existingReviewId) return;
+
+      const confirmed = window.confirm(
+        'Are you sure you want to delete your review? This action cannot be undone.',
+      );
+      if (!confirmed) return;
+
+      deleteBtn.disabled = true;
+      deleteBtn.textContent = 'Deleting...';
+
+      try {
+        const res = await fetch(`/api/v1/reviews/${existingReviewId}`, {
+          method: 'DELETE',
+        });
+
+        if (!res.ok && res.status !== 204) {
+          const data = await res.json();
+          throw new Error(data.message || 'Failed to delete review');
+        }
+
+        showAlert('success', 'Review deleted successfully!');
+        window.setTimeout(() => {
+          location.reload();
+        }, 1200);
+      } catch (err) {
+        showAlert('error', err.message || 'Error deleting your review.');
+        deleteBtn.disabled = false;
+        deleteBtn.textContent = 'Delete Review';
+      }
+    });
+  }
+
+  // 4. Form Submission (Create or Update)
   reviewForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -68,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rating = parseInt(ratingInput.value, 10);
     const review = reviewContent.value.trim();
 
-    if (!tourId) {
+    if (!tourId && !existingReviewId) {
       return showAlert('error', 'Tour ID not found. Please refresh the page.');
     }
 
@@ -82,41 +154,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Submitting...';
+      const isEdit = Boolean(existingReviewId);
+      submitBtn.textContent = isEdit ? 'Updating...' : 'Submitting...';
 
-      // POST to /api/v1/tours/:tourId/reviews
-      const res = await axios({
-        method: 'POST',
-        url: `/api/v1/tours/${tourId}/reviews`,
-        data: {
-          rating,
-          review,
-        },
+      const url = isEdit
+        ? `/api/v1/reviews/${existingReviewId}`
+        : `/api/v1/tours/${tourId}/reviews`;
+      const method = isEdit ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rating, review }),
       });
 
-      if (res.data.status === 'Success' || res.status === 201) {
-        showAlert('success', 'Review submitted successfully!');
-        
-        // Reset form
-        reviewForm.reset();
-        currentSelectedRating = 0;
-        ratingInput.value = '';
-        updateStars(0, 'active');
-
-        // Reload page after a brief moment so user sees their new review
-        window.setTimeout(() => {
-          location.reload();
-        }, 1500);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(
+          data.message || `Error ${isEdit ? 'updating' : 'submitting'} review.`,
+        );
       }
+
+      showAlert(
+        'success',
+        isEdit
+          ? 'Review updated successfully!'
+          : 'Review submitted successfully!',
+      );
+
+      window.setTimeout(() => {
+        location.reload();
+      }, 1500);
     } catch (err) {
-      const message =
-        err.response?.data?.message ||
-        err.message ||
-        'Error submitting your review. Please try again.';
-      showAlert('error', message);
+      showAlert('error', err.message || 'Error processing your review.');
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit Review';
+      submitBtn.textContent = existingReviewId
+        ? 'Update Review'
+        : 'Submit Review';
     }
   });
 });

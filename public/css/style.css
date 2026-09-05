@@ -1253,6 +1253,48 @@ ul {
   color: #000000;
   font-size: 3rem;
 }
+.cta__booking-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+@media only screen and (max-width: 50em) {
+  .cta__booking-controls {
+    justify-content: center;
+  }
+}
+.cta__participants-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10rem;
+  padding: 0.8rem 1.6rem;
+  transition: all 0.2s ease;
+}
+.cta__participants-group:focus-within {
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+}
+.cta__participants-group label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #000000;
+  cursor: pointer;
+}
+.cta__participants-group input {
+  width: 5rem;
+  background: transparent;
+  border: none;
+  color: #000000;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+}
 
 .btn--pill {
   padding: 2.4rem 4.8rem;
@@ -1998,6 +2040,14 @@ ul {
   color: rgba(248, 249, 250, 0.7);
   line-height: 1.6;
 }
+.booking-card__meta {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 1.3rem;
+  color: rgba(248, 249, 250, 0.7);
+}
 .booking-card .btn {
   align-self: flex-start;
 }
@@ -2706,14 +2756,15 @@ ul {
   font-weight: 400;
   text-transform: capitalize;
 }
-.admin-controls .glass-form {
+
+.glass-form {
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 3rem;
   border-radius: 1rem;
 }
-.admin-controls .glass-form .heading-tertiary, .admin-controls .glass-form #form-title {
+.glass-form .heading-tertiary, .glass-form #form-title {
   color: #f8f9fa;
   font-size: 1.8rem;
   font-weight: 700;
@@ -2721,13 +2772,13 @@ ul {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.admin-controls .glass-form .form__group {
+.glass-form .form__group {
   margin-bottom: 2rem;
 }
-.admin-controls .glass-form .form__label {
+.glass-form .form__label {
   color: rgba(248, 249, 250, 0.8);
 }
-.admin-controls .glass-form .form__input {
+.glass-form .form__input {
   background-color: rgba(255, 255, 255, 0.05);
   color: #f8f9fa;
   padding: 1.5rem;
@@ -2736,22 +2787,22 @@ ul {
   width: 100%;
   transition: all 0.3s;
 }
-.admin-controls .glass-form .form__input:focus {
+.glass-form .form__input:focus {
   border-color: #ff6b35;
   outline: none;
   box-shadow: 0 0 10px rgba(255, 107, 53, 0.2);
 }
-.admin-controls .glass-form .form__input option {
+.glass-form .form__input option {
   background-color: #0b101e;
 }
-.admin-controls .glass-form .form__input[type=number] {
+.glass-form .form__input[type=number] {
   -moz-appearance: textfield;
 }
-.admin-controls .glass-form .form__input[type=number]::-webkit-inner-spin-button, .admin-controls .glass-form .form__input[type=number]::-webkit-outer-spin-button {
+.glass-form .form__input[type=number]::-webkit-inner-spin-button, .glass-form .form__input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.admin-controls .glass-form .form__input[type=file] {
+.glass-form .form__input[type=file] {
   padding: 1rem;
   color: rgba(255, 255, 255, 0.7);
   font-family: inherit;
@@ -2759,7 +2810,7 @@ ul {
   word-break: break-all; /* Prevents long filenames from breaking the container */
   line-height: 1.5;
 }
-.admin-controls .glass-form .form__input[type=file]::file-selector-button {
+.glass-form .form__input[type=file]::file-selector-button {
   display: block; /* The magic rule that forces the 2-line layout */
   width: 100%; /* Makes the button fill the container width */
   margin-right: 0; /* Remove any previous right margin */
@@ -2774,12 +2825,12 @@ ul {
   transition: all 0.2s;
   font-weight: 600;
 }
-.admin-controls .glass-form .form__input[type=file]::file-selector-button:hover {
+.glass-form .form__input[type=file]::file-selector-button:hover {
   background-color: #ff6b35;
   border-color: #ff6b35;
   color: #fff;
 }
-.admin-controls .glass-form .form__group--actions {
+.glass-form .form__group--actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
@@ -2787,7 +2838,7 @@ ul {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   padding-top: 3rem;
 }
-.admin-controls .glass-form .form__group--actions button {
+.glass-form .form__group--actions button {
   width: 100%;
   border: none;
   outline: none;
@@ -3650,75 +3701,221 @@ ul {
 }
 .tour-dashboard-card__actions {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  gap: 1rem; /* Slightly tighter gap to fit 3 buttons nicely */
   width: 100%;
+  margin-top: 1.5rem;
 }
-.tour-dashboard-card__cta {
-  flex: 1;
-  text-align: center;
-  display: inline-flex;
+.tour-dashboard-card {
+  /* Unified Base Button Style */
+}
+.tour-dashboard-card__btn, .tour-dashboard-card__cta, .tour-dashboard-card__btn-status {
+  flex: 1; /* Forces all buttons to share the space equally */
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.1rem 1.6rem;
-  background-color: #FF6B35;
-  color: #fff;
-  border-radius: 0.6rem;
-  font-size: 1.3rem;
+  padding: 1rem 0.5rem; /* Thinner horizontal padding so they don't overflow */
+  font-size: 1.2rem; /* Scaled down slightly to fit 3 words cleanly */
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
-  border: 1px solid transparent;
-  line-height: 1.2;
-}
-.tour-dashboard-card__cta:hover {
-  background-color: #e05e2e;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 107, 53, 0.35);
-  color: #fff;
-}
-.tour-dashboard-card__btn-status {
-  flex: 1;
-  text-align: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.1rem 1.6rem;
-  border-radius: 0.6rem;
-  font-size: 1.3rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
   cursor: pointer;
-  transition: all 0.2s ease;
+  text-align: center;
+  white-space: nowrap; /* CRITICAL: Forces text to stay on one single line */
+  text-decoration: none; /* In case any button is an <a> tag */
   border: 1px solid transparent;
   font-family: inherit;
   line-height: 1.2;
 }
-.tour-dashboard-card__btn-status--active {
-  background: rgba(239, 68, 68, 0.12);
+.tour-dashboard-card {
+  /* View Button (Solid Primary) */
+}
+.tour-dashboard-card__cta, .tour-dashboard-card__btn--view, .tour-dashboard-card__btn--primary {
+  background-color: #FF6B35;
+  border-color: #FF6B35;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.25);
+}
+.tour-dashboard-card__cta:hover, .tour-dashboard-card__btn--view:hover, .tour-dashboard-card__btn--primary:hover {
+  background-color: #e05e2e;
+  border-color: #e05e2e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  color: #fff;
+}
+.tour-dashboard-card {
+  /* Edit Button (Outline Theme) */
+}
+.tour-dashboard-card__btn--edit {
+  background: transparent;
+  border-color: rgba(255, 107, 53, 0.5);
+  color: #FF6B35;
+}
+.tour-dashboard-card__btn--edit:hover {
+  background: #FF6B35;
+  border-color: #FF6B35;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+}
+.tour-dashboard-card {
+  /* Deactivate Button (Outline Red / Status Active) */
+}
+.tour-dashboard-card__btn-status--active, .tour-dashboard-card__btn--status-active, .tour-dashboard-card__btn--status--active, .tour-dashboard-card__btn--deactivate {
+  background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.4);
   color: #ef4444;
 }
-.tour-dashboard-card__btn-status--active:hover {
+.tour-dashboard-card__btn-status--active:hover, .tour-dashboard-card__btn--status-active:hover, .tour-dashboard-card__btn--status--active:hover, .tour-dashboard-card__btn--deactivate:hover {
   background: #ef4444;
+  border-color: #ef4444;
   color: #fff;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
-.tour-dashboard-card__btn-status--inactive {
-  background: rgba(16, 185, 129, 0.12);
+.tour-dashboard-card {
+  /* Activate Button (Outline Green / Status Inactive) */
+}
+.tour-dashboard-card__btn-status--inactive, .tour-dashboard-card__btn--status-inactive, .tour-dashboard-card__btn--status--inactive, .tour-dashboard-card__btn--activate {
+  background: rgba(16, 185, 129, 0.1);
   border-color: rgba(16, 185, 129, 0.4);
   color: #10b981;
 }
-.tour-dashboard-card__btn-status--inactive:hover {
+.tour-dashboard-card__btn-status--inactive:hover, .tour-dashboard-card__btn--status-inactive:hover, .tour-dashboard-card__btn--status--inactive:hover, .tour-dashboard-card__btn--activate:hover {
   background: #10b981;
+  border-color: #10b981;
   color: #fff;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* ==========================================
+   USER ACCOUNT REVIEWS MANAGEMENT
+   ========================================== */
+.user-reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(32rem, 1fr));
+  gap: 2.5rem;
+  margin-top: 2rem;
+}
+
+.user-review-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+}
+.user-review-card:hover {
+  border-color: rgba(255, 107, 53, 0.3);
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.2);
+}
+.user-review-card__header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.user-review-card__img {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 0.8rem;
+  object-fit: cover;
+}
+.user-review-card__tour-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.user-review-card__tour-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #F8F9FA;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.user-review-card__tour-name:hover {
+  color: #FF6B35;
+}
+.user-review-card__date {
+  font-size: 1.2rem;
+  color: rgba(248, 249, 250, 0.5);
+}
+.user-review-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.user-review-card__rating {
+  display: flex;
+  gap: 0.4rem;
+}
+.user-review-card__rating .star-icon {
+  width: 2rem;
+  height: 2rem;
+  fill: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.user-review-card__rating .star-icon.active, .user-review-card__rating .star-icon.hovered {
+  fill: #FF6B35;
+  transform: scale(1.1);
+}
+.user-review-card__textarea {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #F8F9FA;
+  padding: 1rem 1.2rem;
+  border-radius: 0.6rem;
+  font-family: inherit;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+.user-review-card__textarea:focus {
+  border-color: #FF6B35;
+  outline: none;
+}
+.user-review-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+.user-review-card__actions .btn-save-user-review {
+  background: #FF6B35;
+  color: #fff;
+  border: 1px solid #FF6B35;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.user-review-card__actions .btn-save-user-review:hover {
+  background: #e05e2e;
+}
+.user-review-card__actions .btn-delete-user-review {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.user-review-card__actions .btn-delete-user-review:hover {
+  background: #ef4444;
+  color: #fff;
 }
 
 /*# sourceMappingURL=style.css.map */

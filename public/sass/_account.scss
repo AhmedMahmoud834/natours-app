@@ -244,6 +244,15 @@
     line-height: 1.6;
   }
 
+  &__meta {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 1.3rem;
+    color: rgba($color-neutral-gray, 0.7);
+  }
+
   .btn {
     align-self: flex-start;
   }

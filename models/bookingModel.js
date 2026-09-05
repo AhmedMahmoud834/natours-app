@@ -15,6 +15,12 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Booking must have a price!'],
   },
+  participants: {
+    type: Number,
+    required: [true, 'A booking must specify number of participants!'],
+    default: 1,
+    min: [1, 'A booking must have at least 1 participant!'],
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -42,7 +48,7 @@ const bookingSchema = new mongoose.Schema({
 bookingSchema.pre(/^find/, function () {
   this.populate('user').populate({
     path: 'tour',
-    select: 'name',
+    select: 'name imageCover slug summary',
   });
 });
 

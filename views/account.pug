@@ -19,7 +19,7 @@ block content
             +navItem('/me', 'Settings', 'settings', true)
             if user && user.role === 'user'
               +navItem('/my-tours', 'My bookings', 'briefcase', false)
-              +navItem('#', 'My reviews', 'star', false)
+              +navItem('/my-reviews', 'My reviews', 'star', false)
               +navItem('#', 'Billing', 'credit-card', false)
             if user && (user.role === 'lead-guide' || user.role === 'admin')
               +navItem('/lead-guide-dashboard', 'Lead Guide Panel', 'map', false)

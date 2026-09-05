@@ -1,4 +1,5 @@
 import Booking from '../models/bookingModel.js';
+import Review from '../models/reviewModel.js';
 import Tour from '../models/tourModel.js';
 import User from '../models/userModel.js';
 import APIFeatures from '../util/apiFeatures.js';
@@ -113,14 +114,33 @@ export const getResetPasswordForm = (req, res, next) => {
 };
 
 export const getMyTours = async (req, res, next) => {
-  const bookings = await Booking.find({ user: req.user.id });
+  const bookings = await Booking.find({ user: req.user.id })
+    .populate({
+      path: 'tour',
+      select: 'name slug imageCover summary duration difficulty price dates startDates',
+    })
+    .sort('-createdAt');
 
-  const toursIds = bookings.map((el) => el.tour);
-  const tours = await Tour.find({ _id: { $in: toursIds } });
+  const tours = bookings.map((b) => b.tour).filter(Boolean);
 
   res.status(200).render('accountBookings', {
     title: 'My Bookings',
+    bookings,
     tours,
+    user: req.user,
+  });
+};
+
+export const getMyReviews = async (req, res, next) => {
+  const reviews = await Review.find({ user: req.user.id }).populate({
+    path: 'tour',
+    select: 'name slug imageCover difficulty duration price',
+  });
+
+  res.status(200).render('accountReviews', {
+    title: 'My Reviews',
+    activeTab: 'reviews',
+    reviews,
     user: req.user,
   });
 };
@@ -249,7 +269,8 @@ export const getGuideDashboard = async (req, res, next) => {
   allBookings.forEach((b) => {
     const tId = b.tour ? b.tour.toString() : null;
     if (tId) {
-      tourParticipantCounts[tId] = (tourParticipantCounts[tId] || 0) + 1;
+      tourParticipantCounts[tId] =
+        (tourParticipantCounts[tId] || 0) + (b.participants || 1);
     }
   });
 

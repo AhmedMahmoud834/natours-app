@@ -13,10 +13,21 @@ const stripe = new Stripe(config.stripe.secretKey);
 export const getCheckoutSession = async (req, res, next) => {
   if (req.user.role !== 'user')
     return next(
-      new AppError('You don not have permission to do this action.', 403),
+      new AppError('You do not have permission to do this action.', 403),
     );
   const tour = await Tour.findById(req.params.tourId);
   if (!tour) return next(new AppError('Tour not found!', 404));
+
+  const participants = Math.max(1, parseInt(req.query.participants, 10) || 1);
+  if (tour.maxGroupSize && participants > tour.maxGroupSize) {
+    return next(
+      new AppError(
+        `Participants cannot exceed maximum group size of ${tour.maxGroupSize}.`,
+        400,
+      ),
+    );
+  }
+  console.log(req.query.participants);
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
@@ -24,6 +35,10 @@ export const getCheckoutSession = async (req, res, next) => {
     cancel_url: `${req.protocol}://${req.get('host')}/tours/${tour.slug}`,
     customer_email: req.user.email,
     client_reference_id: tour.id,
+    metadata: {
+      tourId: tour.id,
+      participants: participants.toString(),
+    },
     mode: 'payment',
     line_items: [
       {
@@ -40,7 +55,7 @@ export const getCheckoutSession = async (req, res, next) => {
             ],
           },
         },
-        quantity: 1,
+        quantity: participants,
       },
     ],
   });
@@ -54,22 +69,33 @@ export const getCheckoutSession = async (req, res, next) => {
 const createBookingCheckout = async (session, req) => {
   const stripePaymentIntentId = session.payment_intent;
   const tourId = session.client_reference_id;
+  const participants = parseInt(session.metadata?.participants, 10) || 1;
   const user = await User.findOne({ email: session.customer_email });
 
   if (!user) {
-    logger.error(`createBookingCheckout: No user found for email ${session.customer_email}`);
+    logger.error(
+      `createBookingCheckout: No user found for email ${session.customer_email}`,
+    );
     return;
   }
+
+  console.log(session.metadata.participants);
+  logger.info(
+    `createBookingCheckout: session.metadata=${JSON.stringify(session.metadata)}, parsed participants=${participants}`,
+  );
 
   const booking = await Booking.create({
     tour: tourId,
     user: user.id,
     price: session.amount_total / 100,
+    participants,
     paid: true,
     status: 'confirmed',
     paymentOption: 'stripe',
-    stripePaymentIntentId
+    stripePaymentIntentId,
   });
+
+  console.log(booking);
 
   try {
     const tour = await Tour.findById(tourId);
@@ -81,13 +107,16 @@ const createBookingCheckout = async (session, req) => {
     await new Email(user, url).sendBookingConfirmation(tour, booking);
     logger.info(`Booking confirmation email sent to ${user.email}`);
   } catch (err) {
-    logger.error(`Error sending booking confirmation email: ${err.message}`, { stack: err.stack });
+    logger.error(`Error sending booking confirmation email: ${err.message}`, {
+      stack: err.stack,
+    });
   }
 
   return booking;
 };
 
 export const webhookCheckout = async (req, res, next) => {
+  console.log('webhook hit');
   const signature = req.headers['stripe-signature'];
   let event;
   try {
@@ -96,16 +125,20 @@ export const webhookCheckout = async (req, res, next) => {
       signature,
       config.stripe.webhookSecret,
     );
+    console.log('signature verification done');
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
+    console.log('session metadata', session.metadata);
+    console.log('session customer_email', session.customer_email);
     await createBookingCheckout(session, req);
+    console.log("creating booking done")
   }
-  
+
   res.status(200).json({ received: true });
 };
 
@@ -250,7 +283,13 @@ export const getAllBookings = FactoryHandler.getAll(Booking);
 export const getOneBooking = FactoryHandler.getOne(Booking, 'bookingId');
 
 export const createBooking = async (req, res, next) => {
-  const { tour: tourId, user, price, status } = req.body;
+  const {
+    tour: tourId,
+    user,
+    price,
+    status,
+    participants: rawParticipants,
+  } = req.body;
 
   // 1. Validate status (only pending or confirmed allowed at creation)
   if (status && !['pending', 'confirmed'].includes(status)) {
@@ -266,26 +305,39 @@ export const createBooking = async (req, res, next) => {
   const tour = await Tour.findById(tourId);
   if (!tour) return next(new AppError('No tour found with that ID.', 404));
 
-  // 3. Resolve price: use admin custom price if provided, otherwise default to tour calculated price
+  // 3. Resolve participants count and validate against maxGroupSize
+  const participants = Math.max(1, parseInt(rawParticipants, 10) || 1);
+  if (tour.maxGroupSize && participants > tour.maxGroupSize) {
+    return next(
+      new AppError(
+        `Participants cannot exceed maximum group size of ${tour.maxGroupSize}.`,
+        400,
+      ),
+    );
+  }
+
+  // 4. Resolve price: use admin custom price if provided, otherwise default to tour calculated price * participants
   let finalPrice;
   if (price !== undefined && price !== null && price !== '') {
     finalPrice = Number(price);
   } else {
-    finalPrice = tour.priceDiscount
+    const unitPrice = tour.priceDiscount
       ? tour.price - tour.priceDiscount
       : tour.price;
+    finalPrice = unitPrice * participants;
   }
 
-  // 4. Resolve status and paid flag
+  // 5. Resolve status and paid flag
   const bookingStatus = status || 'pending';
   const isPaid =
     req.body.paid !== undefined ? req.body.paid : bookingStatus === 'confirmed';
 
-  // 5. Create the booking (always cash for manual admin creation)
+  // 6. Create the booking (always cash for manual admin creation)
   const booking = await Booking.create({
     tour: tourId,
     user,
     price: finalPrice,
+    participants,
     status: bookingStatus,
     paid: isPaid,
     paymentOption: 'cash',

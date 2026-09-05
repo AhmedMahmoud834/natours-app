@@ -53,10 +53,14 @@ block content
                           span.tour-dashboard-card__footer-label Duration & Max Group
                           strong.tour-dashboard-card__footer-value= `${tour.duration} days • ${tour.maxGroupSize} ppl`
                       .tour-dashboard-card__actions
-                        a.tour-dashboard-card__cta(href=`/tours/${tour.slug}` target='_blank') View Tour
-                        button.btn-toggle-tour-status.tour-dashboard-card__btn-status(
+                        a.tour-dashboard-card__btn.tour-dashboard-card__btn--view(href=`/tours/${tour.slug}` target='_blank') View Tour
+                        button.btn-edit-tour.tour-dashboard-card__btn.tour-dashboard-card__btn--edit(
                           type='button'
-                          class=tour.active !== false ? 'tour-dashboard-card__btn-status--active' : 'tour-dashboard-card__btn-status--inactive'
+                          data-tour-id=tour.id
+                        ) Edit
+                        button.btn-toggle-tour-status.tour-dashboard-card__btn(
+                          type='button'
+                          class=tour.active !== false ? 'tour-dashboard-card__btn--status-active' : 'tour-dashboard-card__btn--status-inactive'
                           data-tour-id=tour.id
                           data-active=`${tour.active !== false}`
                         )= tour.active !== false ? 'Deactivate' : 'Activate'
@@ -89,55 +93,15 @@ block content
                           p(style='color: rgba(255, 255, 255, 0.5); font-size: 1.2rem; margin: 0;')= booking.user ? booking.user.email : 'N/A'
                       div(style='text-align: right;')
                         span(style='display: block; color: #ff6b35; font-size: 1.3rem; font-weight: 600;')= booking.tour && booking.tour.name ? booking.tour.name : 'Tour'
-                        span(style='display: inline-block; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; text-transform: uppercase; background: rgba(85, 197, 122, 0.15); color: #55c57a; margin-top: 0.3rem;')= booking.status
+                        div(style='display: flex; gap: 0.8rem; align-items: center; justify-content: flex-end; margin-top: 0.3rem;')
+                          span(style='font-size: 1.2rem; color: rgba(255, 255, 255, 0.7); font-weight: 500;')= `${booking.participants || 1} guest${(booking.participants || 1) > 1 ? 's' : ''}`
+                          span(style='display: inline-block; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; text-transform: uppercase; background: rgba(85, 197, 122, 0.15); color: #55c57a;')= booking.status
             else
               p.empty-state(style='color: rgba(255, 255, 255, 0.5); font-style: italic; margin-bottom: 3rem;') No bookings yet for your assigned tours.
 
           .line &nbsp;
 
-          // 3. CREATE NEW TOUR FORM
-          .user-view__form-container
-            h2.heading-secondary.ma-bt-md Create a New Tour
-            form#create-tour-form.form
-              .form__group
-                label.form__label(for='tour-name') Tour Name
-                input#tour-name.form__input(type='text', required, placeholder='The Forest Hiker')
-              
-              .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;')
-                .form__group
-                  label.form__label(for='tour-duration') Duration (Days)
-                  input#tour-duration.form__input(type='number', min='1', required, placeholder='5')
-                .form__group
-                  label.form__label(for='tour-maxGroupSize') Max Group Size
-                  input#tour-maxGroupSize.form__input(type='number', min='1', required, placeholder='15')
-
-              .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;')
-                .form__group
-                  label.form__label(for='tour-difficulty') Difficulty
-                  select#tour-difficulty.form__input(required)
-                    option(value='easy') Easy
-                    option(value='medium' selected) Medium
-                    option(value='difficult') Difficult
-                .form__group
-                  label.form__label(for='tour-price') Price ($)
-                  input#tour-price.form__input(type='number', min='0', required, placeholder='497')
-
-              .form__group
-                label.form__label(for='tour-summary') Summary
-                input#tour-summary.form__input(type='text', required, placeholder='Breathtaking hike through the forest')
-
-              .form__group
-                label.form__label(for='tour-description') Description
-                textarea#tour-description.form__input(rows='4', required, placeholder='Detailed description of the tour experience...')
-
-              .form__group
-                label.form__label(for='tour-guides') Assign Guides (Optional — Hold Ctrl / Cmd to select multiple)
-                select#tour-guides.form__input(multiple size='3' style='height: auto; min-height: 8rem;')
-                  if availableGuides && availableGuides.length
-                    each g in availableGuides
-                      option(value=g.id)= `${g.name} (${g.email})`
-                  else
-                    option(disabled) No supporting guides found
-
-              .form__group.form__group--right(style='display: flex; justify-content: flex-end; margin-top: 2rem;')
-                button.btn.btn--primary.btn--pill(type='submit') Create Tour
+          // 3. CREATE / EDIT TOUR FORM
+          .user-view__form-container#tour-form-section
+            include _tourForm
+            +tourForm({ hidden: false, saveText: 'Create Tour', cancelHidden: true })

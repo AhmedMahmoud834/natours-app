@@ -1,0 +1,64 @@
+extends base
+
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(href=`/img/icons.svg#icon-${icon}`)
+      span= text
+
+block append head
+  script(src='/js/myReviews.js' defer)
+
+block content
+  main.main
+    section.section-account
+      .user-view
+        nav.user-view__menu
+          ul.side-nav
+            +navItem('/me', 'Settings', 'settings', false)
+            if user && user.role === 'user'
+              +navItem('/my-tours', 'My bookings', 'briefcase', false)
+              +navItem('/my-reviews', 'My reviews', 'star', true)
+              +navItem('#', 'Billing', 'credit-card', false)
+            if user && (user.role === 'lead-guide' || user.role === 'admin')
+              +navItem('/lead-guide-dashboard', 'Lead Guide Panel', 'map', false)
+          
+          if user && user.role === 'admin'
+            .admin-nav
+              h5.admin-nav__heading Admin
+              ul.side-nav
+                +navItem('/admin/overview', 'Dashboard', 'trending-up', false)
+                +navItem('/admin/tours', 'Manage tours', 'map', false)
+                +navItem('/admin/users', 'Manage users', 'users', false)
+                +navItem('/admin/reviews', 'Manage reviews', 'star', false)
+                +navItem('/admin/bookings', 'Manage bookings', 'briefcase', false)
+
+        .user-view__content
+          h2.heading-secondary.ma-bt-md My Reviews
+          if reviews && reviews.length
+            .user-reviews-grid
+              each r in reviews
+                - const tour = r.tour || {}
+                .user-review-card(data-review-id=r.id data-original-rating=r.rating data-original-text=r.review)
+                  .user-review-card__header
+                    if tour.imageCover
+                      img.user-review-card__img(src=`/img/tours/${tour.imageCover}` alt=`${tour.name}`)
+                    .user-review-card__tour-info
+                      a.user-review-card__tour-name(href=`/tours/${tour.slug || '#'}` target='_blank')= tour.name || 'Tour'
+                      span.user-review-card__date= new Date(r.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                  
+                  .user-review-card__body
+                    .star-rating.user-review-card__rating
+                      - for (let i = 1; i <= 5; i++)
+                        svg.star-icon(data-rating=i class=(i <= r.rating ? 'active' : ''))
+                          use(href='/img/icons.svg#icon-star')
+                      input.user-review-rating-input(type='hidden' value=r.rating)
+                    
+                    textarea.form__input.user-review-card__textarea(rows='3' placeholder='Your review text...' required)= r.review
+                  
+                  .user-review-card__actions
+                    button.btn.btn--small.btn--primary.btn-save-user-review(type='button') Save Changes
+                    button.btn.btn--small.btn-delete-user-review(type='button') Delete
+          else
+            p.empty-state(style='color: rgba(255, 255, 255, 0.5); font-style: italic;') You have not written any reviews yet.

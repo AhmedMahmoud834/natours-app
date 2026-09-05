@@ -20,6 +20,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resReviews = await fetch(`/api/v1/reviews?tour=${tour.id}`);
     const reviewsData = await resReviews.json();
     const reviews = resReviews.ok ? (reviewsData.data?.document || []) : [];
+    window.currentTourReviews = reviews;
+    document.dispatchEvent(
+      new CustomEvent('reviewsLoaded', {
+        detail: { reviews, tourId: tour.id },
+      }),
+    );
 
     // Helper functions
     const formatDate = (dateString) => {
@@ -57,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <svg class="header-hero__icon">
                   <use href="/img/icons.svg#icon-map-pin"></use>
                 </svg>
-                <span class="header-hero__text">${tour.startLocation.description}</span>
+                <span class="header-hero__text">${tour.startLocation?.description || 'Location TBD'}</span>
               </div>
             </div>
           </div>
@@ -72,9 +78,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const priceHtml = tour.priceDiscount 
       ? `<span style="text-decoration: line-through; opacity: 0.7; margin-right: 0.5rem; font-weight: normal;">$${tour.price}</span><span style="color: #ff6b35;">$${tour.price - tour.priceDiscount}</span>` 
       : `$${tour.price}`;
-    
+
     let guidesHtml = '';
-    if (tour.guides) {
+    if (tour.guides && tour.guides.length) {
       tour.guides.forEach(guide => {
         let roleText = '';
         if (guide.role === 'lead-guide') roleText = '<span class="overview-box__role">Lead guide</span>';
@@ -82,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         guidesHtml += `
           <div class="overview-box__guide">
-            <img class="overview-box__guide-img" src="/img/users/${guide.photo}" alt="${guide.name}">
+            <img class="overview-box__guide-img" src="/img/users/${guide.photo || 'default.jpg'}" alt="${guide.name}">
             ${roleText}
             <span class="overview-box__name">${guide.name}</span>
           </div>
@@ -145,11 +151,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     `;
 
     // -- REVIEWS SECTION --
+    const currentUserId = container.dataset.userId;
     let reviewsListHtml = '';
     if (reviews.length) {
       reviews.forEach(review => {
         const photo = review.user && review.user.photo ? review.user.photo : 'default.jpg';
         const name = review.user && review.user.name ? review.user.name : 'Anonymous';
+        const isMyReview =
+          currentUserId &&
+          review.user &&
+          ((review.user._id && review.user._id.toString() === currentUserId) ||
+            (review.user.id && review.user.id.toString() === currentUserId) ||
+            review.user.toString() === currentUserId);
         
         let starsHtml = '';
         for (let star = 1; star <= 5; star++) {
@@ -162,15 +175,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         reviewsListHtml += `
-          <div class="reviews__card">
+          <div class="reviews__card" ${isMyReview ? 'style="border: 1px solid rgba(255, 107, 53, 0.4);"' : ''}>
             <div class="reviews__avatar">
               <img class="reviews__avatar-img" src="/img/users/${photo}" alt="${name}">
               <h6 class="reviews__user">${name}</h6>
+              ${
+                isMyReview
+                  ? '<span class="badge" style="margin-left: auto; font-size: 1rem; padding: 0.2rem 0.6rem; background: rgba(255, 107, 53, 0.15); color: #FF6B35; border: 1px solid rgba(255, 107, 53, 0.4); border-radius: 10rem;">You</span>'
+                  : ''
+              }
             </div>
             <p class="reviews__text">${review.review}</p>
             <div class="reviews__rating">
               ${starsHtml}
             </div>
+            ${
+              isMyReview
+                ? '<a href="#review-form" style="display: block; margin-top: 1.2rem; font-size: 1.2rem; color: #FF6B35; font-weight: 600; text-decoration: underline;">Edit your review &darr;</a>'
+                : ''
+            }
           </div>
         `;
       });
@@ -195,7 +218,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     let ctaButtonHtml = '';
     
     if (userRole === 'user') {
-      ctaButtonHtml = `<button class="btn btn--primary btn--pill" id="book-tour" data-tour-id="${tour.id}">Book tour now!</button>`;
+      const maxGroup = tour.maxGroupSize || 20;
+      ctaButtonHtml = `
+        <div class="cta__booking-controls">
+          <div class="cta__participants-group">
+            <label for="tour-participants">Tickets:</label>
+            <input type="number" id="tour-participants" min="1" max="${maxGroup}" value="1" />
+          </div>
+          <button class="btn btn--primary btn--pill" id="book-tour" data-tour-id="${tour.id}" data-max-group="${maxGroup}">Book tour now!</button>
+        </div>
+      `;
     } else if (userRole) {
       // Logged in, but not a standard user (e.g. admin, guide, lead-guide)
       ctaButtonHtml = `<button class="btn btn--primary btn--pill" disabled style="background-color: #777; cursor: not-allowed; box-shadow: none; transform: none; pointer-events: none;">Only users can book tours</button>`;

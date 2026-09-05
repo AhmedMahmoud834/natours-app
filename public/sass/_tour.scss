@@ -617,6 +617,52 @@
     color: $color-dark-base;
     font-size: 3rem;
   }
+
+  &__booking-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+
+    @media only screen and (max-width: 50em) {
+      justify-content: center;
+    }
+  }
+
+  &__participants-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: rgba($color-dark-base, 0.05);
+    border: 1px solid rgba($color-dark-base, 0.15);
+    border-radius: 10rem;
+    padding: 0.8rem 1.6rem;
+    transition: all 0.2s ease;
+
+    &:focus-within {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+    }
+
+    label {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: $color-dark-base;
+      cursor: pointer;
+    }
+
+    input {
+      width: 5rem;
+      background: transparent;
+      border: none;
+      color: $color-dark-base;
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+    }
+  }
 }
 
 .btn {

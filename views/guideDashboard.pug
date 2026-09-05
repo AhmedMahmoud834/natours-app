@@ -98,6 +98,8 @@ block content
                           p(style='color: rgba(255, 255, 255, 0.6); font-size: 1.3rem; margin: 0.2rem 0 0;')= booking.user ? booking.user.email : 'No email available'
                       div(style='text-align: right;')
                         span(style='display: block; color: #ff6b35; font-size: 1.3rem; font-weight: 600;')= booking.tour && booking.tour.name ? booking.tour.name : 'Assigned Tour'
-                        span(style=booking.status === 'confirmed' ? 'display: inline-block; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; text-transform: uppercase; background: rgba(85, 197, 122, 0.15); color: #55c57a; margin-top: 0.3rem;' : 'display: inline-block; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; text-transform: uppercase; background: rgba(245, 158, 11, 0.15); color: #f59e0b; margin-top: 0.3rem;')= booking.status || 'confirmed'
+                        div(style='display: flex; gap: 0.8rem; align-items: center; justify-content: flex-end; margin-top: 0.3rem;')
+                          span(style='font-size: 1.2rem; color: rgba(255, 255, 255, 0.7); font-weight: 500;')= `${booking.participants || 1} guest${(booking.participants || 1) > 1 ? 's' : ''}`
+                          span(style=booking.status === 'confirmed' ? 'display: inline-block; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; text-transform: uppercase; background: rgba(85, 197, 122, 0.15); color: #55c57a;' : 'display: inline-block; padding: 0.2rem 0.8rem; border-radius: 10rem; font-size: 1.1rem; text-transform: uppercase; background: rgba(245, 158, 11, 0.15); color: #f59e0b;')= booking.status || 'confirmed'
             else
               p.empty-state(style='color: rgba(255, 255, 255, 0.5); font-style: italic; margin-bottom: 3rem;') No booked passengers found for the selected tour.

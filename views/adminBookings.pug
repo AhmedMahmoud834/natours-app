@@ -62,10 +62,13 @@ block content
           select#create-user.form__input(required)
             option(value='') -- Select a Customer --
 
-        .form__group-row(style='display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;')
+        .form__group-row(style='display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1.5rem;')
           .form__group
-            label.form__label(for='create-price') Price ($)
-            input#create-price.form__input(type='number', min='0', placeholder='Auto from Tour')
+            label.form__label(for='create-participants') Guests / Tickets
+            input#create-participants.form__input(type='number', min='1', value='1', required)
+          .form__group
+            label.form__label(for='create-price') Total Price ($)
+            input#create-price.form__input(type='number', min='0', placeholder='Auto: Price × Guests')
           .form__group
             label.form__label(for='create-payment-option') Payment Method
             select#create-payment-option.form__input(disabled)
@@ -103,7 +106,10 @@ block content
               span.stat-label Customer
               span.stat-value#stat-user -
             .stat-box
-              span.stat-label Price
+              span.stat-label Participants
+              span.stat-value#stat-participants -
+            .stat-box
+              span.stat-label Total Price
               span.stat-value.text-orange#stat-price -
             .stat-box
               span.stat-label Date Booked

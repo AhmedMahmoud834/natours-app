@@ -51,9 +51,12 @@ reviewSchema.pre(/^find/, function () {
 });
 
 reviewSchema.statics.calculateAvgRating = async function (tourId) {
+  if (!tourId) return;
+  const id = tourId._id ? tourId._id : tourId;
+
   const stats = await this.aggregate([
     {
-      $match: { tour: tourId },
+      $match: { tour: id },
     },
     {
       $group: {
@@ -65,12 +68,12 @@ reviewSchema.statics.calculateAvgRating = async function (tourId) {
   ]);
 
   if (stats.length > 0) {
-    await Tour.findByIdAndUpdate(tourId, {
+    await Tour.findByIdAndUpdate(id, {
       ratingsQuantity: stats[0].ratingCount,
       ratingsAverage: stats[0].ratingAvg,
     });
   } else {
-    await Tour.findByIdAndUpdate(tourId, {
+    await Tour.findByIdAndUpdate(id, {
       ratingsQuantity: 0,
       ratingsAverage: 1,
     });
@@ -83,7 +86,8 @@ reviewSchema.post('save', function () {
 
 reviewSchema.post(/^findOneAnd/, async function (doc) {
   if (!doc) return;
-  await this.model.calculateAvgRating(doc.tour);
+  const tourId = doc.tour?._id || doc.tour;
+  await this.model.calculateAvgRating(tourId);
 });
 
 const Review = mongoose.model('Review', reviewSchema);

@@ -22,6 +22,7 @@ const DOM = {
   createTour: document.getElementById('create-tour'),
   createUser: document.getElementById('create-user'),
   createPrice: document.getElementById('create-price'),
+  createParticipants: document.getElementById('create-participants'),
   createPaymentOption: document.getElementById('create-payment-option'),
   createStatus: document.getElementById('create-status'),
   btnSave: document.getElementById('btn-save'),
@@ -38,6 +39,7 @@ const DOM = {
   // Stats Grid
   statTour: document.getElementById('stat-tour'),
   statUser: document.getElementById('stat-user'),
+  statParticipants: document.getElementById('stat-participants'),
   statPrice: document.getElementById('stat-price'),
   statDate: document.getElementById('stat-date'),
   statPayment: document.getElementById('stat-payment'),
@@ -173,7 +175,7 @@ const getBookings = async () => {
           <div style="flex: 1; min-width: 0; overflow: hidden;">
             <h4 class="tour-name" style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #f8f9fa; font-weight: 600; font-size: 1.5rem;">${tourName}</h4>
             <span class="tour-meta" style="color: rgba(255, 255, 255, 0.75); font-size: 1.2rem;">
-              ${userName} &bull; <strong style="color: #ff6b35;">$${b.price}</strong> &bull; ${paymentOpt}
+              ${userName} &bull; <strong style="color: #ff6b35;">$${b.price}</strong> &bull; ${b.participants || 1} ${(b.participants || 1) === 1 ? 'ticket' : 'tickets'} &bull; ${paymentOpt}
             </span>
           </div>
           <span class="badge badge--${statusClass}" style="flex-shrink: 0;">${b.status}</span>
@@ -213,9 +215,12 @@ const renderBookingDetails = (booking) => {
   DOM.detailStatus.textContent = status.toUpperCase();
   DOM.detailStatus.className = `badge badge--${status.toLowerCase()}`;
 
-  // Populate 3x2 Stats Grid
+  // Populate Stats Grid
   DOM.statTour.textContent = tourName;
   DOM.statUser.textContent = `${userName} ${userEmail}`;
+  if (DOM.statParticipants) {
+    DOM.statParticipants.textContent = `${booking.participants || 1} ${(booking.participants || 1) === 1 ? 'ticket' : 'tickets'}`;
+  }
   DOM.statPrice.textContent = `$${booking.price}`;
   DOM.statDate.textContent = booking.createdAt
     ? new Date(booking.createdAt).toLocaleDateString(undefined, {
@@ -431,6 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const paymentOption = DOM.createPaymentOption.value;
     const status = DOM.createStatus.value;
     const priceVal = DOM.createPrice.value.trim();
+    const participantsVal = DOM.createParticipants ? parseInt(DOM.createParticipants.value, 10) || 1 : 1;
 
     if (!tourId || !userId) {
       showAlert('error', 'Please select both a Tour and a Customer.');
@@ -440,6 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const payload = {
       tour: tourId,
       user: userId,
+      participants: participantsVal,
       status,
       paymentOption: 'cash',
     };

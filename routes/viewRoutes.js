@@ -11,6 +11,7 @@ import {
   getForgotPassword,
   getResetPasswordForm,
   getMyTours,
+  getMyReviews,
   getAdminDashboard,
   getLeadGuideDashboard,
   getGuideDashboard,
@@ -40,6 +41,7 @@ viewRouter.get('/login', isLoggedIn, redirectIfLoggedIn, getLogin);
 viewRouter.get('/signup', isLoggedIn, redirectIfLoggedIn, getSignupForm);
 viewRouter.get('/me', routeProtect, getMePage);
 viewRouter.get('/my-tours', routeProtect, getMyTours);
+viewRouter.get('/my-reviews', routeProtect, restrictTo('user'), getMyReviews);
 viewRouter.get(
   '/guide-dashboard',
   routeProtect,

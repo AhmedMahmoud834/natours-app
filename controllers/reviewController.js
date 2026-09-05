@@ -51,7 +51,11 @@ export const deleteReview = async (req, res, next) => {
 
   if (!review) return next(new AppError('No review found with this id.', 404));
 
-  if (req.user.id !== review.user.id && req.user.role !== 'admin')
+  const reviewUserId = review.user?._id
+    ? review.user._id.toString()
+    : review.user?.toString();
+
+  if (req.user.id !== reviewUserId && req.user.role !== 'admin')
     return next(
       new AppError('You do not have permission to do this action', 403),
     );
@@ -70,7 +74,11 @@ export const updateReview = async (req, res, next) => {
 
   if (!review) return next(new AppError('No review found with this id.', 404));
 
-  if (req.user.id !== review.user.id)
+  const reviewUserId = review.user?._id
+    ? review.user._id.toString()
+    : review.user?.toString();
+
+  if (req.user.id !== reviewUserId)
     return next(
       new AppError('You do not have permission to do this action', 403),
     );
@@ -78,6 +86,10 @@ export const updateReview = async (req, res, next) => {
   const updatedReview = await Review.findByIdAndUpdate(
     req.params.reviewId,
     updateData,
+    {
+      new: true,
+      runValidators: true,
+    },
   );
 
   res.status(200).json({
