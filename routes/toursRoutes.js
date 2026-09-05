@@ -51,14 +51,19 @@ toursRouter
     getMonthlyPlan,
   );
 
+toursRouter.get(
+  '/inactive',
+  routeProtect,
+  restrictTo('admin'),
+  getAllInActiveTours,
+);
+
 // Public read routes
 toursRouter.get('/', getTours);
 toursRouter.get('/:tourId', getTour);
 
 // Protected routes (Admin & Lead Guide only)
 toursRouter.use(routeProtect, restrictTo('admin', 'lead-guide'));
-
-toursRouter.get('/inActive', restrictTo('admin'), getAllInActiveTours);
 
 toursRouter
   .route('/')
