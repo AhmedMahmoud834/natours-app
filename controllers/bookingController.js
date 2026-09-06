@@ -104,9 +104,12 @@ const createBookingCheckout = async (session, req) => {
       return booking;
     }
     const url = `${req.protocol}://${req.get('host')}/my-tours`;
+    console.log("about to send email to :", user.email)
     await new Email(user, url).sendBookingConfirmation(tour, booking);
+    console.log("email sent")
     logger.info(`Booking confirmation email sent to ${user.email}`);
   } catch (err) {
+    console.log("email failed", err.message)
     logger.error(`Error sending booking confirmation email: ${err.message}`, {
       stack: err.stack,
     });

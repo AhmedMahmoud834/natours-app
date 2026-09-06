@@ -13,3 +13,5 @@
 {"level":"error","message":"Cannot read properties of null (reading 'name')","stack":"TypeError: Cannot read properties of null (reading 'name')\n    at getTourDetailsPage (file:///C:/projects/natours/controllers/viewsController.js:39:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)","timestamp":"2026-08-03T02:35:28.352Z"}
 {"level":"info","message":"Booking confirmation email sent to ayls@example.com","timestamp":"2026-08-27T21:22:05.857Z"}
 {"level":"info","message":"Booking confirmation email sent to ayls@example.com","timestamp":"2026-09-03T00:18:54.564Z"}
+{"level":"info","message":"createBookingCheckout: session.metadata={\"participants\":\"3\",\"tourId\":\"6a9ab915cfe359aefea0621f\"}, parsed participants=3","timestamp":"2026-09-06T00:04:29.529Z"}
+{"level":"info","message":"Booking confirmation email sent to ayls@example.com","timestamp":"2026-09-06T00:04:32.374Z"}
