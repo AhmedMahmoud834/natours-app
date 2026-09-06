@@ -8,10 +8,6 @@ const requiredEnvVars = [
   'DATABASE_USER',
   'PASSWORD_SALT',
   'JWT_SECRET',
-  'EMAIL_USERNAME',
-  'EMAIL_PASSWORD',
-  'EMAIL_HOST',
-  'EMAIL_PORT',
 ];
 
 requiredEnvVars.forEach((key) => {
@@ -38,11 +34,21 @@ const config = {
     cookieExpiresIn: parseInt(process.env.JWT_COOKIES_EXPIRES, 10) || 15,
   },
   email: {
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT, 10) || 587,
-    username: process.env.EMAIL_USERNAME,
-    password: process.env.EMAIL_PASSWORD,
-    from: process.env.EMAIL_FROM || 'Natours <natours@mail.io>',
+    from: process.env.MAILTRAP_EMAIL_FROM || 'Natours <natours@mail.io>',
+    // Mailtrap (development)
+    mailtrap: {
+      host: process.env.MAILTRAP_EMAIL_HOST,
+      port: parseInt(process.env.MAILTRAP_EMAIL_PORT, 10) || 587,
+      username: process.env.MAILTRAP_EMAIL_USERNAME,
+      password: process.env.MAILTRAP_EMAIL_PASSWORD,
+    },
+    // Brevo (production)
+    brevo: {
+      host: process.env.BREVO_SMTP_SERVER,
+      port: parseInt(process.env.BREVO_PORT, 10) || 587,
+      username: process.env.BREVO_LOGIN,
+      password: process.env.BREVO_SMTP_KEY,
+    },
   },
   stripe: {
     secretKey: process.env.STRIPE_SECRET_KEY,

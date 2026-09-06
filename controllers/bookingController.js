@@ -27,7 +27,6 @@ export const getCheckoutSession = async (req, res, next) => {
       ),
     );
   }
-  console.log(req.query.participants);
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
@@ -79,7 +78,6 @@ const createBookingCheckout = async (session, req) => {
     return;
   }
 
-  console.log(session.metadata.participants);
   logger.info(
     `createBookingCheckout: session.metadata=${JSON.stringify(session.metadata)}, parsed participants=${participants}`,
   );
@@ -95,8 +93,6 @@ const createBookingCheckout = async (session, req) => {
     stripePaymentIntentId,
   });
 
-  console.log(booking);
-
   try {
     const tour = await Tour.findById(tourId);
     if (!tour) {
@@ -104,12 +100,9 @@ const createBookingCheckout = async (session, req) => {
       return booking;
     }
     const url = `${req.protocol}://${req.get('host')}/my-tours`;
-    console.log("about to send email to :", user.email)
     await new Email(user, url).sendBookingConfirmation(tour, booking);
-    console.log("email sent")
     logger.info(`Booking confirmation email sent to ${user.email}`);
   } catch (err) {
-    console.log("email failed", err.message)
     logger.error(`Error sending booking confirmation email: ${err.message}`, {
       stack: err.stack,
     });
@@ -119,7 +112,6 @@ const createBookingCheckout = async (session, req) => {
 };
 
 export const webhookCheckout = async (req, res, next) => {
-  console.log('webhook hit');
   const signature = req.headers['stripe-signature'];
   let event;
   try {
@@ -128,18 +120,13 @@ export const webhookCheckout = async (req, res, next) => {
       signature,
       config.stripe.webhookSecret,
     );
-    console.log('signature verification done');
   } catch (err) {
-    console.log(err);
     return res.status(400).send(`Webhook error: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    console.log('session metadata', session.metadata);
-    console.log('session customer_email', session.customer_email);
     await createBookingCheckout(session, req);
-    console.log("creating booking done")
   }
 
   res.status(200).json({ received: true });

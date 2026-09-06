@@ -15,15 +15,23 @@ class Email {
 
   newTransport() {
     if (config.env === 'production') {
-      // send grid
-      return 1;
+      // Brevo (formerly Sendinblue) SMTP relay
+      return nodemailer.createTransport({
+        host: config.email.brevo.host,
+        port: config.email.brevo.port,
+        auth: {
+          user: config.email.brevo.username,
+          pass: config.email.brevo.password,
+        },
+      });
     }
+    // Mailtrap (development / sandbox)
     return nodemailer.createTransport({
-      host: config.email.host,
-      port: config.email.port,
+      host: config.email.mailtrap.host,
+      port: config.email.mailtrap.port,
       auth: {
-        user: config.email.username,
-        pass: config.email.password,
+        user: config.email.mailtrap.username,
+        pass: config.email.mailtrap.password,
       },
       connectionTimeout: 5000,
       socketTimeout: 5000,
@@ -50,8 +58,7 @@ class Email {
       text: htmlToText(html),
     };
 
-    // create transport
-    this.newTransport();
+    // create transport and send
     await this.newTransport().sendMail(mailOptions);
   }
 

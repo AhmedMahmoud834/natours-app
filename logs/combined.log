@@ -15,3 +15,5 @@
 {"level":"info","message":"Booking confirmation email sent to ayls@example.com","timestamp":"2026-09-03T00:18:54.564Z"}
 {"level":"info","message":"createBookingCheckout: session.metadata={\"participants\":\"3\",\"tourId\":\"6a9ab915cfe359aefea0621f\"}, parsed participants=3","timestamp":"2026-09-06T00:04:29.529Z"}
 {"level":"info","message":"Booking confirmation email sent to ayls@example.com","timestamp":"2026-09-06T00:04:32.374Z"}
+{"level":"info","message":"createBookingCheckout: session.metadata={\"participants\":\"3\",\"tourId\":\"5c88fa8cf4afda39709c2955\"}, parsed participants=3","timestamp":"2026-09-06T00:12:47.667Z"}
+{"level":"info","message":"Booking confirmation email sent to ayls@example.com","timestamp":"2026-09-06T00:12:50.532Z"}
