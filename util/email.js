@@ -10,20 +10,31 @@ class Email {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.from = config.email.from;
+    this.from =
+      config.env === 'production'
+        ? config.email.brevo.from
+        : config.email.mailtrap.from;
   }
 
   newTransport() {
     if (config.env === 'production') {
       // Brevo (formerly Sendinblue) SMTP relay
       return nodemailer.createTransport({
-        host: config.email.brevo.host,
-        port: config.email.brevo.port,
+        host: "smtp-relay.brevo.com",
+        port: 587,
         auth: {
-          user: config.email.brevo.username,
-          pass: config.email.brevo.password,
+          user: "b80d1d001@smtp-brevo.com",
+          pass: "xsmtpsib-886545fac939a6b3f3af01154b438f91a26735504e711b3daf6851bb36986523-FpbxdZ17fGP3yogL",
         },
       });
+      // return nodemailer.createTransport({
+      //   host: config.email.brevo.host,
+      //   port: config.email.brevo.port,
+      //   auth: {
+      //     user: config.email.brevo.username,
+      //     pass: config.email.brevo.password,
+      //   },
+      // });
     }
     // Mailtrap (development / sandbox)
     return nodemailer.createTransport({
@@ -89,6 +100,7 @@ class Email {
     await this.send(template, subject, {
       tourName: tour.name,
       price: booking.price,
+      participants: booking.participants || 1,
     });
   }
 
@@ -98,6 +110,7 @@ class Email {
     await this.send(template, subject, {
       tourName: tour.name,
       price: booking.price,
+      participants: booking.participants || 1,
     });
   }
 
@@ -107,6 +120,7 @@ class Email {
     await this.send(template, subject, {
       tourName: tour.name,
       price: booking.price,
+      participants: booking.participants || 1,
     });
   }
 }

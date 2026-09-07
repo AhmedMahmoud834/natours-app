@@ -1,10 +1,26 @@
 extends baseEmail
 
 block content
+  h1 Booking Confirmed! 🎉
   p Hi #{firstName},
-  p Your booking was successfully confirmed! 🎉
-  p Thank you for booking the <strong>#{tourName}</strong> tour. Your total payment of <strong>$#{price}</strong> has been received.
-  p We are thrilled to have you on board for this adventure!
+  p Thank you for booking with Natours! Your adventure awaits.
+
+  //- Order summary
+  .info-box
+    .detail-row
+      .detail-label TOUR
+      .detail-value #{tourName}
+    .detail-row
+      .detail-label TICKETS
+      .detail-value
+        span.highlight #{participants}
+        |  #{participants > 1 ? 'guests' : 'guest'}
+    .detail-row
+      .detail-label TOTAL PAID
+      .detail-value
+        span.highlight $#{price}
+
+  p We are thrilled to have you on board for this adventure! You can view and manage your bookings anytime from your account.
   table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
     tbody
       tr
@@ -14,5 +30,5 @@ block content
               tr
                 td
                   a(href=`${url}`, target='_blank') View Your Bookings
-  p If you have any questions or need to make changes to your itinerary, please don't hesitate to reply to this email.
+  p.text-muted If you have any questions or need to make changes, simply reply to this email.
   p - The Natours Team

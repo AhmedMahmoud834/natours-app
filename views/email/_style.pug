@@ -186,6 +186,58 @@ style.
   /* -------------------------------------
       RESPONSIVE AND MOBILE STYLES
   ------------------------------------- */
+
+  /* -------------------------------------
+      INFO BOX (structured data panel)
+  ------------------------------------- */
+  .info-box {
+    background: #131D2F;
+    border: 1px solid #1E293B;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+
+  .detail-row {
+    padding: 8px 0;
+    border-bottom: 1px solid #1E293B;
+  }
+
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+
+  .detail-label {
+    color: #94A3B8;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  .detail-value {
+    color: #F8F9FA;
+    font-size: 15px;
+    font-weight: 600;
+    padding-top: 2px;
+  }
+
+  .highlight {
+    color: #FF6B35;
+    font-weight: 700;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #1E293B;
+    margin: 20px 0;
+  }
+
+  .text-muted {
+    color: #94A3B8;
+    font-size: 13px;
+  }
+
   @media only screen and (max-width: 620px) {
     table.body h1 {
       font-size: 22px !important;
@@ -219,5 +271,8 @@ style.
     }
     table.body .btn a {
       width: 100% !important;
+    }
+    .info-box {
+      padding: 14px 16px !important;
     }
   }

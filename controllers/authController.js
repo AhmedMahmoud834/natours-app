@@ -147,7 +147,7 @@ export const forgetPassword = async (req, res, next) => {
 
     return next(
       new AppError(
-        'There was an error sending the email! Try again later.',
+        `There was an error sending the email! Try again later.: ${err.message}`,
         500,
       ),
     );

@@ -34,13 +34,13 @@ const config = {
     cookieExpiresIn: parseInt(process.env.JWT_COOKIES_EXPIRES, 10) || 15,
   },
   email: {
-    from: process.env.MAILTRAP_EMAIL_FROM || 'Natours <natours@mail.io>',
     // Mailtrap (development)
     mailtrap: {
       host: process.env.MAILTRAP_EMAIL_HOST,
       port: parseInt(process.env.MAILTRAP_EMAIL_PORT, 10) || 587,
       username: process.env.MAILTRAP_EMAIL_USERNAME,
       password: process.env.MAILTRAP_EMAIL_PASSWORD,
+      from: process.env.MAILTRAP_EMAIL_FROM || 'Natours <natours@mail.io>',
     },
     // Brevo (production)
     brevo: {
@@ -48,6 +48,7 @@ const config = {
       port: parseInt(process.env.BREVO_PORT, 10) || 587,
       username: process.env.BREVO_LOGIN,
       password: process.env.BREVO_SMTP_KEY,
+      from: process.env.BREVO_EMAIL_FROM || 'Natours <natours@mail.io>',
     },
   },
   stripe: {
