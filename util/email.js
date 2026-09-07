@@ -22,10 +22,14 @@ class Email {
       return nodemailer.createTransport({
         host: config.email.brevo.host,
         port: config.email.brevo.port,
+        secure: false, // use STARTTLS on port 587
+        requireTLS: true,
         auth: {
           user: config.email.brevo.username,
           pass: config.email.brevo.password,
         },
+        connectionTimeout: 10000,
+        socketTimeout: 10000,
       });
     }
     // Mailtrap (development / sandbox)
