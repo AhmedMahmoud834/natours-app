@@ -20,21 +20,13 @@ class Email {
     if (config.env === 'production') {
       // Brevo (formerly Sendinblue) SMTP relay
       return nodemailer.createTransport({
-        host: "smtp-relay.brevo.com",
-        port: 587,
+        host: config.email.brevo.host,
+        port: config.email.brevo.port,
         auth: {
-          user: "b80d1d001@smtp-brevo.com",
-          pass: "xsmtpsib-886545fac939a6b3f3af01154b438f91a26735504e711b3daf6851bb36986523-FpbxdZ17fGP3yogL",
+          user: config.email.brevo.username,
+          pass: config.email.brevo.password,
         },
       });
-      // return nodemailer.createTransport({
-      //   host: config.email.brevo.host,
-      //   port: config.email.brevo.port,
-      //   auth: {
-      //     user: config.email.brevo.username,
-      //     pass: config.email.brevo.password,
-      //   },
-      // });
     }
     // Mailtrap (development / sandbox)
     return nodemailer.createTransport({
