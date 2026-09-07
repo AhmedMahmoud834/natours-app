@@ -16,23 +16,8 @@ class Email {
         : config.email.mailtrap.from;
   }
 
+  // Mailtrap transport (development only)
   newTransport() {
-    if (config.env === 'production') {
-      // Brevo (formerly Sendinblue) SMTP relay
-      return nodemailer.createTransport({
-        host: config.email.brevo.host,
-        port: config.email.brevo.port,
-        secure: false, // use STARTTLS on port 587
-        requireTLS: true,
-        auth: {
-          user: config.email.brevo.username,
-          pass: config.email.brevo.password,
-        },
-        connectionTimeout: 10000,
-        socketTimeout: 10000,
-      });
-    }
-    // Mailtrap (development / sandbox)
     return nodemailer.createTransport({
       host: config.email.mailtrap.host,
       port: config.email.mailtrap.port,
@@ -43,6 +28,34 @@ class Email {
       connectionTimeout: 5000,
       socketTimeout: 5000,
     });
+  }
+
+  // Send via Brevo HTTP API (production) — HTTPS port 443, never blocked
+  async sendBrevo(mailOptions) {
+    const [senderName, senderEmail] = this.from
+      .match(/^(.+)\s*<(.+)>$/)
+      ?.slice(1) || ['Natours', this.from];
+
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'api-key': config.email.brevo.apiKey,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        sender: { name: senderName.trim(), email: senderEmail.trim() },
+        to: [{ email: mailOptions.to }],
+        subject: mailOptions.subject,
+        htmlContent: mailOptions.html,
+        textContent: mailOptions.text,
+      }),
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Brevo API error (${res.status}): ${body}`);
+    }
   }
 
   async send(template, subject, data = {}) {
@@ -65,23 +78,12 @@ class Email {
       text: htmlToText(html),
     };
 
-    // create transport and send
-    const transport = this.newTransport();
-    try {
-      await transport.verify();
-      console.log(`SMTP connection verified (host: ${transport.options.host}, port: ${transport.options.port})`);
-    } catch (verifyErr) {
-      console.error('SMTP verify FAILED:', verifyErr.message);
-      console.error('Transport config:', JSON.stringify({
-        host: transport.options.host,
-        port: transport.options.port,
-        secure: transport.options.secure,
-        user: transport.options.auth?.user ? '✓ set' : '✗ missing',
-        pass: transport.options.auth?.pass ? '✓ set' : '✗ missing',
-      }));
-      throw verifyErr;
+    // Production: Brevo HTTP API | Development: Mailtrap SMTP
+    if (config.env === 'production') {
+      await this.sendBrevo(mailOptions);
+    } else {
+      await this.newTransport().sendMail(mailOptions);
     }
-    await transport.sendMail(mailOptions);
   }
 
   async sendWelcome() {

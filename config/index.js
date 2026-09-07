@@ -42,12 +42,9 @@ const config = {
       password: process.env.MAILTRAP_EMAIL_PASSWORD,
       from: process.env.MAILTRAP_EMAIL_FROM || 'Natours <natours@mail.io>',
     },
-    // Brevo (production)
+    // Brevo (production) — uses HTTP API (Render blocks SMTP ports)
     brevo: {
-      host: process.env.BREVO_SMTP_SERVER,
-      port: parseInt(process.env.BREVO_PORT, 10) || 587,
-      username: process.env.BREVO_LOGIN,
-      password: process.env.BREVO_SMTP_KEY,
+      apiKey: process.env.BREVO_API_KEY,
       from: process.env.BREVO_EMAIL_FROM || 'Natours <natours@mail.io>',
     },
   },
