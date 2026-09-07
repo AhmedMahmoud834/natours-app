@@ -66,7 +66,22 @@ class Email {
     };
 
     // create transport and send
-    await this.newTransport().sendMail(mailOptions);
+    const transport = this.newTransport();
+    try {
+      await transport.verify();
+      console.log(`SMTP connection verified (host: ${transport.options.host}, port: ${transport.options.port})`);
+    } catch (verifyErr) {
+      console.error('SMTP verify FAILED:', verifyErr.message);
+      console.error('Transport config:', JSON.stringify({
+        host: transport.options.host,
+        port: transport.options.port,
+        secure: transport.options.secure,
+        user: transport.options.auth?.user ? '✓ set' : '✗ missing',
+        pass: transport.options.auth?.pass ? '✓ set' : '✗ missing',
+      }));
+      throw verifyErr;
+    }
+    await transport.sendMail(mailOptions);
   }
 
   async sendWelcome() {
