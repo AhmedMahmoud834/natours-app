@@ -264,7 +264,7 @@ STRIPE_WEBHOOK_SECRET_TEST=
 
 The application is deployed on **Render**.
 
-**Live URL:** https://natours-app-latest.onrender.com
+**Live URL:** [Live Preview](https://natours-app-58iw.onrender.com/)
 
 > Note: Render's free tier puts the service to sleep after inactivity. The first request after a sleep period may take 30–60 seconds.
 
