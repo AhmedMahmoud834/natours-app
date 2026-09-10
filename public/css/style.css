@@ -1,3 +1,15 @@
+/* ==========================================
+   MEDIA QUERY MANAGER
+   0 - 600px:      Phone
+   600 - 900px:    Tablet Portrait
+   900 - 1200px:   Tablet Landscape
+   [1200px+]       Normal desktop styles apply
+
+   1em = 16px (standard browser default)
+   37.5em  = 600px
+   56.25em = 900px
+   75em    = 1200px
+   ========================================== */
 *,
 *::before,
 *::after {
@@ -15,10 +27,16 @@ html {
     font-size: 56.25%;
   }
 }
+html {
+  /* 1200px */
+}
 @media only screen and (max-width: 56.25em) {
   html {
     font-size: 50%;
   }
+}
+html {
+  /* 900px */
 }
 
 body {
@@ -1589,6 +1607,9 @@ ul {
     padding: 3rem 2.5rem;
   }
 }
+.login-form {
+  /* 600px */
+}
 .login-form .heading-secondary {
   font-family: "Poppins", sans-serif;
   font-size: 2.6rem;
@@ -1614,6 +1635,21 @@ ul {
   justify-content: space-between;
   align-items: center;
   margin-top: 1rem;
+  gap: 1.5rem;
+}
+@media only screen and (max-width: 37.5em) {
+  .form__group--actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .form__group--actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+.form__group--actions {
+  /* 600px */
 }
 .form__group--right {
   display: flex;
@@ -1825,6 +1861,14 @@ ul {
   justify-content: center;
   padding: 12rem 2rem 6rem 2rem;
 }
+@media only screen and (max-width: 37.5em) {
+  .section-account {
+    padding: 9rem 1rem 4rem 1rem;
+  }
+}
+.section-account {
+  /* 600px */
+}
 
 .user-view {
   max-width: 120rem;
@@ -1838,10 +1882,13 @@ ul {
   border: 1px solid rgba(248, 249, 250, 0.08);
   display: flex;
 }
-@media only screen and (max-width: 60em) {
+@media only screen and (max-width: 56.25em) {
   .user-view {
     flex-direction: column;
   }
+}
+.user-view {
+  /* 900px */
 }
 .user-view__menu {
   flex: 0 0 32rem;
@@ -1849,7 +1896,7 @@ ul {
   padding: 4rem 0;
   border-right: 1px solid rgba(248, 249, 250, 0.05);
 }
-@media only screen and (max-width: 60em) {
+@media only screen and (max-width: 56.25em) {
   .user-view__menu {
     display: flex;
     overflow-x: auto;
@@ -1857,12 +1904,31 @@ ul {
     flex: 0 0 auto;
   }
 }
+.user-view__menu {
+  /* 900px */
+}
 .user-view__content {
   flex: 1;
   padding: 6rem 8rem;
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+@media only screen and (max-width: 56.25em) {
+  .user-view__content {
+    padding: 4rem 2.5rem;
+  }
+}
+.user-view__content {
+  /* 900px */
+}
+@media only screen and (max-width: 37.5em) {
+  .user-view__content {
+    padding: 2.5rem 1.5rem;
+  }
+}
+.user-view__content {
+  /* 600px */
 }
 .user-view__content .heading-secondary {
   font-family: "Poppins", sans-serif;
@@ -1878,6 +1944,14 @@ ul {
   max-width: 68rem;
   margin: 0 auto;
 }
+@media only screen and (max-width: 56.25em) {
+  .user-view__form-container {
+    max-width: 100%;
+  }
+}
+.user-view__form-container {
+  /* 900px */
+}
 
 .side-nav {
   list-style: none;
@@ -1885,11 +1959,14 @@ ul {
 .side-nav li {
   margin-bottom: 0.5rem;
 }
-@media only screen and (max-width: 60em) {
+@media only screen and (max-width: 56.25em) {
   .side-nav li {
     flex: 0 0 auto;
     margin-right: 2rem;
   }
+}
+.side-nav li {
+  /* 900px */
 }
 .side-nav a {
   display: flex;
@@ -2005,6 +2082,21 @@ ul {
   border-color: rgba(255, 107, 53, 0.5);
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.4);
 }
+@media only screen and (max-width: 37.5em) {
+  .booking-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  .booking-card__img {
+    width: 100%;
+    height: 18rem;
+  }
+}
+.booking-card {
+  /* 600px */
+}
 .booking-card__img {
   width: 16rem;
   height: 11rem;
@@ -2071,10 +2163,14 @@ ul {
   gap: 3rem;
   min-height: 50vh;
 }
-@media only screen and (max-width: 60em) {
+@media only screen and (max-width: 56.25em) {
   .admin-container {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
+}
+.admin-container {
+  /* 900px */
 }
 
 .admin-list .filter-group {
@@ -2400,6 +2496,26 @@ ul {
   left: 0;
   z-index: 100;
 }
+@media only screen and (max-width: 56.25em) {
+  .sidebar-minimal {
+    width: 100%;
+    height: 6rem;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    padding: 0 1.5rem;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+  }
+}
+.sidebar-minimal {
+  /* 900px */
+}
 .sidebar-minimal ul {
   list-style: none;
   width: 100%;
@@ -2408,10 +2524,28 @@ ul {
   gap: 2rem;
   align-items: center;
 }
+@media only screen and (max-width: 56.25em) {
+  .sidebar-minimal ul {
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 0.5rem;
+  }
+}
+.sidebar-minimal ul {
+  /* 900px */
+}
 .sidebar-minimal li {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+@media only screen and (max-width: 56.25em) {
+  .sidebar-minimal li {
+    width: auto;
+  }
+}
+.sidebar-minimal li {
+  /* 900px */
 }
 .sidebar-minimal li a {
   display: flex;
@@ -2421,6 +2555,15 @@ ul {
   height: 50px;
   border-radius: 1.2rem;
   transition: all 0.3s;
+}
+@media only screen and (max-width: 56.25em) {
+  .sidebar-minimal li a {
+    width: 4.4rem;
+    height: 4.4rem;
+  }
+}
+.sidebar-minimal li a {
+  /* 900px */
 }
 .sidebar-minimal li a svg {
   width: 2.2rem;
@@ -2460,11 +2603,28 @@ ul {
 .sidebar-minimal__bottom a:hover svg {
   fill: #ff4d4d;
 }
+@media only screen and (max-width: 56.25em) {
+  .sidebar-minimal__bottom {
+    display: none;
+  }
+}
+.sidebar-minimal__bottom {
+  /* 900px */
+}
 
 .dashboard-content {
   flex: 1;
   margin-left: 80px;
   min-height: 100vh;
+}
+@media only screen and (max-width: 56.25em) {
+  .dashboard-content {
+    margin-left: 0;
+    padding-bottom: 8rem;
+  }
+}
+.dashboard-content {
+  /* 900px */
 }
 
 .split-layout {
@@ -2473,10 +2633,33 @@ ul {
   gap: 4rem;
   padding: 4rem;
 }
-@media only screen and (max-width: 60em) {
+@media only screen and (max-width: 75em) {
+  .split-layout {
+    gap: 3rem;
+    padding: 3rem 2rem;
+  }
+}
+.split-layout {
+  /* 1200px */
+}
+@media only screen and (max-width: 56.25em) {
   .split-layout {
     grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding: 2.5rem 1.8rem;
   }
+}
+.split-layout {
+  /* 900px */
+}
+@media only screen and (max-width: 37.5em) {
+  .split-layout {
+    padding: 2rem 1.2rem;
+    gap: 2rem;
+  }
+}
+.split-layout {
+  /* 600px */
 }
 
 .list-controls {
@@ -2493,6 +2676,20 @@ ul {
   flex-wrap: wrap;
   gap: 1.5rem;
   width: 100%;
+}
+@media only screen and (max-width: 37.5em) {
+  .list-controls-row {
+    gap: 1rem;
+  }
+  .list-controls-row .filter-group,
+  .list-controls-row .sort-group {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0 !important;
+  }
+}
+.list-controls-row {
+  /* 600px */
 }
 
 .sort-group, .filter-group {
@@ -2674,6 +2871,31 @@ ul {
   max-height: 70vh;
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+@media only screen and (max-width: 37.5em) {
+  .admin-controls .admin-list-container {
+    padding: 0.8rem;
+  }
+}
+.admin-controls .admin-list-container {
+  /* 600px */
+}
+@media only screen and (max-width: 37.5em) {
+  .admin-controls .admin-list-container ul li {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+  .admin-controls .admin-list-container ul li > div:last-child {
+    width: 100%;
+    text-align: left !important;
+  }
+  .admin-controls .admin-list-container ul li > div:last-child > div {
+    justify-content: flex-start !important;
+  }
+}
+.admin-controls .admin-list-container ul li {
+  /* 600px */
 }
 .admin-controls .admin-list-container::-webkit-scrollbar {
   width: 0.8rem;
@@ -2934,6 +3156,16 @@ ul {
   min-height: 50vh;
   overflow: hidden;
 }
+@media only screen and (max-width: 37.5em) {
+  .admin-data #user-details-pane,
+  .admin-data #tour-details-pane {
+    padding: 1.8rem 1.4rem;
+  }
+}
+.admin-data #user-details-pane,
+.admin-data #tour-details-pane {
+  /* 600px */
+}
 .admin-data #user-placeholder,
 .admin-data #tour-placeholder {
   font-size: 1.6rem;
@@ -2950,6 +3182,21 @@ ul {
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+@media only screen and (max-width: 37.5em) {
+  .admin-data .user-profile-header {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 1.2rem;
+  }
+  .admin-data .user-profile-header__right {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+.admin-data .user-profile-header {
+  /* 600px */
 }
 .admin-data .user-profile-header__left {
   display: contents;
@@ -3398,21 +3645,42 @@ ul {
   max-width: 160rem;
   margin: 0 auto;
 }
-@media only screen and (max-width: 60em) {
+@media only screen and (max-width: 56.25em) {
   .admin-dashboard-wrapper {
-    padding: 3rem 3rem;
+    padding: 3rem 2.5rem;
   }
 }
-@media only screen and (max-width: 40em) {
+.admin-dashboard-wrapper {
+  /* 900px */
+}
+@media only screen and (max-width: 37.5em) {
   .admin-dashboard-wrapper {
-    padding: 2rem 1.5rem;
+    padding: 2rem 1.2rem;
   }
+}
+.admin-dashboard-wrapper {
+  /* 600px */
 }
 
 .welcome-banner {
   margin-bottom: 3.5rem;
   padding-bottom: 2.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+@media only screen and (max-width: 37.5em) {
+  .welcome-banner {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+  }
+  .welcome-banner h1 {
+    font-size: 2.4rem;
+  }
+  .welcome-banner .welcome-subtitle {
+    font-size: 1.4rem;
+  }
+}
+.welcome-banner {
+  /* 600px */
 }
 .welcome-banner h1 {
   color: #F8F9FA;
@@ -3450,12 +3718,29 @@ ul {
 @media only screen and (max-width: 75em) {
   .stats-overview-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
   }
 }
-@media only screen and (max-width: 45em) {
+.stats-overview-grid {
+  /* 1200px */
+}
+@media only screen and (max-width: 56.25em) {
+  .stats-overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+.stats-overview-grid {
+  /* 900px */
+}
+@media only screen and (max-width: 37.5em) {
   .stats-overview-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
+}
+.stats-overview-grid {
+  /* 600px */
 }
 
 .stat-card {
@@ -3470,6 +3755,15 @@ ul {
   overflow: hidden;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+}
+@media only screen and (max-width: 37.5em) {
+  .stat-card {
+    padding: 2rem 1.6rem;
+    gap: 1.5rem;
+  }
+}
+.stat-card {
+  /* 600px */
 }
 .stat-card:hover {
   transform: translateY(-4px);
@@ -3704,6 +3998,15 @@ ul {
   gap: 1rem; /* Slightly tighter gap to fit 3 buttons nicely */
   width: 100%;
   margin-top: 1.5rem;
+}
+@media only screen and (max-width: 37.5em) {
+  .tour-dashboard-card__actions {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
+.tour-dashboard-card__actions {
+  /* 600px */
 }
 .tour-dashboard-card {
   /* Unified Base Button Style */

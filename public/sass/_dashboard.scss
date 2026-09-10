@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 // ==========================================
 // SAAS ADMIN DASHBOARD: EXPEDITION THEME
 // ==========================================
@@ -39,6 +41,22 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
   left: 0;
   z-index: 100;
 
+  @include respond(tab-port) {
+    width: 100%;
+    height: 6rem;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    padding: 0 1.5rem;
+    border-right: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+  }
+
   ul {
     list-style: none;
     width: 100%;
@@ -46,12 +64,22 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
     flex-direction: column;
     gap: 2rem;
     align-items: center;
+
+    @include respond(tab-port) {
+      flex-direction: row;
+      justify-content: space-around;
+      gap: 0.5rem;
+    }
   }
 
   li {
     width: 100%;
     display: flex;
     justify-content: center;
+
+    @include respond(tab-port) {
+      width: auto;
+    }
 
     a {
       display: flex;
@@ -61,6 +89,11 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
       height: 50px;
       border-radius: 1.2rem;
       transition: all 0.3s;
+
+      @include respond(tab-port) {
+        width: 4.4rem;
+        height: 4.4rem;
+      }
 
       svg {
         width: 2.2rem;
@@ -107,12 +140,23 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
       }
     }
   }
+
+  &__bottom {
+    @include respond(tab-port) {
+      display: none;
+    }
+  }
 }
 
 .dashboard-content {
   flex: 1;
   margin-left: 80px;
   min-height: 100vh;
+
+  @include respond(tab-port) {
+    margin-left: 0;
+    padding-bottom: 8rem;
+  }
 }
 
 // ADMIN USERS: SPLIT LAYOUT
@@ -122,8 +166,20 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
   gap: 4rem;
   padding: 4rem;
 
-  @media only screen and (max-width: 60em) {
+  @include respond(tab-land) {
+    gap: 3rem;
+    padding: 3rem 2rem;
+  }
+
+  @include respond(tab-port) {
     grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding: 2.5rem 1.8rem;
+  }
+
+  @include respond(phone) {
+    padding: 2rem 1.2rem;
+    gap: 2rem;
   }
 }
 
@@ -142,6 +198,17 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
   flex-wrap: wrap;
   gap: 1.5rem;
   width: 100%;
+
+  @include respond(phone) {
+    gap: 1rem;
+
+    .filter-group,
+    .sort-group {
+      width: 100%;
+      justify-content: space-between;
+      margin-left: 0 !important;
+    }
+  }
 }
 
 .sort-group, .filter-group {
@@ -339,6 +406,27 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
     max-height: 70vh;
     overflow-y: auto;
     border: 1px solid rgba(255, 255, 255, 0.05);
+
+    @include respond(phone) {
+      padding: 0.8rem;
+    }
+
+    ul li {
+      @include respond(phone) {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
+
+        > div:last-child {
+          width: 100%;
+          text-align: left !important;
+
+          > div {
+            justify-content: flex-start !important;
+          }
+        }
+      }
+    }
 
     &::-webkit-scrollbar {
       width: 0.8rem;
@@ -626,6 +714,10 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
     padding: 2.5rem 3rem;
     min-height: 50vh;
     overflow: hidden;
+
+    @include respond(phone) {
+      padding: 1.8rem 1.4rem;
+    }
   }
 
   #user-placeholder,
@@ -648,6 +740,18 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    @include respond(phone) {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+      gap: 1.2rem;
+
+      &__right {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
 
     &__left {
       // Flattens the DOM visually so its children become direct grid items of the header
@@ -1151,12 +1255,12 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
   max-width: 160rem;
   margin: 0 auto;
 
-  @media only screen and (max-width: 60em) {
-    padding: 3rem 3rem;
+  @include respond(tab-port) {
+    padding: 3rem 2.5rem;
   }
 
-  @media only screen and (max-width: 40em) {
-    padding: 2rem 1.5rem;
+  @include respond(phone) {
+    padding: 2rem 1.2rem;
   }
 }
 
@@ -1164,6 +1268,19 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
   margin-bottom: 3.5rem;
   padding-bottom: 2.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  @include respond(phone) {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+
+    h1 {
+      font-size: 2.4rem;
+    }
+
+    .welcome-subtitle {
+      font-size: 1.4rem;
+    }
+  }
 
   h1 {
     color: #F8F9FA;
@@ -1202,12 +1319,19 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
   grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
 
-  @media only screen and (max-width: 75em) {
+  @include respond(tab-land) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
   }
 
-  @media only screen and (max-width: 45em) {
+  @include respond(tab-port) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  @include respond(phone) {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 
@@ -1223,6 +1347,11 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
   overflow: hidden;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+
+  @include respond(phone) {
+    padding: 2rem 1.6rem;
+    gap: 1.5rem;
+  }
 
   &:hover {
     transform: translateY(-4px);
@@ -1494,6 +1623,11 @@ $color-admin-glass-hover: rgba(255, 255, 255, 0.08);
     gap: 1rem; /* Slightly tighter gap to fit 3 buttons nicely */
     width: 100%;
     margin-top: 1.5rem;
+
+    @include respond(phone) {
+      flex-direction: column;
+      gap: 0.8rem;
+    }
   }
 
   /* Unified Base Button Style */

@@ -10,8 +10,9 @@
   gap: 3rem;
   min-height: 50vh;
 
-  @media only screen and (max-width: 60em) {
+  @include respond(tab-port) {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
 }
 

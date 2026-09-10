@@ -1,0 +1,30 @@
+/* ==========================================
+   MEDIA QUERY MANAGER
+   0 - 600px:      Phone
+   600 - 900px:    Tablet Portrait
+   900 - 1200px:   Tablet Landscape
+   [1200px+]       Normal desktop styles apply
+
+   1em = 16px (standard browser default)
+   37.5em  = 600px
+   56.25em = 900px
+   75em    = 1200px
+   ========================================== */
+
+@mixin respond($breakpoint) {
+  @if $breakpoint == phone {
+    @media only screen and (max-width: 37.5em) {
+      @content;
+    } /* 600px */
+  }
+  @if $breakpoint == tab-port {
+    @media only screen and (max-width: 56.25em) {
+      @content;
+    } /* 900px */
+  }
+  @if $breakpoint == tab-land {
+    @media only screen and (max-width: 75em) {
+      @content;
+    } /* 1200px */
+  }
+}

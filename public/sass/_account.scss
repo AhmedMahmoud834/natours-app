@@ -10,6 +10,10 @@
   align-items: center;
   justify-content: center;
   padding: 12rem 2rem 6rem 2rem;
+
+  @include respond(phone) {
+    padding: 9rem 1rem 4rem 1rem;
+  }
 }
 
 .user-view {
@@ -24,7 +28,7 @@
   border: 1px solid rgba(248, 249, 250, 0.08);
   display: flex;
 
-  @media only screen and (max-width: 60em) {
+  @include respond(tab-port) {
     flex-direction: column;
   }
 
@@ -34,7 +38,7 @@
     padding: 4rem 0;
     border-right: 1px solid rgba(248, 249, 250, 0.05);
 
-    @media only screen and (max-width: 60em) {
+    @include respond(tab-port) {
       display: flex;
       overflow-x: auto;
       padding: 1rem 0;
@@ -48,6 +52,14 @@
     background: rgba(255, 255, 255, 0.02);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+
+    @include respond(tab-port) {
+      padding: 4rem 2.5rem;
+    }
+
+    @include respond(phone) {
+      padding: 2.5rem 1.5rem;
+    }
 
     .heading-secondary {
       font-family: $font-headlines;
@@ -64,6 +76,10 @@
   &__form-container {
     max-width: 68rem;
     margin: 0 auto;
+
+    @include respond(tab-port) {
+      max-width: 100%;
+    }
   }
 }
 
@@ -73,7 +89,7 @@
   li {
     margin-bottom: 0.5rem;
 
-    @media only screen and (max-width: 60em) {
+    @include respond(tab-port) {
       flex: 0 0 auto;
       margin-right: 2rem;
     }
@@ -202,6 +218,18 @@
     transform: translateY(-3px);
     border-color: rgba(255, 107, 53, 0.5);
     box-shadow: 0 1rem 3rem rgba($color-dark-base, 0.4);
+  }
+
+  @include respond(phone) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+    padding: 1.5rem;
+
+    &__img {
+      width: 100%;
+      height: 18rem;
+    }
   }
 
   &__img {
