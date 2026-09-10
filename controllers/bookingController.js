@@ -38,6 +38,12 @@ export const getCheckoutSession = async (req, res, next) => {
       tourId: tour.id,
       participants: participants.toString(),
     },
+    payment_intent_data: {
+      metadata: {
+        tourId: tour.id,
+        participants: participants.toString(),
+      },
+    },
     mode: 'payment',
     line_items: [
       {
@@ -295,7 +301,22 @@ export const createBooking = async (req, res, next) => {
   const tour = await Tour.findById(tourId);
   if (!tour) return next(new AppError('No tour found with that ID.', 404));
 
-  // 3. Resolve participants count and validate against maxGroupSize
+  // 3. Verify user exists and is active
+  if (!user) {
+    return next(
+      new AppError(
+        'A booking must belong to a user. Please provide a user ID.',
+        400,
+      ),
+    );
+  }
+
+  const bookingUser = await User.findById(user);
+  if (!bookingUser) {
+    return next(new AppError('No active user found with that ID.', 404));
+  }
+
+  // 4. Resolve participants count and validate against maxGroupSize
   const participants = Math.max(1, parseInt(rawParticipants, 10) || 1);
   if (tour.maxGroupSize && participants > tour.maxGroupSize) {
     return next(
@@ -306,7 +327,7 @@ export const createBooking = async (req, res, next) => {
     );
   }
 
-  // 4. Resolve price: use admin custom price if provided, otherwise default to tour calculated price * participants
+  // 5. Resolve price: use admin custom price if provided, otherwise default to tour calculated price * participants
   let finalPrice;
   if (price !== undefined && price !== null && price !== '') {
     finalPrice = Number(price);
@@ -317,12 +338,12 @@ export const createBooking = async (req, res, next) => {
     finalPrice = unitPrice * participants;
   }
 
-  // 5. Resolve status and paid flag
+  // 6. Resolve status and paid flag
   const bookingStatus = status || 'pending';
   const isPaid =
     req.body.paid !== undefined ? req.body.paid : bookingStatus === 'confirmed';
 
-  // 6. Create the booking (always cash for manual admin creation)
+  // 7. Create the booking 
   const booking = await Booking.create({
     tour: tourId,
     user,

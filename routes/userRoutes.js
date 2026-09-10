@@ -1,4 +1,5 @@
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import {
   getAllUsers,
   updateMe,
@@ -24,11 +25,22 @@ import {
 } from '../controllers/authController.js';
 import { resizeUserPhoto } from '../util/multer.js';
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: {
+    status: 'Failed',
+    message:
+      'Too many login attempts from this IP, please try again in 15 minutes.',
+  },
+  skipSuccessfulRequests: true,
+});
+
 const userRouter = express.Router();
 
 // auth
 userRouter.post('/signup', signup);
-userRouter.post('/login', login);
+userRouter.post('/login', loginLimiter, login);
 userRouter.get('/logout', logout);
 userRouter.post('/forgetPassword', forgetPassword);
 userRouter.patch('/resetPassword/:token', resetPassword);

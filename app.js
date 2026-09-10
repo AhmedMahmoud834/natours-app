@@ -19,6 +19,7 @@ import globalErrorHandler from './controllers/errorController.js';
 import AppError from './util/appError.js';
 import rootDir from './util/rootDir.js';
 import config from './config/index.js';
+import logger from './util/logger.js';
 import { webhookCheckout } from './controllers/bookingController.js';
 
 const app = express();
@@ -70,9 +71,17 @@ app.use(
   }),
 );
 
-// Development logging
+// HTTP request logging
 if (config.env === 'development') {
   app.use(morgan('dev'));
+} else {
+  app.use(
+    morgan('combined', {
+      stream: {
+        write: (message) => logger.info(message.trim()),
+      },
+    }),
+  );
 }
 
 // Limit requests from same API

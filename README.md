@@ -1,249 +1,359 @@
-# Natours — Tour Booking & Exploration Platform
+# Natours
 
-> A full-stack tour exploration and booking application providing secure reservations, interactive geospatial mapping, and automated payment processing for travel adventures.
-
-[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Express.js](https://img.shields.io/badge/Express-5.2-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose%209.7-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES%20Modules-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![Stripe](https://img.shields.io/badge/Stripe-v22-008CDD?logo=stripe&logoColor=white)](https://stripe.com/)
-[![Sass](https://img.shields.io/badge/Sass-Dart%20Sass-CC6699?logo=sass&logoColor=white)](https://sass-lang.com/)
+A tour booking API and server-rendered web application built with Node.js, Express, and MongoDB. Users can browse tours, book them via Stripe, and manage their account. Admins and guides have role-specific dashboards and controls.
 
 ---
 
-## 📌 Features
+## Tech Stack
 
-- **Tour Discovery & Geospatial Search**: Browse tours filtered by price, difficulty, ratings, or location radius using MongoDB geospatial queries (`$geoWithin`, `$geoNear`).
-- **Interactive Mapping**: Leaflet maps rendered with CartoDB Dark Matter tiles, custom coordinates pins, and route bounding boxes.
-- **Authentication & Role Authorization**: JSON Web Token (JWT) stored in HTTP-only cookies, with role-based access control (`user`, `guide`, `lead-guide`, `admin`).
-- **Account Protection**: Incremental account lockout defense (15m/30m/60m) after 5 consecutive failed login attempts.
-- **Password Reset Pipeline**: Time-limited cryptographic reset tokens delivered through responsive HTML emails.
-- **Stripe Checkout**: Direct integration with Stripe Checkout Sessions for credit card payments and automated booking generation.
-- **User Dashboard**: Profile settings, password management, and a dedicated "My Bookings" view.
-- **Image Processing Pipeline**: Multi-part image uploads via Multer (memory storage) with automated resizing, cropping, and JPEG conversion via Sharp.
-- **Transactional Emails**: Pre-rendered HTML emails using Pug templates and Nodemailer.
-- **Server-Side Rendered UI**: Built with Pug and custom BEM SCSS following the dark "Expedition" palette.
-
----
-
-## 🛠️ Tech Stack
-
-### Backend & Core
-- **Node.js**: Server runtime environment using native ES modules.
-- **Express.js (v5)**: Web application and REST API framework.
-- **Pug**: Server-side templating engine for views and email templates.
-
-### Database & ODM
-- **MongoDB**: NoSQL document database.
-- **Mongoose (v9)**: Object Data Modeling (ODM) library with schema validation, virtual populate, and geospatial indexing.
-
-### Authentication & Security
-- **JSON Web Tokens (`jsonwebtoken`)**: Stateless token issuance and verification.
-- **Bcrypt (`bcryptjs`)**: Password hashing and salt rounds.
-- **Helmet**: HTTP header hardening with a custom Content Security Policy (CSP).
-- **Express Rate Limit**: IP rate limiting against brute-force attacks.
-- **Mongo Sanitize & XSS Filters**: Sanitization of user input against NoSQL operator injection and cross-site scripting.
-- **HPP**: Parameter pollution prevention on query strings.
-
-### Payments & Third-Party APIs
-- **Stripe SDK (v22)**: Payment processing and Checkout Sessions.
-- **Leaflet.js**: Client-side interactive map visualization.
-- **Nodemailer**: SMTP email transport delivery.
-- **Sharp**: High-performance image transformation and resizing.
+| Layer | Technology |
+|---|---|
+| **Backend** | Node.js, Express 5, ES Modules |
+| **Templating** | Pug |
+| **Database** | MongoDB, Mongoose 9 |
+| **Auth** | JWT (HTTP-only cookies), bcryptjs |
+| **Payments** | Stripe Checkout (webhooks) |
+| **Email** | Brevo HTTP API (production), Mailtrap SMTP (development) |
+| **File Uploads** | Multer + Sharp (image resizing) |
+| **Security** | Helmet, express-rate-limit, express-mongo-sanitize, hpp, xss-filters |
+| **Logging** | Winston |
+| **Styles** | SCSS (compiled via Sass) |
+| **Deployment** | Render |
 
 ---
 
-## 🏛️ Architecture & Project Structure
+## Features
 
-The project strictly follows the **Model-View-Controller (MVC)** architectural pattern to ensure clean separation of concerns:
+- Browse, filter, sort, and paginate tours by price, duration, difficulty, and ratings
+- Geospatial queries — find tours within a radius or get distances from a point
+- Stripe Checkout with webhook-based booking creation and participant count tracking
+- Admin manual booking creation (cash payments) with price override support
+- Booking state machine: `pending → confirmed → cancelled / refunded`
+- Automatic Stripe refund issued when an admin refunds a Stripe-paid booking
+- JWT authentication via HTTP-only cookies, with token invalidation on password change
+- Exponential lockout on repeated failed login attempts (15 min → 30 min → 60 min…)
+- Role-based access control: `user`, `guide`, `lead-guide`, `admin`
+- Lead guides and guides can only modify tours they are assigned to
+- Soft delete for both users and tours (`active: false`), with full admin restore
+- User self-deletion sets `active: false` (preserves booking history)
+- Admin deactivation also obfuscates the email (`deleted_<id>_<ts>@deleted.natours.io`)
+- Review creation restricted to `user` role; deletion allowed by author or admin
+- Transactional emails: welcome, password reset, booking confirmation, cancellation, refund, account activation
+- Photo uploads for users and tour images with server-side resizing via Sharp
+- Server-side rendered pages for tour listing, detail, account, bookings, and admin dashboards
+- Guide and lead-guide dashboards showing assigned tours and passenger rosters
+- Winston-based structured logging with separate `combined.log` and `error.log` files
 
-- **Models**: Encapsulate business logic, database schemas, validation rules, and lifecycle middleware.
-- **Views**: Server-side rendered Pug templates providing the user interface and email formats.
-- **Controllers**: Handle HTTP request processing, interface with Mongoose models, and return JSON responses or rendered HTML.
-- **Routers**: Modular Express routers mapping HTTP methods and URL paths to middleware pipelines.
-- **Utils**: Generic reusable helpers (error handling, email dispatch, query features).
+---
+
+## Project Structure
 
 ```
 natours/
-├── config/              # Centralized configuration & environment validation
-├── controllers/         # Request handling & application business logic
-│   ├── authController.js
+├── app.js                  # Express app setup, middleware chain, route mounting
+├── server.js               # DB connection + server start
+├── config/
+│   └── index.js            # Centralised config object (reads from .env)
+├── controllers/
+│   ├── factoryHandler.js   # Generic CRUD factory (getAll, getOne, createOne, updateOne, deleteOne)
+│   ├── authController.js   # JWT auth, protect middleware, restrictTo, lockout
 │   ├── bookingController.js
-│   ├── errorController.js
-│   ├── factoryHandler.js
-│   ├── reviewController.js
 │   ├── toursController.js
 │   ├── usersController.js
-│   └── viewsController.js
-├── models/              # Mongoose data schemas and models
-│   ├── bookingModel.js
-│   ├── reviewModel.js
+│   ├── reviewController.js
+│   ├── viewsController.js
+│   └── errorController.js  # Global error handler, operational vs programming errors
+├── models/
 │   ├── tourModel.js
-│   └── userModel.js
-├── public/              # Static assets compiled for client consumption
-│   ├── css/             # Compiled CSS stylesheets
-│   ├── img/             # Images, icons, and avatars
-│   ├── js/              # Modular vanilla client scripts (IIFE encapsulated)
-│   └── sass/            # SCSS source files adhering to BEM conventions
-├── routes/              # Route declarations mapped to controllers
-│   ├── bookingRoutes.js
-│   ├── reviewRoutes.js
+│   ├── userModel.js
+│   ├── bookingModel.js
+│   └── reviewModel.js
+├── routes/
 │   ├── toursRoutes.js
 │   ├── userRoutes.js
-│   └── viewRoutes.js
-├── util/                # Cross-cutting utility classes & helpers
-│   ├── apiFeatures.js
-│   ├── appError.js
-│   ├── email.js
-│   ├── filterObj.js
-│   ├── logger.js
-│   └── sendCookie.js
-├── views/               # Pug templates (Views & Transactional Emails)
-│   ├── email/           # Email layout and templates
-│   ├── account.pug
-│   ├── accountBookings.pug
-│   ├── base.pug
-│   ├── error.pug
-│   ├── home.pug
-│   ├── login.pug
-│   ├── overview.pug
-│   ├── signup.pug
-│   └── tour.pug
-├── app.js               # Express application configuration & middleware stack
-├── server.js            # Server bootstrap and database connection
-└── package.json
+│   ├── bookingsRoutes.js
+│   └── reviewsRoutes.js
+├── util/
+│   ├── apiFeatures.js      # Chainable filter/sort/paginate/limitFields helper
+│   ├── email.js            # Email class: Brevo HTTP API (prod) / Mailtrap SMTP (dev)
+│   ├── appError.js         # Operational error wrapper
+│   └── logger.js           # Winston logger
+├── views/                  # Pug templates
+│   └── email/              # Transactional email templates
+└── public/                 # Static assets, compiled CSS, client-side JS
 ```
 
----
+### Factory Handler Pattern
 
-## 🔌 API Endpoints Reference
+`FactoryHandler` is a static class that returns Express route handlers for standard CRUD operations. Controllers call it directly instead of repeating boilerplate:
 
-### Tours (`/api/v1/tours`)
+```js
+export const getAllUsers = FactoryHandler.getAll(User);
+export const getUser    = FactoryHandler.getOne(User, 'userId');
+export const createUser = FactoryHandler.createOne(User, ['name', 'email', 'role']);
+```
 
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `GET` | `/api/v1/tours` | Get all tours (supports filter, sort, limit, page) | No |
-| `GET` | `/api/v1/tours/:tourId` | Get single tour details | No |
-| `POST` | `/api/v1/tours` | Create a new tour | Yes (`admin`, `lead-guide`) |
-| `PATCH` | `/api/v1/tours/:tourId` | Update tour & upload cover/gallery images | Yes (`admin`, `lead-guide`) |
-| `DELETE` | `/api/v1/tours/:tourId` | Delete a tour | Yes (`admin`, `lead-guide`) |
-| `GET` | `/api/v1/tours/top-5` | Alias for top 5 rated cheap tours | No |
-| `GET` | `/api/v1/tours/tours-stats` | Aggregation pipeline stats per difficulty | No |
-| `GET` | `/api/v1/tours/monthly-plan/:year` | Monthly tour schedule analysis | Yes (`admin`, `lead-guide`, `guide`) |
-| `GET` | `/api/v1/tours/tours-within/:distance/center/:latlng/unit/:unit` | Find tours within radial distance | No |
-| `GET` | `/api/v1/tours/distances/:latlng/unit/:unit` | Calculate tour distances from coordinates | No |
+The factory supports optional field whitelisting, custom populate options, base filters (e.g. `{ active: false }` for inactive-only queries), and the `includeInactive` query option to bypass soft-delete middleware.
 
-### Users & Authentication (`/api/v1/users`)
+### Middleware Chain
 
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/api/v1/users/signup` | Register new account | No |
-| `POST` | `/api/v1/users/login` | Authenticate user & set JWT cookie | No |
-| `GET` | `/api/v1/users/logout` | Clear authentication cookie | No |
-| `POST` | `/api/v1/users/forgetPassword` | Send password reset token to email | No |
-| `PATCH` | `/api/v1/users/resetPassword/:token` | Reset password using valid token | No |
-| `GET` | `/api/v1/users/me` | Retrieve current user profile | Yes |
-| `PATCH` | `/api/v1/users/updateMe` | Update user details & upload avatar | Yes |
-| `PATCH` | `/api/v1/users/updatePassword` | Change user password | Yes |
-| `DELETE` | `/api/v1/users/deleteMe` | Deactivate account (soft delete) | Yes |
-| `GET` | `/api/v1/users` | Retrieve all users | Yes (`admin`) |
+`app.js` assembles the middleware stack in a deliberate order:
 
-### Bookings & Reviews
-
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `GET` | `/api/v1/booking/checkout-session/:tourId` | Generate Stripe Checkout session | Yes |
-| `GET` | `/api/v1/reviews` | Get all reviews | No |
-| `POST` | `/api/v1/tours/:tourId/reviews` | Create review for a tour | Yes (`user`) |
-| `PATCH` | `/api/v1/reviews/:reviewId` | Update own review | Yes (`user`, `admin`) |
-| `DELETE` | `/api/v1/reviews/:reviewId` | Delete review | Yes (`user`, `admin`) |
+1. CORS, static files, Helmet (CSP configured)
+2. **Stripe webhook** — mounted *before* `express.json()` so the raw body is preserved for signature verification
+3. `express.json()`, `cookie-parser`
+4. MongoDB sanitization, XSS sanitization, HPP, compression
+5. Route handlers
+6. 404 catch-all → global error handler
 
 ---
 
-## ⚙️ Environment Variables
+## API Documentation
 
-Create a `.env` file in the root directory and supply the following configuration keys:
+### Tours
 
-| Variable | Description | Example / Default |
-|---|---|---|
-| `NODE_ENV` | Application environment mode | `development` / `production` |
-| `PORT` | Web server listening port | `5000` |
-| `DATABASE` | MongoDB connection URI | `mongodb://localhost:27017/natours` |
-| `DATABASE_USER` | MongoDB database user (if using Atlas) | `admin` |
-| `DATABASE_PASSWORD` | MongoDB database password | `secretpassword` |
-| `PASSWORD_SALT` | Bcrypt salt rounds count | `10` |
-| `JWT_SECRET` | Secret key for signing JSON Web Tokens | `your-32-character-secret` |
-| `JWT_EXPIRES` | JWT validity lifetime duration | `15d` |
-| `JWT_COOKIES_EXPIRES` | Cookie expiration timeframe in days | `15` |
-| `EMAIL_HOST` | SMTP server hostname | `sandbox.smtp.mailtrap.io` |
-| `EMAIL_PORT` | SMTP port number | `2525` |
-| `EMAIL_USERNAME` | SMTP account username | `mailtrap_user` |
-| `EMAIL_PASSWORD` | SMTP account password | `mailtrap_pass` |
-| `EMAIL_FROM` | Default sender email address | `Natours <admin@natours.io>` |
-| `STRIPE_SECRET_KEY` | Stripe private API secret key | `sk_test_...` |
-| `STRIPE_PUBLIC_KEY` | Stripe publishable API key | `pk_test_...` |
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/tours` | Public | List all active tours (filter, sort, paginate) |
+| `GET` | `/api/v1/tours/:tourId` | Public | Get a single tour |
+| `POST` | `/api/v1/tours` | Admin, Lead-Guide | Create a tour |
+| `PATCH` | `/api/v1/tours/:tourId` | Admin, assigned Lead-Guide | Update a tour |
+| `DELETE` | `/api/v1/tours/:tourId` | Admin, assigned Lead-Guide | Hard delete a tour (blocked if bookings exist; must deactivate instead) |
+| `PATCH` | `/api/v1/tours/:tourId/deactivate` | Admin, assigned Lead-Guide | Soft deactivate a tour |
+| `PATCH` | `/api/v1/tours/:tourId/activate` | Admin, assigned Lead-Guide | Restore a soft-deleted tour |
+| `GET` | `/api/v1/tours/top-5` | Public | Top 5 rated tours |
+| `GET` | `/api/v1/tours/top-5-cheap` | Public | Top 5 cheapest tours |
+| `GET` | `/api/v1/tours/tours-stats` | Public | Aggregated stats by difficulty |
+| `GET` | `/api/v1/tours/monthly-plan/:year` | Admin, Guide, Lead-Guide | Bookings per month |
+| `GET` | `/api/v1/tours/tours-within/:distance/center/:latlng/unit/:unit` | Public | Tours within radius |
+| `GET` | `/api/v1/tours/distances/:latlng/unit/:unit` | Public | Distance from point to each tour |
+
+### Users
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/v1/users/signup` | Public | Register a new account |
+| `POST` | `/api/v1/users/login` | Public | Login |
+| `GET` | `/api/v1/users/logout` | Public | Clears JWT cookie |
+| `POST` | `/api/v1/users/forgetPassword` | Public | Send password reset email |
+| `PATCH` | `/api/v1/users/resetPassword/:token` | Public | Reset password using token |
+| `PATCH` | `/api/v1/users/updatePassword` | Authenticated | Change password |
+| `GET` | `/api/v1/users/me` | Authenticated | Get own profile |
+| `PATCH` | `/api/v1/users/updateMe` | Authenticated | Update name, email, photo |
+| `DELETE` | `/api/v1/users/deleteMe` | Authenticated | Self-deactivate account |
+| `GET` | `/api/v1/users` | Admin | List all active users |
+| `POST` | `/api/v1/users` | Admin | Create user |
+| `GET` | `/api/v1/users/:userId` | Admin | Get user by ID |
+| `PATCH` | `/api/v1/users/:userId` | Admin | Update user (name, email, role) |
+| `PATCH` | `/api/v1/users/:userId/deactivate` | Admin | Soft deactivate + obfuscate email |
+| `PATCH` | `/api/v1/users/:userId/activate` | Admin | Restore account with new email and temp password |
+
+### Bookings
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/bookings/checkout-session/:tourId` | User only | Create a Stripe Checkout session |
+| `GET` | `/api/v1/bookings` | Admin | List all bookings |
+| `POST` | `/api/v1/bookings` | Admin | Create manual (cash) booking |
+| `GET` | `/api/v1/bookings/:bookingId` | Admin | Get single booking |
+| `PATCH` | `/api/v1/bookings/:bookingId/confirm` | Admin | Confirm a pending booking |
+| `PATCH` | `/api/v1/bookings/:bookingId/cancel` | Admin | Cancel a pending/confirmed booking |
+| `PATCH` | `/api/v1/bookings/:bookingId/refund` | Admin | Refund a confirmed Stripe booking |
+| `POST` | `/webhook-checkout` | Stripe | Stripe webhook — creates booking on payment success |
+
+### Reviews
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/tours/:tourId/reviews` | Public | List reviews for a tour |
+| `POST` | `/api/v1/tours/:tourId/reviews` | User only | Submit a review |
+| `GET` | `/api/v1/reviews/:reviewId` | Public | Get single review |
+| `PATCH` | `/api/v1/reviews/:reviewId` | Review author | Update own review |
+| `DELETE` | `/api/v1/reviews/:reviewId` | Author or Admin | Delete review |
 
 ---
 
-## 🚦 Getting Started
+## Getting Started
 
-### 1. Prerequisites
-Ensure you have the following installed on your machine:
-- [Node.js](https://nodejs.org/) (version 18.x or higher)
-- [MongoDB](https://www.mongodb.com/) (running locally or a MongoDB Atlas URI)
+### Prerequisites
 
-### 2. Installation
-Clone the repository and install all dependencies:
+- Node.js v18 or later
+- A MongoDB connection string (MongoDB Atlas works fine)
+- A [Stripe](https://stripe.com) account (test mode is fine)
+- A [Brevo](https://www.brevo.com) account for production email, or a [Mailtrap](https://mailtrap.io) account for development
+
+### 1. Clone and install
+
 ```bash
 git clone https://github.com/AhmedMahmoud834/natours-app.git
 cd natours-app
 npm install
 ```
 
-### 3. Build Stylesheets
-Compile SCSS source files into the distribution stylesheet:
+### 2. Set up environment variables
+
+Create a `.env` file in the project root. See the [Environment Variables](#environment-variables) section below for the full list.
+
+### 3. Compile styles
+
 ```bash
-# Single build
 npm run sass:build
-
-# Active file watcher for frontend development
-npm run sass:watch
 ```
 
-### 4. Run the Server
-```bash
-# Start with automatic restart on file change
-npm start
-
-# Start with Node inspector attached for debugging
-npm run debug
-```
-
-Open your browser and navigate to `http://localhost:5000`.
-
----
-
-## 🧪 Testing & Code Quality
-
-Code formatting and static analysis are enforced using ESLint and Prettier configured for Node.js ES modules:
+### 4. Run the development server
 
 ```bash
-# Run ESLint validation
-npx eslint .
+npm run start:dev
+```
 
-# Format code with Prettier
-npx prettier --write .
+The server starts on `http://localhost:5000` by default.
+
+### 5. (Optional) Forward Stripe webhooks locally
+
+Install the [Stripe CLI](https://stripe.com/docs/stripe-cli) and run:
+
+```bash
+stripe listen --forward-to localhost:5000/webhook-checkout
+```
+
+Copy the webhook signing secret it prints and set it as `STRIPE_WEBHOOK_SECRET_TEST` in your `.env`.
+
+---
+
+## Environment Variables
+
+Create a `.env` file in the project root with the following variables.
+
+```env
+# Server
+NODE_ENV=development
+PORT=5000
+
+# Database
+DATABASE=
+DATABASE_PASSWORD=
+DATABASE_USER=
+
+# Auth
+PASSWORD_SALT=
+JWT_SECRET=
+JWT_EXPIRES=
+JWT_COOKIES_EXPIRES=
+
+# Email — Mailtrap (development)
+MAILTRAP_EMAIL_USERNAME=
+MAILTRAP_EMAIL_PASSWORD=
+MAILTRAP_EMAIL_HOST=
+MAILTRAP_EMAIL_PORT=
+MAILTRAP_EMAIL_FROM=
+
+# Email — Brevo HTTP API (production)
+BREVO_API_KEY=
+BREVO_EMAIL_FROM=
+
+# Stripe
+STRIPE_SECRET_KEY=
+STRIPE_PUBLIC_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_WEBHOOK_SECRET_TEST=
 ```
 
 ---
 
-## 📸 Screenshots / Preview
+## Deployment
 
-*Screenshots and UI demos of the landing page, tour details with Leaflet maps, account dashboard, and Stripe checkout flow will be placed in the `docs/screenshots/` directory.*
+The application is deployed on **Render**.
+
+**Live URL:** https://natours-app-latest.onrender.com
+
+> Note: Render's free tier puts the service to sleep after inactivity. The first request after a sleep period may take 30–60 seconds.
+
+> **Email note:** Render blocks outbound SMTP on the free tier. The production email setup uses the Brevo HTTP API (HTTPS port 443) instead of SMTP to work around this restriction.
 
 ---
 
-## 📄 License
-This project is licensed under the **ISC License**.
+## System Verification & Previews
 
-**Author**: Ahmed Mahmoud
+> This project is designed as a backend-first REST API. The included server-rendered views (Pug/SCSS) serve as a reference client to demonstrate end-to-end API integration, cookie session management, and asynchronous webhook handling.
+
+### 1. Business Logic & Error Handling
+
+#### Conditional Tour Deletion Guard (`400 Bad Request`)
+*Hard deletion is blocked when a tour has existing bookings, protecting payment and booking audit trails:*
+
+![Tour Deletion Guard](docs/previews/tour-deletion-guard.png)
+
+#### Exponential Login Lockout (`429 Too Many Requests`)
+*Account access is progressively locked after repeated failed login attempts (15 min → 30 min → 60 min…):*
+
+![Login Lockout](docs/previews/login-lockout.png)
+
+### 2. Stripe Webhook & Async Event Processing
+
+#### Stripe Webhook Lifecycle
+*CLI webhook event triggers automatic booking creation and transactional confirmation email dispatch:*
+
+![Webhook Processing](docs/previews/webhook-terminal.png)
+
+#### Stripe Dashboard Verification
+*Payment records verified with custom metadata (`tourId`, `participants`) and customer email association:*
+
+![Stripe Dashboard](docs/previews/stripe-dashboard.png)
+
+### 3. Data Integrity & Observability
+
+#### Soft Delete & Email Obfuscation (MongoDB Compass)
+*Deactivated accounts preserve booking history while obfuscating the email for re-registration:*
+
+![MongoDB Compass](docs/previews/mongo-soft-delete.png)
+
+#### Structured Observability (Winston Logs)
+*Structured JSON logging with timestamps, asynchronous event tracking, and operational error stack traces:*
+
+![Winston Logs](docs/previews/winston-logs.png)
+
+---
+
+## Design Decisions
+
+### 1. Soft Delete for Users
+
+Users are never hard-deleted. The `deleteMe` endpoint (self-service) sets `active: false`. The admin `deactivateUser` endpoint additionally obfuscates the email, replacing it with `deleted_<userId>_<timestamp>@deleted.natours.io`. This frees the original email address for re-registration while keeping the user record and all their bookings intact in the database.
+
+A Mongoose `pre(/^find/)` hook on `userModel.js` filters out inactive users from all queries by default. Admin endpoints that need to see inactive users pass `{ includeInactive: true }` as a query option to bypass this filter. Accounts can be fully restored via `PATCH /api/v1/users/:userId/activate`, which requires a new email address and sends a temporary password to it.
+
+### 2. Booking State Machine
+
+Bookings have four possible statuses: `pending`, `confirmed`, `cancelled`, and `refunded`. Transitions are one-directional and enforced at the controller level:
+
+- **`pending → confirmed`** via `PATCH /:bookingId/confirm`
+- **`pending / confirmed → cancelled`** via `PATCH /:bookingId/cancel` — but only for cash bookings. If a Stripe-paid booking is still marked `paid: true`, the cancel endpoint returns a `400` directing the admin to use `/refund` instead, so the customer actually gets their money back.
+- **`confirmed → refunded`** via `PATCH /:bookingId/refund` — triggers a Stripe API refund call for Stripe bookings; for cash bookings it only updates the status and `paid` flag.
+
+There is no path back from `cancelled` or `refunded`. Stripe Checkout bookings are created directly in `confirmed` state via the webhook.
+
+### 3. Tour Capacity — Per-Booking Cap Only
+
+`maxGroupSize` is enforced strictly as a **per-booking cap**: a single booking's `participants` value cannot exceed the tour's `maxGroupSize` (checked when initiating a Stripe Checkout session and during manual booking creation).
+
+There is **no tracking of remaining or total capacity** across all bookings for a tour or date — multiple separate bookings can each individually satisfy the per-booking cap even if their combined participants would exceed `maxGroupSize` many times over.
+
+This was a deliberate middle-ground decision: it prevents an obviously invalid single booking (e.g. 1,000 participants on a 15-person tour) without requiring ongoing slot-tracking maintenance across bookings/dates (such as inventory locks, date availability calculations, and replenishing slots upon cancellation).
+
+### 4. Role-Based Permissions with Tour Scoping
+
+Four roles exist: `user`, `guide`, `lead-guide`, and `admin`. Route-level access is controlled by the `restrictTo(...roles)` middleware in `authController.js`.
+
+Beyond role checks, `lead-guide` and `guide` users can only modify tours they are explicitly assigned to. The `restrictToOwnTour` middleware checks that `req.user.id` is present in `tour.guides` before allowing `PATCH`, `DELETE`, `deactivate`, or `activate` on a tour. Admins bypass this check. Review creation is restricted to `user` role only — `guide`, `lead-guide`, and `admin` roles cannot submit reviews.
+
+### 5. Review Moderation
+
+Admins can delete any review. Review authors can delete and update their own reviews. Admins cannot edit reviews — only delete them. This keeps admin moderation limited to removing content that violates policy, rather than allowing silent alteration of what users wrote.
+
+### 6. Tour Deletion vs. Deactivation (Preserving Booking History)
+
+Admins and assigned lead-guides cannot permanently delete a tour if it has any associated bookings. Before deletion, `deleteTour` queries `Booking.find({ tour: tour.id })`. If any bookings exist, the request is rejected with a `400 Bad Request` status and the message:
+
+> `"Cannot permanently delete this tour - it has <count> existing booking(s). Deactivate it instead."`
+
+Permanent hard deletion (`DELETE /api/v1/tours/:tourId`) is only permitted when a tour has zero associated bookings. This exists to protect referential integrity and prevent losing payment, customer, and booking history records. Once a tour has bookings tied to it, admins and assigned lead-guides must use `PATCH /api/v1/tours/:tourId/deactivate` to soft-delete the tour (`active: false`), hiding it from public listings and queries while keeping all historical records intact.

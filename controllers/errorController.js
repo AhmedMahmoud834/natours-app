@@ -33,8 +33,7 @@ const sendErrorDev = (err, req, res) => {
       stack: err.stack,
     });
   }
-  // eslint-disable-next-line no-console
-  console.error('ERROR: ', err);
+  logger.error(err.message, { stack: err.stack });
   return res.status(err.statusCode).render('error', {
     title: 'Something went wrong!',
     msg: err.isOperational ? err.message : 'Please try again later.',
@@ -43,22 +42,24 @@ const sendErrorDev = (err, req, res) => {
 
 const sendErrorProd = (err, req, res) => {
   if (!req.originalUrl.startsWith('/api')) {
-    // eslint-disable-next-line no-console
-    console.error('ERROR: ', err);
+    if (err.isOperational) {
+      logger.warn(`Operational UI Error (${err.statusCode}): ${err.message}`);
+    } else {
+      logger.error(err.message, { stack: err.stack });
+    }
     return res.status(err.statusCode).render('error', {
       title: 'Something went wrong!',
       msg: err.isOperational ? err.message : 'Please try again later.',
     });
   }
   if (err.isOperational) {
+    logger.warn(`Operational API Error (${err.statusCode}): ${err.message}`);
     res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
     });
   } else {
     logger.error(err.message, { stack: err.stack });
-    // eslint-disable-next-line no-console
-    console.log(err);
     res.status(500).json({
       status: 500,
       message: 'Something bad happened!',

@@ -52,18 +52,19 @@ export const updateTour = async (req, res, next) => {
 };
 
 export const deleteTour = async (req, res, next) => {
-  const tour = await Tour.findById(req.params.tourId).setOptions({
-    includeInactive: true,
-  });
+  const [tour, bookingCount] = await Promise.all([
+    Tour.findById(req.params.tourId).setOptions({
+      includeInactive: true,
+    }),
+    Booking.countDocuments({ tour: req.params.tourId }),
+  ]);
 
   if (!tour) return next(new AppError('No tour found with this id!', 404));
 
-  const bookings = await Booking.find({ tour: tour.id });
-
-  if (bookings.length > 0)
+  if (bookingCount > 0)
     return next(
       new AppError(
-        `Cannot permanently delete this tour - it has ${bookings.length} existing booking(s). Deactivate it instead.`,
+        `Cannot permanently delete this tour - it has ${bookingCount} existing booking(s). Deactivate it instead.`,
         400,
       ),
     );

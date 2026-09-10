@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import isEmail from 'validator/lib/isEmail.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import { ReturnDocument } from 'mongodb';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -122,38 +123,34 @@ userSchema.methods.checkPassword = async function (
 ) {
   const isCorrect = await bcrypt.compare(candidatePassword, userPassword);
   if (!isCorrect) {
-    const updated = await this.constructor.findOneAndUpdate(
-      { _id: this.id },
-      {
-        $inc: { loginAttempts: 1 },
-        lockoutCount:
-          this.lockoutResetTime < Date.now() ? 0 : this.lockoutCount,
-        lockoutResetTime: Date.now() + 24 * 60 * 60 * 1000,
-      },
-      { new: true },
-    );
-    if (updated.loginAttempts >= 5) {
-      await this.constructor.findOneAndUpdate({ _id: this.id }, [
+    const updated = await this.constructor
+      .findOneAndUpdate(
+        { _id: this.id },
         {
-          $inc: { lockoutCount: 1 },
+          $inc: { loginAttempts: 1 },
+          lockoutCount:
+            this.lockoutResetTime < Date.now() ? 0 : this.lockoutCount,
+          lockoutResetTime: Date.now() + 24 * 60 * 60 * 1000,
         },
-        { $set: { loginAttempts: 0 } },
+        { returnDocument: 'after' },
+      )
+      .select('+loginAttempts +lockoutCount');
+    if (updated.loginAttempts >= 5) {
+      const nextLockoutCount = (updated.lockoutCount || 0) + 1;
+
+      const lockoutDurationMs =
+        15 * 60 * 1000 * 2 ** Math.max(0, nextLockoutCount - 1);
+      const lockedUntil = new Date(Date.now() + lockoutDurationMs);
+      await this.constructor.findOneAndUpdate(
+        { _id: this.id },
         {
           $set: {
-            lockedUntil: {
-              $add: [
-                new Date(),
-                {
-                  $multiply: [
-                    900000,
-                    { $pow: [2, { $subtract: ['$lockoutCount', 1] }] },
-                  ],
-                },
-              ],
-            },
+            loginAttempts: 0,
+            lockoutCount: nextLockoutCount,
+            lockedUntil,
           },
         },
-      ]);
+      );
     }
   } else if (this.loginAttempts > 0) {
     await this.constructor.findOneAndUpdate(

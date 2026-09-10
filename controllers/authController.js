@@ -1,12 +1,14 @@
 import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 import AppError from '../util/appError.js';
 import User from '../models/userModel.js';
 import sendToken from '../util/sendCookie.js';
 import config from '../config/index.js';
 import Email from '../util/email.js';
 import Tour from '../models/tourModel.js';
+import logger from '../util/logger.js';
 
 export const signup = async (req, res, next) => {
   const { name, email, password, passwordConfirm } = req.body;
@@ -19,7 +21,15 @@ export const signup = async (req, res, next) => {
   newUser.password = undefined;
 
   const url = `${req.protocol}://${req.get('host')}/me`;
-  await new Email(newUser, url).sendWelcome();
+  try {
+    await new Email(newUser, url).sendWelcome();
+    logger.info(`Welcome email sent to ${newUser.email}`);
+  } catch (err) {
+    logger.error(
+      `Failed to send welcome email to ${newUser.email}: ${err.message}`,
+      { stack: err.stack },
+    );
+  }
   sendToken(newUser.id, req, res);
 
   res.status(201).json({
@@ -34,32 +44,52 @@ export const signup = async (req, res, next) => {
 };
 
 export const login = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email: inputEmail, password: inputPassword } = req.body;
   // check email and password
-  if (!email || !password)
+  if (!inputEmail || !inputPassword)
     return next(new AppError('please provide email and password!', 400));
 
   // check credentials
-  const user = await User.findOne({ email }).select(
+  const user = await User.findOne({ email: inputEmail }).select(
     '+password +lockedUntil +loginAttempts +lockoutCount +lockoutResetTime',
   );
 
   // if account is locked
-  if (user && user.lockedUntil && user.lockedUntil.getTime() > Date.now())
+  if (user && user.lockedUntil && user.lockedUntil.getTime() > Date.now()) {
+    logger.warn(
+      `Login rejected: Account ${user.email} is locked until ${new Date(user.lockedUntil)}`,
+    );
     return next(
       new AppError(
         `Too many login attempts, Account is locked until ${new Date(user.lockedUntil)}`,
-        401,
+        429,
       ),
     );
+  }
 
-  if (!user || !(await user.checkPassword(password, user.password)))
+  const DUMMY_HASH =
+    '$2a$12$e8POd1GTvQkJaaDqcP.7..oPvQvCqO0b9d9zG6z4s3B1n6f5w7r8.';
+  const isPasswordCorrect = user
+    ? await user.checkPassword(inputPassword, user.password)
+    : await bcrypt.compare(inputPassword, DUMMY_HASH);
+
+  if (!user || !isPasswordCorrect)
     return next(new AppError('Incorrect email or password!', 401));
 
   // gen token and send it
   sendToken(user._id, req, res);
+
+  const { name, photo, email, role } = user;
   res.status(200).json({
     status: 'Success',
+    data: {
+      user: {
+        name,
+        email,
+        photo,
+        role,
+      },
+    },
   });
 };
 
@@ -139,6 +169,10 @@ export const forgetPassword = async (req, res, next) => {
       message: 'If that email is registered a reset link was sent.',
     });
   } catch (err) {
+    logger.error(
+      `Error sending password reset email to ${user?.email}: ${err.message}`,
+      { stack: err.stack },
+    );
     if (user) {
       user.passResetToken = undefined;
       user.passResetExpires = undefined;

@@ -1,8 +1,15 @@
-/* eslint-disable no-console */
 import dns from 'node:dns';
 import mongoose from 'mongoose';
 import app from './app.js';
 import config from './config/index.js';
+import logger from './util/logger.js';
+
+process.on('uncaughtException', (err) => {
+  logger.error(`UNCAUGHT EXCEPTION! ${err.name}: ${err.message}`, {
+    stack: err.stack,
+  });
+  process.exit(1);
+});
 
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 
@@ -10,26 +17,26 @@ const dbUrl = config.db.url.replace('<DB_PASSWORD>', config.db.password);
 
 (async () => {
   await mongoose.connect(dbUrl, {});
-  console.log('Database Connected');
+  logger.info('Database connected successfully');
 })();
 
 const server = app.listen(config.port, () => {
-  console.log(`Server listening on port: ${config.port}`);
+  logger.info(`Server listening on port: ${config.port}`);
 });
 
 process.on('unhandledRejection', (err) => {
-  console.log(err.name, err.message);
-  console.log('UNHANDLED REJECTION! SHUTTING DOWN...');
-
+  logger.error(`UNHANDLED REJECTION! ${err.name}: ${err.message}`, {
+    stack: err.stack,
+  });
   server.close(() => {
     process.exit(1);
   });
 });
 
 process.on('SIGTERM', () => {
-  console.log('SIGTERM RECEIVED. SHUTTING DOWN GRACEFULLY!');
+  logger.info('SIGTERM RECEIVED. Shutting down gracefully.');
   server.close(() => {
     mongoose.connection.close();
-    console.log('Process terminated!');
+    logger.info('Process terminated!');
   });
 });

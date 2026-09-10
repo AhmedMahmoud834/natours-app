@@ -23,6 +23,8 @@ if (config.env !== 'production') {
       ),
     }),
   );
+} else {
+  logger.add(new winston.transports.Console());
 }
 
 export default logger;
