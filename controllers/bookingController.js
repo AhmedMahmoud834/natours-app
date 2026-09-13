@@ -155,20 +155,27 @@ export const refundBooking = async (req, res, next) => {
     );
   }
 
-  if (booking.paymentOption === 'stripe') {
-    if (!booking.stripePaymentIntentId) {
-      return next(
-        new AppError(
-          'Stripe payment intent ID is missing on this booking. Cannot process refund.',
-          400,
-        ),
-      );
-    }
-
-    await stripe.refunds.create({
-      payment_intent: booking.stripePaymentIntentId,
-    });
+  if (booking.paymentOption !== 'stripe') {
+    return next(
+      new AppError(
+        'Only bookings paid via Stripe can be refunded. For cash bookings, please use the /cancel endpoint.',
+        400,
+      ),
+    );
   }
+
+  if (!booking.stripePaymentIntentId) {
+    return next(
+      new AppError(
+        'Stripe payment intent ID is missing on this booking. Cannot process refund.',
+        400,
+      ),
+    );
+  }
+
+  await stripe.refunds.create({
+    payment_intent: booking.stripePaymentIntentId,
+  });
 
   booking.status = 'refunded';
   booking.paid = false;

@@ -328,7 +328,7 @@ Bookings have four possible statuses: `pending`, `confirmed`, `cancelled`, and `
 
 - **`pending → confirmed`** via `PATCH /:bookingId/confirm`
 - **`pending / confirmed → cancelled`** via `PATCH /:bookingId/cancel` — but only for cash bookings. If a Stripe-paid booking is still marked `paid: true`, the cancel endpoint returns a `400` directing the admin to use `/refund` instead, so the customer actually gets their money back.
-- **`confirmed → refunded`** via `PATCH /:bookingId/refund` — triggers a Stripe API refund call for Stripe bookings; for cash bookings it only updates the status and `paid` flag.
+- **`confirmed → refunded`** via `PATCH /:bookingId/refund` — triggers a Stripe API refund call for Stripe-paid bookings (`paymentOption: 'stripe'`). Cash bookings are blocked with a `400` directing the admin to use `/cancel` instead.
 
 There is no path back from `cancelled` or `refunded`. Stripe Checkout bookings are created directly in `confirmed` state via the webhook.
 
